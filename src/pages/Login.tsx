@@ -25,54 +25,55 @@ const Login: React.FC = () => {
       alert("Credenciais inválidas. Por favor, tente novamente.");
     }
   };
-
-  return (
-    <div className="container">
-      <div className="form-container">
-        <div className="form-content">
-          <h2>Login</h2>
-          <form onSubmit={handleSubmit}>
-            {/* Campo para Email */}
-            <div className="input-group">
-              <label>Email:</label>
-              <input
-                type="email"
-                value={credentials.email}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, email: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            {/* Campo para Senha */}
-            <div className="input-group">
-              <label>Senha:</label>
-              <input
-                type="password"
-                value={credentials.password}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, password: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <button type="submit">Login</button>
-          </form>
-
-          <p>
-            Não tem uma conta?
-            <span onClick={() => navigate("/register")} className="link-text">
-              Registre-se
-            </span>
-          </p>
+    return (
+      <div className="container">
+        <div className="form-container">
+          <div className="form-content">
+            <h2>Login</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="input-group">
+                <label>Email:</label>
+                <input
+                  type="email"
+                  value={credentials.email}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, email: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>Senha:</label>
+                <input
+                  type="password"
+                  value={credentials.password}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, password: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <button type="submit">Login</button>
+            </form>
+    
+            <p>
+              Não tem uma conta?
+              <span
+                onClick={() => navigate("/register")}
+                className="link-text"
+              >
+                Registre-se
+              </span>
+            </p>
+          </div>
+          <div className="image-section"></div>
         </div>
-        <div className="image-section"></div>
+        <footer>
+          Copyright ©2024 Produced by Sistemas de Informação
+        </footer>
       </div>
-      <footer>Copyright ©2024 Produced by Sistemas de Informação</footer>
-    </div>
-  );
+    );
+    
 };
 
 export default Login;
