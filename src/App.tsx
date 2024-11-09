@@ -30,7 +30,7 @@ interface PrivateRouteProps {
   admin?: boolean;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, admin = false }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { token } = React.useContext(AuthContext);
 
   if (!token) {
