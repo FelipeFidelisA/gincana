@@ -5,8 +5,6 @@ interface Quiz {
   tempo: ReactNode;
   perguntas: any;
   respostas: any;
-  // Defina a estrutura do objeto Quiz aqui
-  // Exemplo: id: number;
 }
 
 interface QuizContextProps {
