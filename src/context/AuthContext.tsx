@@ -25,7 +25,7 @@ export const AuthContext = createContext<AuthContextType>({
   logout: () => {},
 });
 
-const exampleUrl = "https://example.com/api";
+// const exampleUrl = "https://example.com/api";
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(
