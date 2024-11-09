@@ -2,20 +2,13 @@ import { createContext, useState, ReactNode, FC } from "react";
 
 interface AuthContextType {
   token: string | null;
-  login: (credentials: Credentials) => Promise<void>;
-  register: (userInfo: UserInfo) => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<void>;
+  register: (userInfo: {
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => Promise<void>;
   logout: () => void;
-}
-
-interface Credentials {
-  email: string;
-  password: string;
-}
-
-interface UserInfo {
-  email: string;
-  password: string;
-  confirmPassword: string;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -25,25 +18,30 @@ export const AuthContext = createContext<AuthContextType>({
   logout: () => {},
 });
 
-// const exampleUrl = "https://example.com/api";
-
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token")
   );
 
-  const login = async (credentials: Credentials) => {
-    console.log(credentials);
-    const fakeToken = "123456";
-    localStorage.setItem("token", fakeToken);
-    setToken(fakeToken);
+  const login = async (credentials: { email: string; password: string }) => {
+    if (
+      credentials.email === "admin@example.com" &&
+      credentials.password === "password"
+    ) {
+      const fakeToken = "admin-token";
+      localStorage.setItem("token", fakeToken);
+      setToken(fakeToken);
+    } else {
+      throw new Error("Credenciais inválidas");
+    }
   };
 
-  const register = async (userInfo: UserInfo) => {
-    console.log(userInfo);
-    const fakeToken = "654321";
-    localStorage.setItem("token", fakeToken);
-    setToken(fakeToken);
+  const register = async (userInfo: {
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    console.log("Registrando usuário:", userInfo);
   };
 
   const logout = () => {

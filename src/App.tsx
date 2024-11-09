@@ -1,43 +1,41 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Quiz from './pages/Quiz';
-import AdmQuiz from './pages/AdmQuiz';
-import { AuthContext, AuthProvider } from './context/AuthContext';
-import { QuizProvider } from './context/QuizContext';
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import QuizManagement from "./pages/QuizManagement";
+import QuizResponse from "./pages/QuizResponse";
+import { QuizProvider } from "./context/QuizContext";
 
-const App: React.FC = () => {
+const App = () => {
   return (
-    <AuthProvider>
-      <QuizProvider>
-        <Router>
+    <QuizProvider>
+      <Router>
+        <div style={{ padding: "20px" }}>
+          <nav>
+            <ul style={{ listStyle: "none", display: "flex", gap: "10px" }}>
+              <li>
+                <Link to="/manage">Gerenciar Quizzes</Link>
+              </li>
+              <li>
+                <Link to="/respond">Responder Quiz</Link>
+              </li>
+            </ul>
+          </nav>
+          <hr />
           <Routes>
-            <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/quiz" element={<PrivateRoute><Quiz /></PrivateRoute>} />
-            <Route path="/admquiz" element={<PrivateRoute admin><AdmQuiz /></PrivateRoute>} />
+            <Route path="/manage" element={<QuizManagement />} />
+            <Route path="/respond" element={<QuizResponse />} />
+            <Route path="/" element={<Home />} />
           </Routes>
-        </Router>
-      </QuizProvider>
-    </AuthProvider>
+        </div>
+      </Router>
+    </QuizProvider>
   );
 };
 
-interface PrivateRouteProps {
-  children: JSX.Element;
-  admin?: boolean;
-}
-
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const { token } = React.useContext(AuthContext);
-
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
-
-  return children;
-};
+// Componente Home
+const Home = () => (
+  <div>
+    <h1>Bem-vindo ao Sistema de Quiz</h1>
+    <p>Use a navegação acima para gerenciar ou responder quizzes.</p>
+  </div>
+);
 
 export default App;
