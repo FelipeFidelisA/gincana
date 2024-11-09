@@ -1,6 +1,7 @@
 import React, { useState, useContext, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import "./auth.css";
 
 const Register: React.FC = () => {
   const { register } = useContext(AuthContext);
