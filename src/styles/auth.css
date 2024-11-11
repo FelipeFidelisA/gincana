@@ -5,75 +5,113 @@
   align-items: center;
   min-height: 100vh;
   background-color: #f5f5f5;
+  padding: 1rem;
+  animation: fadeIn 1s ease-in-out;
 }
 
 /* Contêiner do Formulário */
 .form-container {
   display: flex;
+  flex-direction: row;
   width: 70%;
-  max-width: 900px;
+  max-width: 1200px;
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  margin: 0 auto; /* Centraliza o formulário horizontalmente */
+  margin: 2rem auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* Seção de conteúdo do formulário */
 .form-content {
   flex: 1;
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: slideIn 1s ease-out;
 }
 
 /* Título */
 h2 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #333;
-  text-align: center; 
+  text-align: center;
+  margin-bottom: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+h2:hover {
+  color: #007bff;
 }
 
 /* Grupos de entrada */
 .input-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
 }
 
 .input-group label {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #555;
+  display: block;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.input-group label:hover {
+  color: #007bff;
 }
 
 .input-group input {
   width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.3rem;
+  padding: 0.75rem;
   border: 1px solid #ccc;
   border-radius: 5px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
 }
 
 /* Botão */
 .button-container {
   display: flex;
-  justify-content: center; 
-  width: 100%; 
+  justify-content: center;
+  width: 100%;
 }
 
 button {
-  width: 40%;
-  padding: 0.7rem;
-  margin: 1rem auto 0 auto; 
+  width: 50%;
+  padding: 0.75rem;
+  margin: 1.5rem auto 0 auto;
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   text-align: center;
 }
 
 button:hover {
   background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
 }
 
 /* Link de "Esqueceu a senha?" */
@@ -81,12 +119,18 @@ button:hover {
   font-size: 0.9rem;
   color: #555;
   margin-top: 0.5rem;
+  text-align: center;
 }
 
 .forgot-password a {
   color: #d33;
   text-decoration: underline;
   cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+  color: #a00;
 }
 
 /* Link para registro */
@@ -94,7 +138,7 @@ button:hover {
   text-align: center;
   font-size: 0.9rem;
   color: #555;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 .register-link .link-text {
@@ -102,6 +146,11 @@ button:hover {
   margin-left: 0.3rem;
   cursor: pointer;
   text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.register-link .link-text:hover {
+  color: #0056b3;
 }
 
 /* Seção de imagem */
@@ -109,12 +158,94 @@ button:hover {
   flex: 1;
   background: url('public/loginIMG.svg') no-repeat center;
   background-size: cover;
+  transition: transform 0.3s ease;
+}
+
+.form-container:hover .image-section {
+  transform: scale(1.05);
 }
 
 /* Rodapé */
 footer {
-  margin-top: 1rem;
+  margin-top: 2rem;
   font-size: 0.8rem;
   color: #aaa;
   text-align: center;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsividade */
+
+/* Tablets e dispositivos médios */
+@media (max-width: 992px) {
+  .form-container {
+    flex-direction: row;
+    width: 80%;
+  }
+
+  button {
+    width: 60%;
+  }
+}
+
+/* Dispositivos móveis */
+@media (max-width: 768px) {
+  .form-container {
+    flex-direction: column;
+    width: 90%;
+  }
+
+  .image-section {
+    display: none;
+  }
+
+  .form-content {
+    padding: 1.5rem;
+  }
+
+  button {
+    width: 80%;
+  }
+}
+
+/* Telas pequenas */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .input-group label,
+  .input-group input {
+    font-size: 0.9rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.65rem;
+    font-size: 1rem;
+  }
+
+  .register-link {
+    font-size: 0.85rem;
+  }
 }

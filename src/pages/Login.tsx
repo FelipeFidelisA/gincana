@@ -45,16 +45,15 @@ const Login: React.FC = () => {
                 required
               />
             </div>
-          <p className="forgot-password">
-            <a href="#">Esqueceu a senha?</a>
-          </p>
-          
-          <div className="button-container">
-    <button type="submit">Login</button>
-  </div>
+            <p className="forgot-password">
+              <a href="#">Esqueceu a senha?</a>
+            </p>
+
+            <div className="button-container">
+              <button type="submit">Login</button>
+            </div>
           </form>
-  
-  
+
           <p className="register-link">
             Não tem uma conta?
             <span onClick={() => navigate("/register")} className="link-text">
@@ -67,7 +66,6 @@ const Login: React.FC = () => {
       <footer>Copyright ©2024 Produced by Sistemas de Informação</footer>
     </div>
   );
-    
 };
 
 export default Login;

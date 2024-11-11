@@ -6,6 +6,8 @@ import QuizManagement from "./pages/QuizManagement";
 import QuizResponse from "./pages/QuizResponse";
 import AddQuiz from "./pages/AddQuiz";
 import QrView from "./pages/QrView";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import { QuizProvider } from "./context/QuizContext";
 
 const App = () => {
@@ -16,8 +18,10 @@ const App = () => {
           <Header />
           <hr />
           <Routes>
-            <Route path="/manage" element={<QuizManagement />} />
             <Route path="/add-quiz" element={<AddQuiz />} />
+            <Route path="/manage" element={<QuizManagement />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/respond" element={<QuizResponse />} />
             <Route path="/qrview" element={<QrView />} />
             <Route path="/" element={<Home />} />
