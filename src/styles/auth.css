@@ -1,21 +1,33 @@
-/* Container principal */
+:root {
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --secondary-color: #6c757d;
+  --background-color: #f5f5f5;
+  --form-background: #ffffff;
+  --input-border: #ccc;
+  --input-focus: rgba(0, 123, 255, 0.5);
+  --text-color: #333;
+  --label-color: #555;
+  --footer-color: #aaa;
+  --error-color: #d33;
+}
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--background-color);
   padding: 1rem;
   animation: fadeIn 1s ease-in-out;
 }
 
-/* Contêiner do Formulário */
 .form-container {
   display: flex;
   flex-direction: row;
   width: 70%;
   max-width: 1200px;
-  background-color: #fff;
+  background-color: var(--form-background);
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -28,7 +40,6 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-/* Seção de conteúdo do formulário */
 .form-content {
   flex: 1;
   padding: 2rem;
@@ -38,53 +49,67 @@
   animation: slideIn 1s ease-out;
 }
 
-/* Título */
 h2 {
   font-size: 2rem;
   font-weight: bold;
-  color: #333;
+  color: var(--text-color);
   text-align: center;
   margin-bottom: 1.5rem;
   transition: color 0.3s ease;
 }
 
 h2:hover {
-  color: #007bff;
+  color: var(--primary-color);
 }
 
-/* Grupos de entrada */
 .input-group {
-  margin-bottom: 1.5rem;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
 }
 
 .input-group label {
   font-size: 1rem;
-  color: #555;
+  color: var(--label-color);
   display: block;
   margin-bottom: 0.5rem;
   transition: color 0.3s ease;
 }
 
 .input-group label:hover {
-  color: #007bff;
+  color: var(--primary-color);
 }
 
 .input-group input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border);
   border-radius: 5px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-size: 1rem;
+  align-self: center;
 }
 
 .input-group input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 5px var(--input-focus);
   outline: none;
 }
 
-/* Botão */
+.input-group input::placeholder {
+  color: var(--secondary-color);
+}
+
+.error-message {
+  color: var(--error-color);
+  background-color: rgba(211, 51, 51, 0.1);
+  padding: 0.75rem;
+  border: 1px solid var(--error-color);
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
 .button-container {
   display: flex;
   justify-content: center;
@@ -95,7 +120,7 @@ button {
   width: 50%;
   padding: 0.75rem;
   margin: 1.5rem auto 0 auto;
-  background-color: #007bff;
+  background-color: var(--primary-color);
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -106,7 +131,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-hover);
   transform: scale(1.05);
 }
 
@@ -114,35 +139,15 @@ button:active {
   transform: scale(0.95);
 }
 
-/* Link de "Esqueceu a senha?" */
-.forgot-password {
-  font-size: 0.9rem;
-  color: #555;
-  margin-top: 0.5rem;
-  text-align: center;
-}
-
-.forgot-password a {
-  color: #d33;
-  text-decoration: underline;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.forgot-password a:hover {
-  color: #a00;
-}
-
-/* Link para registro */
 .register-link {
   text-align: center;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--label-color);
   margin-top: 1.5rem;
 }
 
 .register-link .link-text {
-  color: #007bff;
+  color: var(--primary-color);
   margin-left: 0.3rem;
   cursor: pointer;
   text-decoration: underline;
@@ -150,13 +155,12 @@ button:active {
 }
 
 .register-link .link-text:hover {
-  color: #0056b3;
+  color: var(--primary-hover);
 }
 
-/* Seção de imagem */
 .image-section {
   flex: 1;
-  background: url('public/loginIMG.svg') no-repeat center;
+  background: url("/public/loginIMG.svg") no-repeat center;
   background-size: cover;
   transition: transform 0.3s ease;
 }
@@ -165,15 +169,13 @@ button:active {
   transform: scale(1.05);
 }
 
-/* Rodapé */
 footer {
   margin-top: 2rem;
   font-size: 0.8rem;
-  color: #aaa;
+  color: var(--footer-color);
   text-align: center;
 }
 
-/* Animações */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -194,13 +196,10 @@ footer {
   }
 }
 
-/* Responsividade */
-
-/* Tablets e dispositivos médios */
 @media (max-width: 992px) {
   .form-container {
     flex-direction: row;
-    width: 80%;
+    width: 100%;
   }
 
   button {
@@ -208,11 +207,10 @@ footer {
   }
 }
 
-/* Dispositivos móveis */
 @media (max-width: 768px) {
   .form-container {
     flex-direction: column;
-    width: 90%;
+    width: 100%;
   }
 
   .image-section {
@@ -228,7 +226,6 @@ footer {
   }
 }
 
-/* Telas pequenas */
 @media (max-width: 480px) {
   h2 {
     font-size: 1.5rem;

@@ -3,46 +3,66 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "./auth.css";
 
+interface Credentials {
+  email: string;
+  password: string;
+}
+
 const Login: React.FC = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({
+  const [credentials, setCredentials] = useState<Credentials>({
     email: "",
     password: "",
   });
 
+  const [error, setError] = useState<string | null>(null); // Estado para mensagens de erro
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await login(credentials);
-    navigate("/quiz");
+    try {
+      await login(credentials);
+      navigate("/manage");
+    } catch (error: any) {
+      setError("Email ou senha incorretos. Tente novamente.");
+    }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCredentials((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div className="container">
       <div className="form-container">
         <div className="form-content">
           <h2>Login</h2>
-          <form onSubmit={handleSubmit}>
+          {error && <div className="error-message">{error}</div>}
+          <form onSubmit={handleSubmit} noValidate>
             <div className="input-group">
-              <label>Email:</label>
+              <label htmlFor="email">Email:</label>
               <input
+                id="email"
+                name="email"
                 type="email"
                 value={credentials.email}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, email: e.target.value })
-                }
+                onChange={handleChange}
                 required
+                placeholder="Digite seu email"
               />
             </div>
             <div className="input-group">
-              <label>Senha:</label>
+              <label htmlFor="password">Senha:</label>
               <input
+                id="password"
+                name="password"
                 type="password"
                 value={credentials.password}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, password: e.target.value })
-                }
+                onChange={handleChange}
                 required
+                placeholder="Digite sua senha"
               />
             </div>
             <p className="forgot-password">
@@ -61,9 +81,11 @@ const Login: React.FC = () => {
             </span>
           </p>
         </div>
-        <div className="image-section"></div>
+        <div className="image-section" aria-hidden="true"></div>
       </div>
-      <footer>Copyright ©2024 Produced by Sistemas de Informação</footer>
+      <footer>
+        &copy; 2024 Produzido por Sistemas de Informação
+      </footer>
     </div>
   );
 };

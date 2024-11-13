@@ -1,39 +1,34 @@
-/* Container principal */
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: white !important;
 }
 
-/* Contêiner do Formulário */
 .form-container {
   display: flex;
   width: 70%;
   max-width: 900px;
-  background-color: #fff;
+  background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  margin: 0 auto; /* Centraliza o formulário horizontalmente */
+  margin: 0 auto;
 }
 
-/* Seção de conteúdo do formulário */
 .form-content {
   flex: 1;
   padding: 2rem;
 }
 
-/* Título */
 h2 {
   font-size: 1.8rem;
   font-weight: bold;
   color: #333;
-  text-align: center; 
+  text-align: center;
 }
 
-/* Grupos de entrada */
 .input-group {
   margin-bottom: 1rem;
 }
@@ -51,17 +46,16 @@ h2 {
   border-radius: 5px;
 }
 
-/* Botão */
 .button-container {
   display: flex;
-  justify-content: center; 
-  width: 100%; 
+  justify-content: center;
+  width: 100%;
 }
 
 button {
   width: 40%;
   padding: 0.7rem;
-  margin: 1rem auto 0 auto; 
+  margin: 1rem auto 0 auto;
   background-color: #007bff;
   color: #fff;
   border: none;
@@ -76,7 +70,6 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* Link de "Esqueceu a senha?" */
 .forgot-password {
   text-align: center;
   font-size: 0.9rem;
@@ -90,7 +83,6 @@ button:hover {
   cursor: pointer;
 }
 
-/* Link para registro */
 .register-link {
   text-align: center;
   font-size: 0.9rem;
@@ -105,14 +97,12 @@ button:hover {
   text-decoration: underline;
 }
 
-/* Seção de imagem */
 .image-section {
   flex: 1;
-  background: url('public/loginIMG.svg') no-repeat center;
+  background: url("public/loginIMG.svg") no-repeat center;
   background-size: cover;
 }
 
-/* Rodapé */
 footer {
   margin-top: 1rem;
   font-size: 0.8rem;

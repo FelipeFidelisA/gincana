@@ -1,6 +1,9 @@
+import { FaDice } from "react-icons/fa";
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { QuizContext } from "../context/QuizContext";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 import "../styles/QuizResponse.css";
 
 interface QuizData {
@@ -18,7 +21,16 @@ interface UsuarioResposta {
   nome: string;
   respostas: number[];
   data: string;
+  personagem: string;
 }
+
+const characterOptions = [
+  "/characters/character1.png",
+  "/characters/character2.png",
+  "/characters/character3.png",
+  "/characters/character4.png",
+  "/characters/character5.png",
+];
 
 const QuizResponse: React.FC = () => {
   const { registerResponse } = useContext(QuizContext);
@@ -29,8 +41,10 @@ const QuizResponse: React.FC = () => {
   const [respostasUsuario, setRespostasUsuario] = useState<number[]>([]);
   const [nome, setNome] = useState<string>("");
   const [tempoRestante, setTempoRestante] = useState<number>(60);
+  const [tempoTotal, setTempoTotal] = useState<number>(60);
   const [step, setStep] = useState<"nome" | "quiz">("nome");
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
+  const [selectedCharacter, setSelectedCharacter] = useState<number>(0);
 
   const getQuizFromURL = (): QuizData | null => {
     const params = new URLSearchParams(location.search);
@@ -52,7 +66,9 @@ const QuizResponse: React.FC = () => {
     const quizData = getQuizFromURL();
     if (quizData) {
       setQuiz(quizData);
-      setTempoRestante(quizData.tempo || 60);
+      const totalTempo = quizData.tempo || 60;
+      setTempoRestante(totalTempo);
+      setTempoTotal(totalTempo);
     } else {
       alert("Dados do quiz inválidos ou ausentes.");
       navigate("/");
@@ -106,6 +122,7 @@ const QuizResponse: React.FC = () => {
       nome,
       respostas: respostasUsuario,
       data: new Date().toISOString(),
+      personagem: characterOptions[selectedCharacter],
     };
 
     registerResponse(quiz!, usuarioResposta);
@@ -113,6 +130,15 @@ const QuizResponse: React.FC = () => {
     alert("Respostas registradas com sucesso!");
     navigate("/");
   };
+
+  const randomizeCharacter = () => {
+    const randomIndex = Math.floor(Math.random() * characterOptions.length);
+    setSelectedCharacter(randomIndex);
+  };
+
+  useEffect(() => {
+    randomizeCharacter();
+  }, []);
 
   if (!quiz) {
     return null;
@@ -133,14 +159,32 @@ const QuizResponse: React.FC = () => {
               setStep("quiz");
             }}
           >
-            <label htmlFor="nome">Seu Nome:</label>
-            <input
-              id="nome"
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-            />
+            <div className="character-display">
+              <img
+                src={characterOptions[selectedCharacter]}
+                alt="Seu Personagem"
+                className="character-image"
+              />
+              <button
+                type="button"
+                onClick={randomizeCharacter}
+                className="dice-button"
+              >
+                <FaDice size={32} />
+              </button>
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="nome">Seu Nome:</label>
+              <input
+                id="nome"
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+              />
+            </div>
+
             <button type="submit">Iniciar Quiz</button>
           </form>
         </div>
@@ -149,7 +193,21 @@ const QuizResponse: React.FC = () => {
       {step === "quiz" && (
         <>
           <h2>Quiz: {quiz.nome}</h2>
-          <h3>Tempo Restante: {tempoRestante} segundos</h3>
+
+          <div className="timer-container">
+            <CircularProgressbar
+              value={tempoRestante}
+              maxValue={tempoTotal}
+              text={`${tempoRestante}s`}
+              styles={buildStyles({
+                pathColor: `rgba(62, 152, 199, ${tempoRestante / tempoTotal})`,
+                textColor: "#000",
+                trailColor: "#d6d6d6",
+                backgroundColor: "#f88",
+              })}
+            />
+          </div>
+
           <div className="question-container">
             <p>
               <strong>

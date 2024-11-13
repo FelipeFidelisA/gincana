@@ -1,6 +1,3 @@
-/* src/styles/QuizManagement.css */
-
-/* Variáveis de Cores para Facilitar Manutenção */
 :root {
   --primary-color: #2196f3;
   --primary-hover: #0b7dda;
@@ -16,7 +13,6 @@
   --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Container Principal */
 .quiz-management-container {
   padding: 20px;
   max-width: 900px;
@@ -33,7 +29,6 @@
   box-shadow: 0 6px 12px var(--shadow-color);
 }
 
-/* Título e Cabeçalho */
 .header {
   display: flex;
   justify-content: space-between;
@@ -62,7 +57,6 @@
   transform: translateY(-2px);
 }
 
-/* Cartões de Quiz */
 .quiz-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -111,7 +105,6 @@
   transform: translateY(-2px);
 }
 
-/* Remover Quiz - Botão X no Topo do Card */
 .remove-button {
   position: absolute;
   top: 10px;
@@ -123,12 +116,10 @@
   transition: color 0.3s ease;
 }
 
-
 .remove-button:focus {
   outline: none;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -178,7 +169,6 @@
   transform: translateY(-2px);
 }
 
-/* Animações */
 @keyframes fadeIn {
   from {
     opacity: 0;

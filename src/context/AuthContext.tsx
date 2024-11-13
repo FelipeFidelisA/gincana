@@ -26,7 +26,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const login = async (credentials: { email: string; password: string }) => {
     if (
       credentials.email === "admin@example.com" &&
-      credentials.password === "password"
+      credentials.password === "1209"
     ) {
       const fakeToken = "admin-token";
       localStorage.setItem("token", fakeToken);
