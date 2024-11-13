@@ -1,7 +1,8 @@
+// Login.tsx
 import React, { useState, useContext, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import "./auth.css";
+import FormComponent from "../components/FormComponent";
 
 interface Credentials {
   email: string;
@@ -17,7 +18,12 @@ const Login: React.FC = () => {
     password: "",
   });
 
-  const [error, setError] = useState<string | null>(null); // Estado para mensagens de erro
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCredentials((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -29,65 +35,86 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCredentials((prev) => ({ ...prev, [name]: value }));
-  };
+  const fields = [
+    {
+      label: "Email:",
+      type: "email",
+      name: "email",
+      placeholder: "Digite seu email",
+    },
+    {
+      label: "Senha:",
+      type: "password",
+      name: "password",
+      placeholder: "Digite sua senha",
+    },
+  ];
 
   return (
-    <div className="container">
-      <div className="form-container">
-        <div className="form-content">
-          <h2>Login</h2>
-          {error && <div className="error-message">{error}</div>}
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="input-group">
-              <label htmlFor="email">Email:</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={credentials.email}
-                onChange={handleChange}
-                required
-                placeholder="Digite seu email"
-              />
-            </div>
-            <div className="input-group">
-              <label htmlFor="password">Senha:</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={credentials.password}
-                onChange={handleChange}
-                required
-                placeholder="Digite sua senha"
-              />
-            </div>
-            <p className="forgot-password">
-              <a href="#">Esqueceu a senha?</a>
-            </p>
-
-            <div className="button-container">
-              <button type="submit">Login</button>
-            </div>
-          </form>
-
-          <p className="register-link">
-            Não tem uma conta?
-            <span onClick={() => navigate("/register")} className="link-text">
-              Registre-se
-            </span>
-          </p>
+    <div style={styles.container}>
+      <div style={styles.formContainer}>
+        <div style={{ flex: 1 }}>
+          <FormComponent
+            credentials={credentials}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            error={error}
+            navigate={navigate}
+            fields={fields}
+            title="Login"
+            submitButtonText="Entrar"
+            footerText="Não tem uma conta?"
+            footerLinkText="Registre-se"
+            footerLinkPath="/register"
+          />
         </div>
-        <div className="image-section" aria-hidden="true"></div>
+        <div style={{ ...styles.imageSection }} aria-hidden="true"></div>
       </div>
-      <footer>
+      <footer style={styles.footer}>
         &copy; 2024 Produzido por Sistemas de Informação
       </footer>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: "flex",
+    flexDirection: "column" as "column" | "row",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "100vh",
+    backgroundColor: "#f5f5f5",
+    padding: "1rem",
+    animation: "fadeIn 1s ease-in-out",
+  },
+  formContainer: {
+    display: "flex",
+    flexDirection: "row" as "column" | "row",
+    width: "70%",
+    maxWidth: "1200px",
+    backgroundColor: "#ffffff",
+    borderRadius: "10px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+    overflow: "hidden",
+    margin: "2rem auto",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+  },
+  imageSection: {
+    flex: 1,
+    backgroundImage: 'url("/public/loginIMG.svg")',
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    transition: "transform 0.3s ease",
+    display: "block",
+  },
+  footer: {
+    marginTop: "2rem",
+    fontSize: "0.8rem",
+    color: "#aaa",
+    textAlign: "center" as const,
+  },
 };
 
 export default Login;
