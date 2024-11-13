@@ -21,7 +21,7 @@ const AddQuiz = () => {
   const handleQuestionChange = (
     index: number,
     field: string,
-    value: string | number | null
+    value: string | number
   ) => {
     const novasPerguntas = [...form.perguntas];
     if (field.startsWith("opcao")) {
@@ -29,8 +29,8 @@ const AddQuiz = () => {
       novasPerguntas[index].opcoes[opcaoIndex] = value as string;
     } else if (field === "respostaCerta") {
       novasPerguntas[index].respostaCerta = value as number;
-    } else {
-      novasPerguntas[index][field] = value as string;
+    } else if (field === "pergunta") {
+      novasPerguntas[index].pergunta = value as string;
     }
     setForm({ ...form, perguntas: novasPerguntas });
   };
