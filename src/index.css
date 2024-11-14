@@ -50,7 +50,6 @@ table {
 
 /* Additional resets */
 input, button, textarea, select {
-	font-family: inherit;
 	font-size: inherit;
 	line-height: inherit;
 }

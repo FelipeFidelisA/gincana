@@ -7,7 +7,11 @@ const AddQuiz = () => {
   const [form, setForm] = useState({
     nome: "",
     perguntas: [
-      { pergunta: "", opcoes: ["", "", "", ""], respostaCerta: null as number | null },
+      {
+        pergunta: "",
+        opcoes: ["", "", "", ""],
+        respostaCerta: null as number | null,
+      },
     ],
     tempo: 60,
   });
@@ -78,7 +82,7 @@ const AddQuiz = () => {
       maxWidth: "900px",
       margin: "30px auto",
       padding: "20px",
-      fontFamily: "'Comic Sans MS', cursive, sans-serif",
+      fontFamily: "Quicksand",
       backgroundColor: "#fff",
       borderRadius: "12px",
       boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
@@ -112,11 +116,9 @@ const AddQuiz = () => {
       outline: "none",
     },
     questionCard: {
-      backgroundColor: "#fefefe",
       padding: "20px",
       borderRadius: "10px",
       marginBottom: "25px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
     },
     optionContainer: {
       display: "flex",
@@ -191,7 +193,16 @@ const AddQuiz = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.header}>Adicionar Novo Quiz</h2>
+      <h2
+        style={{
+          textAlign: "center",
+          marginBottom: "20px",
+          fontWeight: "900",
+          fontSize: "1.5em",
+        }}
+      >
+        Adicionar Novo Quiz
+      </h2>
       <form onSubmit={handleSubmit}>
         {/* Nome do Quiz */}
         <div style={styles.formGroup}>
@@ -204,7 +215,10 @@ const AddQuiz = () => {
             required
             style={styles.input}
             placeholder="Digite o nome do quiz"
-            onFocus={(e) => (e.currentTarget.style.borderColor = styles.inputFocus.borderColor)}
+            onFocus={(e) =>
+              (e.currentTarget.style.borderColor =
+                styles.inputFocus.borderColor)
+            }
           />
         </div>
 
@@ -220,12 +234,24 @@ const AddQuiz = () => {
             min="10"
             style={styles.input}
             placeholder="Ex: 60"
-            onFocus={(e) => (e.currentTarget.style.borderColor = styles.inputFocus.borderColor)}
+            onFocus={(e) =>
+              (e.currentTarget.style.borderColor =
+                styles.inputFocus.borderColor)
+            }
           />
         </div>
 
         {/* Perguntas */}
-        <h3>Perguntas</h3>
+        <h3
+          style={{
+            textAlign: "center",
+            marginBottom: "20px",
+            fontWeight: "900",
+            fontSize: "1.5em",
+          }}
+        >
+          Perguntas
+        </h3>
         {form.perguntas.map((q, index) => (
           <div key={index} style={styles.questionCard}>
             {/* Pergunta */}
@@ -240,7 +266,10 @@ const AddQuiz = () => {
                 required
                 style={styles.input}
                 placeholder="Digite a pergunta"
-                onFocus={(e) => (e.currentTarget.style.borderColor = styles.inputFocus.borderColor)}
+                onFocus={(e) =>
+                  (e.currentTarget.style.borderColor =
+                    styles.inputFocus.borderColor)
+                }
               />
             </div>
 
@@ -252,7 +281,9 @@ const AddQuiz = () => {
                   key={opIndex}
                   style={{
                     ...styles.optionContainer,
-                    ...(q.respostaCerta === opIndex ? styles.optionSelected : {}),
+                    ...(q.respostaCerta === opIndex
+                      ? styles.optionSelected
+                      : {}),
                   }}
                   onClick={() =>
                     handleQuestionChange(index, "respostaCerta", opIndex)
@@ -315,22 +346,31 @@ const AddQuiz = () => {
           </div>
         ))}
 
-        {/* Adicionar Pergunta */}
-        <button
-          type="button"
-          onClick={addQuestion}
+        <div
           style={{
-            ...styles.button,
-            ...styles.addButton,
-            ...(hoveredButton === "add" ? styles.addButtonHover : {}),
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
-          onMouseEnter={() => setHoveredButton("add")}
-          onMouseLeave={() => setHoveredButton(null)}
         >
-          Adicionar Pergunta
-        </button>
+          <button
+            type="button"
+            onClick={addQuestion}
+            style={{
+              ...styles.button,
+              ...styles.addButton,
+              ...(hoveredButton === "add" ? styles.addButtonHover : {}),
+            }}
+            onMouseEnter={() => setHoveredButton("add")}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+            Adicionar Pergunta
+          </button>
+        </div>
 
         {/* Submeter Quiz */}
+
         <button
           type="submit"
           style={{

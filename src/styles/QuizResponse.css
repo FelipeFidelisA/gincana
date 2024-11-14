@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+
 :root {
   --primary-color: #4a90e2; /* Azul frio */
   --primary-hover: #357ab7;
@@ -11,12 +14,14 @@
   --input-border: #d4d4d4;
   --focus-border: rgba(74, 144, 226, 0.6);
   --shadow-color: rgba(0, 0, 0, 0.1);
-  --font-family: "Roboto", sans-serif;
 }
 
 body {
   background: linear-gradient(135deg, #a8c0ff 0%, #f0f8ff 100%);
-  font-family: var(--font-family);
+  font-family: "Quicksand", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
 }
 
 .quiz-container {

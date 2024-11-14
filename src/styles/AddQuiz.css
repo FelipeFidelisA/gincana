@@ -20,7 +20,6 @@
 .add-quiz-container {
   padding: 20px;
   margin: 20px auto;
-  font-family: 'Roboto', sans-serif;
   background-color: var(--background-color);
   border-radius: 10px;
   box-shadow: 0 4px 6px var(--shadow-color);

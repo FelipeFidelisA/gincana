@@ -37,7 +37,7 @@ const Register: React.FC = () => {
     }
     try {
       await register(credentials);
-      navigate("/quiz");
+      navigate("/login");
     } catch (error: any) {
       setError(error.message || "Erro ao registrar. Tente novamente.");
     }
