@@ -2,16 +2,6 @@
 import React, { useState } from "react";
 import InputComponent from "./InputComponent";
 
-interface FormField {
-  label: string;
-  type: string;
-  name: string;
-  placeholder: string;
-}
-
-
-
-
 
 interface FormComponentProps {
   credentials: any;

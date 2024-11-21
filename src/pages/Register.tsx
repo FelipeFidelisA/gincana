@@ -71,6 +71,7 @@ const Register: React.FC = () => {
   ];
 
   const [isFormHovered, setIsFormHovered] = useState(false);
+  console.log(isFormHovered);
 
   return (
     <div style={styles.container}>
@@ -115,7 +116,9 @@ const Register: React.FC = () => {
         </div>
         <div style={styles.imageSection} aria-hidden="true"></div>
       </div>
-      <footer style={styles.footer}>&copy; 2024 Produzido por Sistemas de Informação</footer>
+      <footer style={styles.footer}>
+        &copy; 2024 Produzido por Sistemas de Informação
+      </footer>
     </div>
   );
 };
