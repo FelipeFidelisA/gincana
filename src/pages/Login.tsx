@@ -102,7 +102,7 @@ const styles = {
   },
   imageSection: {
     flex: 1,
-    backgroundImage: 'url("/public/loginIMG.svg")',
+    backgroundImage: 'url("/public/loginIMG.png")',
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     backgroundSize: "cover",
