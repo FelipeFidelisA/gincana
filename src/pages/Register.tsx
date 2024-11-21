@@ -114,7 +114,9 @@ const Register: React.FC = () => {
             footerLinkPath="/login"
           />
         </div>
-        <div style={styles.imageSection} aria-hidden="true"></div>
+        <div style={styles.imageSection} aria-hidden="true">
+          <img src="../public/loginIMG.png" />
+        </div>
       </div>
       <footer style={styles.footer}>
         &copy; 2024 Produzido por Sistemas de Informação
