@@ -188,7 +188,14 @@
   }
 }
 
+/* Centralizar os botões */
+.add-question-button,
+.submit-quiz-button {
+  display: block; /* Garante que o botão seja tratado como um bloco */
+  margin: 10px auto; /* Centraliza horizontalmente */
+}
 
 input{
   max-width: 80%;
 }
+
