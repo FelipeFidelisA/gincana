@@ -116,7 +116,7 @@ const styles = {
   },
   imageSection: {
     flex: 1,
-    backgroundImage: 'url("/public/loginIMG.png")',
+    backgroundImage: 'url("https://i.imgur.com/HtZ6B7O.png")',
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     backgroundSize: "cover",
