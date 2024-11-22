@@ -6,7 +6,7 @@ import FormComponent from "../components/FormComponent";
 
 interface Credentials {
   name: string;
-  email: string;
+  username: string;
   password: string;
   confirmPassword: string;
 }
@@ -17,7 +17,7 @@ const Register: React.FC = () => {
 
   const [credentials, setCredentials] = useState<Credentials>({
     name: "",
-    email: "",
+    username: "",
     password: "",
     confirmPassword: "",
   });
@@ -51,10 +51,10 @@ const Register: React.FC = () => {
       placeholder: "Digite seu nome",
     },
     {
-      label: "Email:",
-      type: "email",
-      name: "email",
-      placeholder: "Digite seu email",
+      label: "username:",
+      type: "username",
+      name: "username",
+      placeholder: "Digite seu username",
     },
     {
       label: "Senha:",

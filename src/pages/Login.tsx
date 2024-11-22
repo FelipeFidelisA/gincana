@@ -3,9 +3,10 @@ import React, { useState, useContext, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import FormComponent from "../components/FormComponent";
+import api from "../api";
 
 interface Credentials {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -14,7 +15,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState<Credentials>({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -28,19 +29,32 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await login(credentials);
-      navigate("/manage");
+      console.log(credentials);
+      const userData = {
+        username: credentials.username,
+        password: credentials.password,
+      };
+
+      console.log("responseString");
+      console.log("responseString");
+      console.log("responseString");
+      console.log("responseString");
+      const response = await api.post("/login", userData);
+      localStorage.setItem("token", "token");
+      const responseString = JSON.stringify(response.data);
+      console.log(responseString);
+      //navigate("/manage");
     } catch (error: any) {
-      setError("Email ou senha incorretos. Tente novamente.");
+      setError("email ou senha incorretos. Tente novamente.");
     }
   };
 
   const fields = [
     {
-      label: "Email:",
-      type: "email",
-      name: "email",
-      placeholder: "Digite seu email",
+      label: "email:",
+      type: "username",
+      name: "username",
+      placeholder: "Digite seu username",
     },
     {
       label: "Senha:",
@@ -69,7 +83,7 @@ const Login: React.FC = () => {
           />
         </div>
         <div style={{ ...styles.imageSection }} aria-hidden="true">
-          <img src="../public/loginIMG.png"/>
+          <img src="../public/loginIMG.png" />
         </div>
       </div>
       <footer style={styles.footer}>
