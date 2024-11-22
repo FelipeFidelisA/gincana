@@ -1,7 +1,6 @@
 // Login.tsx
-import React, { useState, useContext, FormEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 import FormComponent from "../components/FormComponent";
 import api from "../api";
 
@@ -11,7 +10,6 @@ interface Credentials {
 }
 
 const Login: React.FC = () => {
-  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState<Credentials>({
