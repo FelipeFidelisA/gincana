@@ -1,43 +1,57 @@
-// context/AuthContext.tsx
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { api } from "../api";
 
 interface AuthContextProps {
+  authToken: string | null;
   isAuthenticated: boolean;
-  register: (credentials: { name: string; email: string; password: string }) => Promise<void>;
-  login: (credentials: { username: string; password: string }) => Promise<void>;
+  register: (credentials: { name: string; email: string; password: string }) => Promise<any>;
+  login: (credentials: { username: string; password: string }) => Promise<any>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) setIsAuthenticated(true);
+  }, []);
 
   const register = async ({ name, email, password }: { name: string; email: string; password: string }) => {
-    const response: any = await api.post("/user/new", { name, email, password })
-    if (response.status !== 200) {
-      console.log("Erro ao registrar usuário");
+    try {
+      return await api.post("/user/new", { name, email, password });
+    } catch (error: any) {
+      throw error.response?.data.message;
     }
-  }
+  };
 
   const login = async ({ username, password }: { username: string; password: string }) => {
     try {
-      const response = await api.post("/auth/login", { username, password });
-      setIsAuthenticated(true);
-      localStorage.setItem("token", response.data.token); // Salva o token
-    } catch (error) {
-      console.log(error);
+      const response = await api.post("/login", { username, password });
+      if (response.status === 200) {
+        const { authToken, refreshToken } = response.data;
+        localStorage.setItem("authToken", authToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        setIsAuthenticated(true);
+        setAuthToken(authToken);
+      }
+      return response;
+    } catch (error: any) {
+      throw error.response?.data.message;
     }
   };
 
   const logout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
     setIsAuthenticated(false);
-    localStorage.removeItem("token");
+    setAuthToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, register, login, logout }}>
+    <AuthContext.Provider value={{ authToken, isAuthenticated, register, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

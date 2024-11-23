@@ -8,7 +8,7 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [credentials, setCredentials] = useState({ username: "marceline@mail.com", password: "2308" });
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,10 +19,12 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError(null);
     try {
-      await login(credentials);
-      navigate("/manage");
-    } catch {
-      setError("Credenciais inválidas. Tente novamente.");
+      const response = await login(credentials);
+      if (response.status === 200) {
+        navigate("/manage")
+      }
+    } catch (error: any) {
+      setError(error);
     }
   };
 

@@ -1,120 +1,144 @@
-import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { QRCodeCanvas } from "qrcode.react";
-import { QuizContext } from "../context/QuizContext";
-import "../styles/QuizManagement.css";
+import React, { useState, useEffect } from 'react';
+import { useQuizApi } from '../context/QuizApiContext';
+import { useNavigate } from 'react-router-dom';
+import Modal from 'react-modal'; // Modal que exibirá as respostas'
+import { QRCodeCanvas } from 'qrcode.react';
 
-const QuizManagement = () => {
-  const { quizzes, removeQuiz } = useContext(QuizContext);
+Modal.setAppElement('#root'); // Acessibilidade do Modal
+
+// Tipo de dados para o modal
+interface ModalData {
+  quizCode: string;
+  quizTitle: string;
+  ranking: any[];
+}
+
+const QuizManagement: React.FC = () => {
+  const { quizzes, ranking, loading, error, fetchQuizzes, fetchRanking, removeQuiz } = useQuizApi();
   const navigate = useNavigate();
 
-  const [modalData, setModalData] = useState<{ quiz: any; isOpen: boolean }>({
-    quiz: null,
-    isOpen: false,
-  });
+  const [modalData, setModalData] = useState<ModalData | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [quizToRemove, setQuizToRemove] = useState<string | null>(null); // Código do quiz para remoção
 
-  const openModal = (quiz: any) => {
-    setModalData({ quiz, isOpen: true });
+  // Carregar quizzes ao montar o componente
+  useEffect(() => {
+    setTimeout(() => {
+      //fetchQuizzes()
+    }
+      , 10000
+    );
+
+  }, [fetchQuizzes]);
+
+  // Função para abrir o modal e buscar as respostas do quiz
+  const openModal = async (quizCode: string, quizTitle: string) => {
+    await fetchRanking(quizCode);
+    setModalData({
+      quizCode,
+      quizTitle,
+      ranking: ranking?.guestRanking || [],
+    });
+    setShowModal(true);
   };
 
+  // Função para fechar o modal
   const closeModal = () => {
-    setModalData({ quiz: null, isOpen: false });
+    setShowModal(false);
+    setModalData(null);
   };
 
-  const generateQuizURL = (quiz: any) => {
-    const serializedData = encodeURIComponent(JSON.stringify(quiz));
-    return `${window.location.origin}/respond?data=${serializedData}`;
+  // Função para remover o quiz
+  const handleRemoveQuiz = async () => {
+    if (quizToRemove) {
+      await removeQuiz(quizToRemove);
+      setQuizToRemove(null);
+    }
+  };
+
+  // Gerar URL para responder o quiz
+  const generateQuizUrl = (quizCode: string) => {
+    return `/quiz/${quizCode}`;
+  };
+
+  // Navegar para a página de responder o quiz
+  const handleNavigateToQuiz = (quizCode: string) => {
+    navigate(generateQuizUrl(quizCode));
   };
 
   return (
-    <div className="quiz-management-container">
-      <div className="header">
-        <h2>Meus Quizzes</h2>
-        <button
-          onClick={() => navigate("/add-quiz")}
-          className="add-quiz-button"
-        >
-          Adicionar Quiz
-        </button>
-      </div>
+    <div className="quiz-management">
+      <h1>Gerenciamento de Quizzes</h1>
+
+      {loading && <p>Carregando quizzes...</p>}
+      {error && <p>{error}</p>}
 
       {quizzes.length === 0 ? (
-        <p>Nenhum quiz adicionado ainda.</p>
+        <p>Nenhum quiz foi adicionado. Adicione um novo quiz para começar.</p>
       ) : (
-        <div className="quiz-cards">
-          {quizzes.map((quiz, index) => (
-            <div key={index} className="quiz-card">
-              <h3>{quiz.nome}</h3>
-              <QRCodeCanvas value={generateQuizURL(quiz)} size={128} />
-              <div className="card-buttons">
-                <button onClick={() => openModal(quiz)}>Ver Respostas</button>
-                <button
-                  onClick={() =>
-                    navigate(
-                      `/respond?data=${encodeURIComponent(
-                        JSON.stringify(quiz)
-                      )}`
-                    )
-                  }
-                >
-                  Responder
-                </button>
-                <button
-                  onClick={() => {
-                    if (
-                      window.confirm(
-                        "Você tem certeza que deseja remover este quiz?"
-                      )
-                    ) {
-                      removeQuiz(index);
-                    }
-                  }}
-                  className="remove-button"
-                >
-                  X
-                </button>
+        <div className="quiz-list">
+          {quizzes.map((quiz) => (
+            <div key={quiz.id} className="quiz-card">
+              <h3>{quiz.title}</h3>
+              <p>Código: {quiz.code}</p>
+
+              <div className="quiz-actions">
+                {/* QR Code */}
+                <div className="qr-code">
+                  <QRCodeCanvas value={generateQuizUrl(quiz.code)} />
+                </div>
+
+                <button onClick={() => openModal(quiz.code, quiz.title)}>Ver Respostas</button>
+                <button onClick={() => handleNavigateToQuiz(quiz.code)}>Responder</button>
+
+                {/* Remover Quiz */}
+                <button onClick={() => setQuizToRemove(quiz.code)}>Remover Quiz</button>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {modalData.isOpen && modalData.quiz && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Respostas para: {modalData.quiz.nome}</h3>
-            {modalData.quiz.respostas.length === 0 ? (
-              <p>Nenhum usuário respondeu a este quiz ainda.</p>
-            ) : (
-              <ul>
-                {modalData.quiz.respostas.map((resp: any, respIndex: any) => (
-                  <li key={respIndex} className="response-item">
-                    <strong>Nome:</strong> {resp.nome}
-                    <br />
-                    <strong>Data:</strong>{" "}
-                    {new Date(resp.data).toLocaleString()}
-                    <br />
-                    <strong>Respostas:</strong>
-                    <ul>
-                      {resp.respostas.map((resposta: any, qIndex: any) => (
-                        <li key={qIndex}>
-                          Pergunta {qIndex + 1}:{" "}
-                          {modalData.quiz.perguntas[qIndex].opcoes[resposta]} -{" "}
-                          {resposta ===
-                          modalData.quiz.perguntas[qIndex].respostaCerta
-                            ? "✅ Correta"
-                            : "❌ Incorreta"}
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <button onClick={closeModal} className="close-modal-button">
-              Fechar
-            </button>
+      {/* Modal para exibir as respostas */}
+      <Modal
+        isOpen={showModal}
+        onRequestClose={closeModal}
+        contentLabel="Respostas do Quiz"
+        className="modal-content"
+        overlayClassName="modal-overlay"
+      >
+        <h2>{modalData?.quizTitle}</h2>
+
+        {modalData?.ranking && modalData.ranking.length > 0 ? (
+          <div className="ranking-list">
+            {modalData.ranking.map((guest, index) => (
+              <div key={index} className="ranking-item">
+                <p>{guest.guestName} - Pontuação: {guest.score}</p>
+                <p>Respostas:</p>
+                <ul>
+                  {guest.responses.map((response: any, idx: any) => (
+                    <li key={idx}>
+                      Pergunta: {response.question} - Sua resposta: {response.answer}{' '}
+                      {response.isRight ? '(Correto)' : '(Errado)'}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
+        ) : (
+          <p>Este quiz ainda não possui respostas.</p>
+        )}
+
+        <button onClick={closeModal}>Fechar</button>
+      </Modal>
+
+      {/* Confirmação de remoção */}
+      {quizToRemove && (
+        <div className="remove-quiz-confirmation">
+          <p>Você tem certeza que deseja remover este quiz?</p>
+          <button onClick={handleRemoveQuiz}>Sim</button>
+          <button onClick={() => setQuizToRemove(null)}>Não</button>
         </div>
       )}
     </div>

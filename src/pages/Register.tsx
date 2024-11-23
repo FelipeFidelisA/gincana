@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormComponent from "../components/FormComponent";
 import { useAuth } from "../context/AuthContext";
@@ -11,6 +11,7 @@ const Register: React.FC = () => {
   const [credentials, setCredentials] = useState({ name: "marceline", email: "marceline@mail.com", password: "2308" });
   const [error, setError] = useState<string | null>(null);
 
+
   const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) => {
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
@@ -19,10 +20,17 @@ const Register: React.FC = () => {
     e.preventDefault();
     setError(null);
     try {
-      await register(credentials);
-      // navigate("/manage");
-    } catch {
-      setError("Falha no registro. Tente novamente.");
+      const response = await register(credentials);
+      if (response.status === 201) {
+        navigate("/login")
+      }
+      if (response?.data.message) {
+        setError("Usuário com este email já existe.");
+        setTimeout(() => setError(null), 3000);
+      }
+    } catch (error: any) {
+      setError(error);
+      setTimeout(() => setError(null), 3000);
     }
   };
 
