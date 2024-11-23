@@ -1,62 +1,50 @@
-import { createContext, useState, ReactNode, FC } from "react";
-import api from "../api";
+// context/AuthContext.tsx
+import React, { createContext, useState, useContext } from "react";
+import { api } from "../api";
 
-interface AuthContextType {
-  token: string | null;
+interface AuthContextProps {
+  isAuthenticated: boolean;
+  register: (credentials: { name: string; email: string; password: string }) => Promise<void>;
   login: (credentials: { username: string; password: string }) => Promise<void>;
-  register: (userInfo: {
-    username: string;
-    password: string;
-    confirmPassword: string;
-  }) => Promise<void>;
   logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType>({
-  token: null,
-  login: async () => {},
-  register: async () => {},
-  logout: () => {},
-});
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token")
-  );
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = async (credentials: { username: string; password: string }) => {
-    const userData = {
-        username: credentials.username,
-        password: credentials.password,
-      };
+  const register = async ({ name, email, password }: { name: string; email: string; password: string }) => {
+    const response: any = await api.post("/user/new", { name, email, password })
+    if (response.status !== 200) {
+      console.log("Erro ao registrar usuário");
+    }
+  }
 
-    console.log("responseString");
-    console.log("responseString");
-    console.log("responseString");
-    console.log("responseString");
-    const response = await api.post("/login", userData);
-      setToken("token");
-      localStorage.setItem("token", "token");
-      const responseString = JSON.stringify(response.data);
-      console.log(responseString);
-  };
-
-  const register = async (userInfo: {
-    username: string;
-    password: string;
-    confirmPassword: string;
-  }) => {
-    console.log("Registrando usuário:", userInfo);
+  const login = async ({ username, password }: { username: string; password: string }) => {
+    try {
+      const response = await api.post("/auth/login", { username, password });
+      setIsAuthenticated(true);
+      localStorage.setItem("token", response.data.token); // Salva o token
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const logout = () => {
+    setIsAuthenticated(false);
     localStorage.removeItem("token");
-    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, login, register, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, register, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth deve ser usado dentro de AuthProvider");
+  return context;
 };

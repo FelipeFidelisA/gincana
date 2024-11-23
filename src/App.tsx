@@ -8,22 +8,25 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { QuizProvider } from "./context/QuizContext";
 import React from "react";
+import { AuthProvider } from "./context/AuthContext";
 
 const App = () => {
   return (
-    <QuizProvider>
-      <Router>
-        <Routes>
-          <Route path="/add-quiz" element={<AddQuiz />} />
-          <Route path="/manage" element={<QuizManagement />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/respond" element={<QuizResponse />} />
-          <Route path="/qrview" element={<QrView />} />
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </Router>
-    </QuizProvider>
+    <AuthProvider>
+      <QuizProvider>
+        <Router>
+          <Routes>
+            <Route path="/add-quiz" element={<AddQuiz />} />
+            <Route path="/manage" element={<QuizManagement />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/respond" element={<QuizResponse />} />
+            <Route path="/qrview" element={<QrView />} />
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </Router>
+      </QuizProvider>
+    </AuthProvider>
   );
 };
 

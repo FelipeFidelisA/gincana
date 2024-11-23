@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "https://api-teste-a.5lsiua.easypanel.host",
+export const api = axios.create({
+  baseURL: "https://postgresql-16-adada.5lsiua.easypanel.host",
 });
 
-api.interceptors.request.use(
+/* api.interceptors.request.use(
   async (config) => {
     const token = await localStorage.getItem("token");
     if (token) {
@@ -12,6 +12,12 @@ api.interceptors.request.use(
     }
     return config;
   }
-);
+); */
 
-export default api;
+export const authReq = axios.create({
+  baseURL: "https://postgresql-16-adada.5lsiua.easypanel.host",
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+});
+
