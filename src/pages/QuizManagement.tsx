@@ -19,19 +19,17 @@ const QuizManagement: React.FC = () => {
 
   const [modalData, setModalData] = useState<ModalData | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [quizToRemove, setQuizToRemove] = useState<string | null>(null); // Código do quiz para remoção
+  const [quizToRemove, setQuizToRemove] = useState<string | null>(null);
 
-  // Carregar quizzes ao montar o componente
   useEffect(() => {
     setTimeout(() => {
-      //fetchQuizzes()
+      fetchQuizzes()
     }
-      , 10000
+      , 1000
     );
 
   }, [fetchQuizzes]);
 
-  // Função para abrir o modal e buscar as respostas do quiz
   const openModal = async (quizCode: string, quizTitle: string) => {
     await fetchRanking(quizCode);
     setModalData({
@@ -42,7 +40,6 @@ const QuizManagement: React.FC = () => {
     setShowModal(true);
   };
 
-  // Função para fechar o modal
   const closeModal = () => {
     setShowModal(false);
     setModalData(null);

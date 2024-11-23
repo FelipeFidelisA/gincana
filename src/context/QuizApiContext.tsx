@@ -22,12 +22,6 @@ interface Question {
     quizId: number;
 }
 
-interface Option {
-    id: number;
-    description: string;
-    isRight: boolean;
-    questionId: number;
-}
 
 interface Quiz {
     id: number;
@@ -87,7 +81,7 @@ export const QuizApiProvider: React.FC<QuizApiProviderProps> = ({ children }) =>
                 {
                     method: 'GET',
                     headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjaGVucmlxdWUyMDE1MjBAZ21haWwuY29tIiwiaWF0IjoxNzMyNDA0MjU3LCJleHAiOjE3MzI0MDQ5Nzd9.nAkpUbnT27_nLGjlNOoDlIMzPAMS8Ab1YvvXj0Vtowo`,
+                        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjaGVucmlxdWUyMDE1MjBAZ21haWwuY29tIiwiaWF0IjoxNzMyNDA1NjY2LCJleHAiOjE3MzI0MDYzODZ9.dMqjkoHW7jLZuHjvx0Y8zlYq7SLHG0t75G_pA6aFAxQ`,
                     },
                 });
             setQuizzes(responses.data);
@@ -149,7 +143,7 @@ export const QuizApiProvider: React.FC<QuizApiProviderProps> = ({ children }) =>
                     },
                 }
             );
-            fetchQuizzes(); // Atualiza os quizzes após a mudança de pontuação
+            fetchQuizzes();
         } catch (err) {
             setError('Erro ao atualizar a pontuação');
         } finally {
@@ -201,3 +195,5 @@ export const useQuizApi = (): QuizApiContextType => {
     }
     return context;
 };
+
+
