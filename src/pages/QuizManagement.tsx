@@ -1,143 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import { useQuizApi } from '../context/QuizApiContext';
-import { useNavigate } from 'react-router-dom';
-import Modal from 'react-modal'; // Modal que exibirá as respostas'
-import { QRCodeCanvas } from 'qrcode.react';
+import { useEffect, useState } from "react";
+import Modal from "react-modal";
+import QuizList from "./QuizList";
+import GuestManagement from "./GuestManagement";
+import QuizRanking from "./QuizRanking";
+import AddQuizForm from "./AddQuizForm";
+import QuestionList from "./QuestionList";
+import { useQuizApi } from "../context/QuizApiContext";
 
-Modal.setAppElement('#root'); // Acessibilidade do Modal
+// Define the app element for Modal to manage accessibility
+Modal.setAppElement("#root");
 
-// Tipo de dados para o modal
-interface ModalData {
-  quizCode: string;
-  quizTitle: string;
-  ranking: any[];
-}
-
-const QuizManagement: React.FC = () => {
-  const { quizzes, ranking, loading, error, fetchQuizzes, fetchRanking, removeQuiz } = useQuizApi();
-  const navigate = useNavigate();
-
-  const [modalData, setModalData] = useState<ModalData | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [quizToRemove, setQuizToRemove] = useState<string | null>(null);
+const QuizManagement = () => {
+  // State hooks
+  const { quizzes } = useQuizApi();
+  const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
+  const [isGuestModalOpen, setIsGuestModalOpen] = useState(false);
+  const [isRankingModalOpen, setIsRankingModalOpen] = useState(false);
+  const [isAddQuizModalOpen, setIsAddQuizModalOpen] = useState(false);
+  const [isAddQuestionModalOpen, setIsAddQuestionModalOpen] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
-      fetchQuizzes()
-    }
-      , 1000
-    );
+    quizzes;
+  }, []);
+  // Modal management functions
+  const openGuestModal = (quizId: number) => {
+    setSelectedQuizId(quizId);
+    setIsGuestModalOpen(true);
+  };
 
-  }, [fetchQuizzes]);
+  const openRankingModal = (quizId: number) => {
+    setSelectedQuizId(quizId);
+    setIsRankingModalOpen(true);
+  };
 
-  const openModal = async (quizCode: string, quizTitle: string) => {
-    await fetchRanking(quizCode);
-    setModalData({
-      quizCode,
-      quizTitle,
-      ranking: ranking?.guestRanking || [],
-    });
-    setShowModal(true);
+  const openAddQuizModal = () => {
+    setIsAddQuizModalOpen(true);
+  };
+
+  const openAddQuestionModal = (quizId: number) => {
+    setSelectedQuizId(quizId);
+    setIsAddQuestionModalOpen(true);
   };
 
   const closeModal = () => {
-    setShowModal(false);
-    setModalData(null);
+    setIsGuestModalOpen(false);
+    setIsRankingModalOpen(false);
+    setIsAddQuizModalOpen(false);
+    setIsAddQuestionModalOpen(false);
   };
 
-  // Função para remover o quiz
-  const handleRemoveQuiz = async () => {
-    if (quizToRemove) {
-      await removeQuiz(quizToRemove);
-      setQuizToRemove(null);
-    }
-  };
-
-  // Gerar URL para responder o quiz
-  const generateQuizUrl = (quizCode: string) => {
-    return `/quiz/${quizCode}`;
-  };
-
-  // Navegar para a página de responder o quiz
-  const handleNavigateToQuiz = (quizCode: string) => {
-    navigate(generateQuizUrl(quizCode));
+  const addQuiz = (quizName: string) => {
+    console.log("Adding quiz:", quizName);
   };
 
   return (
-    <div className="quiz-management">
-      <h1>Gerenciamento de Quizzes</h1>
+    <div>
+      <h1>Quiz Management</h1>
 
-      {loading && <p>Carregando quizzes...</p>}
-      {error && <p>{error}</p>}
+      {/* Add Quiz Button */}
+      <button onClick={openAddQuizModal}>Add Quiz</button>
 
-      {quizzes.length === 0 ? (
-        <p>Nenhum quiz foi adicionado. Adicione um novo quiz para começar.</p>
-      ) : (
-        <div className="quiz-list">
-          {quizzes.map((quiz) => (
-            <div key={quiz.id} className="quiz-card">
-              <h3>{quiz.title}</h3>
-              <p>Código: {quiz.code}</p>
+      {/* Quiz List */}
+      <QuizList
+        quizzes={quizzes}
+        selectedQuizId={selectedQuizId}
+        onOpenGuestModal={openGuestModal}
+        onOpenRankingModal={openRankingModal}
+        onOpenAddQuestionModal={openAddQuestionModal}
+      />
 
-              <div className="quiz-actions">
-                {/* QR Code */}
-                <div className="qr-code">
-                  <QRCodeCanvas value={generateQuizUrl(quiz.code)} />
-                </div>
-
-                <button onClick={() => openModal(quiz.code, quiz.title)}>Ver Respostas</button>
-                <button onClick={() => handleNavigateToQuiz(quiz.code)}>Responder</button>
-
-                {/* Remover Quiz */}
-                <button onClick={() => setQuizToRemove(quiz.code)}>Remover Quiz</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Modal para exibir as respostas */}
+      {/* Guest Management Modal */}
       <Modal
-        isOpen={showModal}
+        isOpen={isGuestModalOpen}
         onRequestClose={closeModal}
-        contentLabel="Respostas do Quiz"
-        className="modal-content"
-        overlayClassName="modal-overlay"
+        contentLabel="Guest Management"
       >
-        <h2>{modalData?.quizTitle}</h2>
-
-        {modalData?.ranking && modalData.ranking.length > 0 ? (
-          <div className="ranking-list">
-            {modalData.ranking.map((guest, index) => (
-              <div key={index} className="ranking-item">
-                <p>{guest.guestName} - Pontuação: {guest.score}</p>
-                <p>Respostas:</p>
-                <ul>
-                  {guest.responses.map((response: any, idx: any) => (
-                    <li key={idx}>
-                      Pergunta: {response.question} - Sua resposta: {response.answer}{' '}
-                      {response.isRight ? '(Correto)' : '(Errado)'}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>Este quiz ainda não possui respostas.</p>
-        )}
-
-        <button onClick={closeModal}>Fechar</button>
+        <GuestManagement quizId={selectedQuizId} onClose={closeModal} />
       </Modal>
 
-      {/* Confirmação de remoção */}
-      {quizToRemove && (
-        <div className="remove-quiz-confirmation">
-          <p>Você tem certeza que deseja remover este quiz?</p>
-          <button onClick={handleRemoveQuiz}>Sim</button>
-          <button onClick={() => setQuizToRemove(null)}>Não</button>
-        </div>
-      )}
+      {/* Quiz Ranking Modal */}
+      <Modal
+        isOpen={isRankingModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Quiz Ranking"
+      >
+        <QuizRanking quizId={selectedQuizId} onClose={closeModal} />
+      </Modal>
+
+      {/* Add Quiz Modal */}
+      <Modal
+        isOpen={isAddQuizModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Add Quiz"
+      >
+        <AddQuizForm onAddQuiz={addQuiz} onClose={closeModal} />
+      </Modal>
+
+      {/* Add Question Modal */}
+      <Modal
+        isOpen={isAddQuestionModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Add Question"
+      >
+        <QuestionList quizId={selectedQuizId} onClose={closeModal} />
+      </Modal>
     </div>
   );
 };

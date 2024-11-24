@@ -37,7 +37,6 @@ const QuizResponse: React.FC = () => {
   const { registerResponse } = useContext(QuizContext);
   const navigate = useNavigate();
   const location = useLocation();
-
   const [quiz, setQuiz] = useState<any | null>(null);
   const [respostasUsuario, setRespostasUsuario] = useState<number[]>([]);
   const [nome, setNome] = useState<string>("");
@@ -47,31 +46,49 @@ const QuizResponse: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [selectedCharacter, setSelectedCharacter] = useState<number>(0);
 
-  const getQuizFromURL = (): QuizData | null => {
+  // Obtém o código do quiz da URL
+  const getCodeFromURL = (): string | null => {
     const params = new URLSearchParams(location.search);
-    const data = params.get("data");
-    if (data) {
-      try {
-        const decodedData = decodeURIComponent(data);
-        const quizData = JSON.parse(decodedData) as QuizData;
-        return quizData;
-      } catch (error) {
-        console.error("Erro ao decodificar os dados do quiz:", error);
-        return null;
+    return params.get("code");
+  };
+
+  const fetchQuizData = async (code: string) => {
+    try {
+      const response = await fetch(
+        `https://api-teste-a.5lsiua.easypanel.host/quiz/code/${code}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      console.log("Response:", response);
+      if (!response.ok) {
+        throw new Error("Erro ao buscar dados do quiz.");
       }
+      const data = await response.json();
+      const quizData: QuizData = {
+        nome: data.title,
+        perguntas: data.questions.map((q: any) => ({
+          pergunta: q.title,
+          opcoes: [], // Aqui você pode mapear as opções de resposta se estiverem na resposta da API
+        })),
+        tempo: 60, // Ajuste conforme necessário
+      };
+      setQuiz(quizData);
+      setTempoTotal(60);
+      setTempoRestante(60);
+    } catch (error) {
+      console.error("Erro ao buscar quiz:", error);
     }
-    return null;
   };
 
   useEffect(() => {
-    const quizData = getQuizFromURL();
-    if (quizData) {
-      setQuiz(quizData);
-      const totalTempo = quizData.tempo || 60;
-      setTempoRestante(totalTempo);
-      setTempoTotal(totalTempo);
+    const code = getCodeFromURL();
+    if (code) {
+      fetchQuizData(code);
     } else {
-      alert("Dados do quiz inválidos ou ausentes.");
+      alert("Código do quiz inválido.");
       navigate("/");
     }
   }, [location.search, navigate]);
@@ -142,7 +159,7 @@ const QuizResponse: React.FC = () => {
   }, []);
 
   if (!quiz) {
-    return null;
+    return <div>Carregando...</div>;
   }
 
   return (
