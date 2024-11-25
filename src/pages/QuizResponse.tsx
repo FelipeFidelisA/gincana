@@ -25,12 +25,12 @@ interface UsuarioResposta {
 }
 
 const characterOptions = [
-  "public/character/galo1.jpg",
-  "public/character/galo2.jpg",
-  "public/character/rato1.jpg",
-  "public/character/rato2.jpg",
-  "public/character/urso1.jpg",
-  "public/character/urso2.jpg",
+  "https://imgur.com/x1byl5O",
+  "https://imgur.com/eGGKCQk",
+  "https://imgur.com/mhf5qhD",
+  "https://imgur.com/UpkmJj7",
+  "https://imgur.com/7Nv2wN9",
+  "https://imgur.com/zF7LLvQ",
 ];
 
 const QuizResponse: React.FC = () => {
