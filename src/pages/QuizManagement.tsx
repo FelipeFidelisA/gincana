@@ -1,45 +1,33 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "react-modal";
-import QuizList from "./QuizList";
 import GuestManagement from "./GuestManagement";
 import QuizRanking from "./QuizRanking";
 import AddQuizForm from "./AddQuizForm";
 import QuestionList from "./QuestionList";
 import { useQuizApi } from "../context/QuizApiContext";
+import { QRCodeCanvas } from "qrcode.react";
+import { useNavigate } from "react-router-dom";
 
-// Define the app element for Modal to manage accessibility
 Modal.setAppElement("#root");
 
 const QuizManagement = () => {
-  // State hooks
   const { quizzes } = useQuizApi();
   const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
   const [isGuestModalOpen, setIsGuestModalOpen] = useState(false);
   const [isRankingModalOpen, setIsRankingModalOpen] = useState(false);
   const [isAddQuizModalOpen, setIsAddQuizModalOpen] = useState(false);
   const [isAddQuestionModalOpen, setIsAddQuestionModalOpen] = useState(false);
+  const [quizCode, setQuizCode] = useState<string>("");
+  const [modalData, setModalData] = useState<any>({
+    isOpen: false,
+    quiz: null,
+  });
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    quizzes;
-  }, []);
-  // Modal management functions
-  const openGuestModal = (quizId: number) => {
-    setSelectedQuizId(quizId);
-    setIsGuestModalOpen(true);
-  };
-
-  const openRankingModal = (quizId: number) => {
-    setSelectedQuizId(quizId);
-    setIsRankingModalOpen(true);
-  };
-
-  const openAddQuizModal = () => {
-    setIsAddQuizModalOpen(true);
-  };
-
-  const openAddQuestionModal = (quizId: number) => {
-    setSelectedQuizId(quizId);
-    setIsAddQuestionModalOpen(true);
+  console.log(setSelectedQuizId);
+  console.log(setQuizCode);
+  const openModal = (quiz: any) => {
+    setModalData({ isOpen: true, quiz });
   };
 
   const closeModal = () => {
@@ -47,7 +35,14 @@ const QuizManagement = () => {
     setIsRankingModalOpen(false);
     setIsAddQuizModalOpen(false);
     setIsAddQuestionModalOpen(false);
+    setModalData({ isOpen: false, quiz: null });
   };
+
+  const removeQuiz = (index: number) => {
+    console.log(`Removendo quiz no índice ${index}`);
+  };
+
+  const generateQuizURL = (quiz: any) => `https://example.com/quiz/${quiz.id}`;
 
   const addQuiz = (quizName: string) => {
     console.log("Adding quiz:", quizName);
@@ -69,7 +64,7 @@ const QuizManagement = () => {
         <p>Nenhum quiz adicionado ainda.</p>
       ) : (
         <div className="quiz-cards">
-          {quizzes.map((quiz, index) => (
+          {quizzes.map((quiz: any, index) => (
             <div key={index} className="quiz-card">
               <h3>{quiz.nome}</h3>
               <QRCodeCanvas value={generateQuizURL(quiz)} size={128} />
@@ -144,6 +139,46 @@ const QuizManagement = () => {
           </div>
         </div>
       )}
+
+      {/* Guest Management Modal */}
+      <Modal
+        isOpen={isGuestModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Guest Management"
+      >
+        <GuestManagement
+          quizId={selectedQuizId}
+          onClose={closeModal}
+          quizCode={quizCode}
+        />
+      </Modal>
+
+      {/* Quiz Ranking Modal */}
+      <Modal
+        isOpen={isRankingModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Quiz Ranking"
+      >
+        <QuizRanking quizId={selectedQuizId} onClose={closeModal} />
+      </Modal>
+
+      {/* Add Quiz Modal */}
+      <Modal
+        isOpen={isAddQuizModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Add Quiz"
+      >
+        <AddQuizForm onAddQuiz={addQuiz} onClose={closeModal} />
+      </Modal>
+
+      {/* Add Question Modal */}
+      <Modal
+        isOpen={isAddQuestionModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Add Question"
+      >
+        <QuestionList quizId={selectedQuizId} onClose={closeModal} />
+      </Modal>
     </div>
   );
 };

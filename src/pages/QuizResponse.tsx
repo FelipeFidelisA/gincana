@@ -1,21 +1,12 @@
+import { v4 as uuidv4 } from "uuid";
 import { FaDice } from "react-icons/fa";
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { QuizContext } from "../context/QuizContext";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "../styles/QuizResponse.css";
-
-interface QuizData {
-  nome: string;
-  perguntas: Pergunta[];
-  tempo?: number;
-}
-
-interface Pergunta {
-  pergunta: string;
-  opcoes: string[];
-}
+import { api } from "../api";
 
 interface UsuarioResposta {
   nome: string;
@@ -36,7 +27,6 @@ const characterOptions = [
 const QuizResponse: React.FC = () => {
   const { registerResponse } = useContext(QuizContext);
   const navigate = useNavigate();
-  const location = useLocation();
   const [quiz, setQuiz] = useState<any | null>(null);
   const [respostasUsuario, setRespostasUsuario] = useState<number[]>([]);
   const [nome, setNome] = useState<string>("");
@@ -46,52 +36,26 @@ const QuizResponse: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [selectedCharacter, setSelectedCharacter] = useState<number>(0);
 
-  // Obtém o código do quiz da URL
-  const getCodeFromURL = (): string | null => {
-    const params = new URLSearchParams(location.search);
-    return params.get("code");
-  };
-
-  const fetchQuizData = async (code: string) => {
-    try {
-      const response = await fetch(
-        `https://api-teste-a.5lsiua.easypanel.host/quiz/code/${code}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      );
-      console.log("Response:", response);
-      if (!response.ok) {
-        throw new Error("Erro ao buscar dados do quiz.");
-      }
-      const data = await response.json();
-      const quizData: QuizData = {
-        nome: data.title,
-        perguntas: data.questions.map((q: any) => ({
-          pergunta: q.title,
-          opcoes: [], // Aqui você pode mapear as opções de resposta se estiverem na resposta da API
-        })),
-        tempo: 60, // Ajuste conforme necessário
-      };
-      setQuiz(quizData);
-      setTempoTotal(60);
-      setTempoRestante(60);
-    } catch (error) {
-      console.error("Erro ao buscar quiz:", error);
-    }
+  // Dados estáticos do quiz
+  const quizData = {
+    nome: "quiz de estatistica",
+    code: "CW22ODH",
+    perguntas: [
+      { pergunta: "adadadsawda", opcoes: ["Opção 1", "Opção 2", "Opção 3"] },
+      { pergunta: "quem descobriu", opcoes: ["Opção A", "Opção B", "Opção C"] },
+      {
+        pergunta: "quem é cezumario",
+        opcoes: ["Opção X", "Opção Y", "Opção Z"],
+      },
+    ],
   };
 
   useEffect(() => {
-    const code = getCodeFromURL();
-    if (code) {
-      fetchQuizData(code);
-    } else {
-      alert("Código do quiz inválido.");
-      navigate("/");
-    }
-  }, [location.search, navigate]);
+    // Setando os dados estáticos
+    setQuiz(quizData);
+    setTempoTotal(60);
+    setTempoRestante(60);
+  }, []);
 
   useEffect(() => {
     if (step !== "quiz" || !quiz) return;
@@ -157,6 +121,34 @@ const QuizResponse: React.FC = () => {
   useEffect(() => {
     randomizeCharacter();
   }, []);
+
+  const startQuiz = async () => {
+    try {
+      // Exemplo de chamada da API
+      const response = await api.post("/guest", {
+        name: nome,
+        ip: uuidv4(),
+        profileUrl: "https://example.com/profile", // Substitua com o URL real do perfil
+      });
+      console.log("guestJoinQuizResponse.data");
+      console.log(response.data);
+      const guestJoinQuizResponse = await api.post("/guest/join", {
+        guestId: response.data.id,
+        quizCode: quiz!.code,
+      });
+      console.log("guestJoinQuizResponse.data");
+      console.log("guestJoinQuizResponse.data");
+      console.log(guestJoinQuizResponse);
+    } catch (error) {
+      console.error("Erro ao iniciar o quiz:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (step === "quiz" && nome) {
+      startQuiz(); // Chama a API quando o quiz começa
+    }
+  }, [step, nome]);
 
   if (!quiz) {
     return <div>Carregando...</div>;
@@ -234,7 +226,7 @@ const QuizResponse: React.FC = () => {
               {quiz.perguntas[currentQuestion].pergunta}
             </p>
             {quiz.perguntas[currentQuestion].opcoes.map(
-              (opcao: any, opIndex: any) => (
+              (opcao: string, opIndex: number) => (
                 <div
                   key={opIndex}
                   className={`option-container ${
