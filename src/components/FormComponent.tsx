@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import InputComponent from "./InputComponent";
 
-
 interface FormComponentProps {
   credentials: any;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -43,6 +42,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       flexDirection: "column" as const,
       justifyContent: "center",
       animation: "slideIn 1s ease-out",
+      fontFamily: "'Poppins', sans-serif", // Fonte Poppins aplicada aqui
     },
     h2: {
       fontSize: "2rem",
@@ -61,10 +61,12 @@ const FormComponent: React.FC<FormComponentProps> = ({
       borderRadius: "5px",
       marginBottom: "1rem",
       textAlign: "center" as const,
+      fontFamily: "'Poppins', sans-serif", // Fonte Poppins no erro também
     },
     form: {
       display: "flex",
       flexDirection: "column" as const,
+      fontFamily: "'Poppins', sans-serif", // Fonte Poppins para os inputs
     },
     buttonContainer: {
       display: "flex",
@@ -83,12 +85,14 @@ const FormComponent: React.FC<FormComponentProps> = ({
       transition: "background-color 0.3s ease, transform 0.2s ease",
       textAlign: "center" as const,
       transform: isButtonActive ? "scale(0.95)" : "scale(1)",
+      fontFamily: "'Poppins', sans-serif", // Fonte Poppins no botão
     },
     registerLink: {
       textAlign: "center" as const,
       fontSize: "0.9rem",
       color: "#555",
       marginTop: "1.5rem",
+      fontFamily: "'Poppins', sans-serif", // Fonte Poppins no link do rodapé
     },
     linkText: {
       color: isLinkTextHovered ? "#0056b3" : "#007bff",
@@ -96,6 +100,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       cursor: "pointer",
       textDecoration: "underline",
       transition: "color 0.3s ease",
+      fontFamily: "'Poppins', sans-serif", // Fonte Poppins no link de navegação
     },
   };
 

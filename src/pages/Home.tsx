@@ -88,6 +88,17 @@ const Home: React.FC = () => {
 
   const [buttonHover, setButtonHover] = useState(false);
 
+  // Estilo do rodapé
+  const footerStyle: React.CSSProperties = {
+    position: "absolute",
+    bottom: "10px",
+    fontSize: "0.8rem",
+    color: "#fff",
+    textDecoration: "none",
+    opacity: 0.7,
+    cursor: "pointer",
+  };
+
   return (
     <div style={containerStyle}>
       <h3 style={titleStyle}>Insira o Código da Sala para Iniciar</h3>
@@ -112,6 +123,7 @@ const Home: React.FC = () => {
           Iniciar Quiz
         </button>
       </div>
+      <a href="/login" style={footerStyle}>Login</a> 
     </div>
   );
 };

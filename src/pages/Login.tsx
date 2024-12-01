@@ -8,10 +8,15 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({ username: "marceline@mail.com", password: "2308" });
+  const [credentials, setCredentials] = useState({
+    username: "marceline@mail.com",
+    password: "2308",
+  });
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = ({
+    target: { name, value },
+  }: React.ChangeEvent<HTMLInputElement>) => {
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -21,7 +26,7 @@ const Login: React.FC = () => {
     try {
       const response = await login(credentials);
       if (response.status === 200) {
-        navigate("/manage")
+        navigate("/manage");
       }
     } catch (error: any) {
       setError(error);
@@ -29,8 +34,18 @@ const Login: React.FC = () => {
   };
 
   const fields = [
-    { label: "Email:", type: "text", name: "username", placeholder: "Digite seu username" },
-    { label: "Senha:", type: "password", name: "password", placeholder: "Digite sua senha" },
+    {
+      label: "Email:",
+      type: "text",
+      name: "username",
+      placeholder: "Digite seu username",
+    },
+    {
+      label: "Senha:",
+      type: "password",
+      name: "password",
+      placeholder: "Digite sua senha",
+    },
   ];
 
   return (
@@ -51,10 +66,11 @@ const Login: React.FC = () => {
             navigate={navigate}
           />
         </div>
-        <div className="image-section" aria-hidden="true">
-        </div>
+        <div className="image-section" aria-hidden="true"></div>
       </div>
-      <footer className="footer">© 2024 Produzido por Sistemas de Informação</footer>
+      <footer className="footer">
+        © 2024 Produzido por Sistemas de Informação
+      </footer>
     </div>
   );
 };
