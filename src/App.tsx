@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import QuizManagement from "./pages/QuizManagement";
 import QuizResponse from "./pages/QuizResponse";
 import AddQuiz from "./pages/AddQuiz";
 import QrView from "./pages/QrView";
@@ -9,6 +8,8 @@ import { QuizProvider } from "./context/QuizContext";
 import { AuthProvider } from "./context/AuthContext";
 import { QuizApiProvider } from "./context/QuizApiContext";
 import Home from "./pages/Home";
+import QuizManagement from "./components/QuizManagement";
+import QuizAdminPage from "./pages/QuizAdminPage";
 
 const App = () => {
   return (
@@ -17,12 +18,13 @@ const App = () => {
         <QuizProvider>
           <Router>
             <Routes>
-              <Route path="/add-quiz" element={<AddQuiz />} />
-              <Route path="/manage" element={<QuizManagement />} />
-              <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/respond" element={<QuizResponse />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/manage" element={<QuizManagement />} />
+              <Route path="/add-quiz" element={<AddQuiz />} />
               <Route path="/qrview" element={<QrView />} />
+              <Route path="/respond" element={<QuizResponse />} />
+              <Route path="/quizadm" element={<QuizAdminPage />} />
               <Route path="/" element={<Home />} />
             </Routes>
           </Router>

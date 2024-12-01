@@ -1,161 +1,134 @@
-/* Container principal */
+/* Fonte Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
 .quiz-management-container {
-  font-family: Arial, sans-serif;
-  margin: 0 auto;
-  padding: 20px;
-  max-width: 1200px;
-  background-color: #ffffff; /* Fundo completamente branco */
-  color: #ffffff; /* Texto em cor suave para contraste */
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-}
-
-/* Cabeçalho da aplicação */
-.app-header {
+  padding: 2rem;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  background-color: #ffffff;
-  padding: 15px 20px;
-  color:        rgb(0, 0, 0);
-  border-radius: 8px;
-}
-
-.logo {
-  font-size: 24px;
-}
-
-.icon {
-  font-size: 30px;
-}
-
-h1 {
-  font-size: 24px;
-  margin: 0;
-}
-
-.user-menu {
-  display: flex;
-  align-items: center;
-}
-
-/* Botões */
-button {
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 14px;
-  padding: 10px 20px;
-  margin: 0 5px;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-button:hover {
-  transform: scale(1.03);
-}
-
-.create-button,
-.add-quiz-button {
-  background-color: #4caf50;
-  color: white;
-}
-
-.create-button:hover,
-.add-quiz-button:hover {
-  background-color: #45a049;
-}
-
-.remove-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.remove-button:hover {
-  background-color: #e53935;
-}
-
-.card-buttons button {
-  background-color: #007bff;
-  color: white;
-}
-
-.card-buttons button:hover {
-  background-color: #0056b3;
-}
-
-/* Seção dos quizzes */
-.quiz-section {
-  margin-top: 30px;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #ffffff; /* Fundo branco */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .header {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
+}
+
+.header h2 {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.add-quiz-button {
+  background-color: #02A09D;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.add-quiz-button:hover {
+  background-color: #035F9B;
 }
 
 .quiz-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .quiz-card {
-  background-color: #ffffff; /* Fundo branco */
-  border-radius: 8px;
-  padding: 20px;
-  width: 250px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-  text-align: center;
-}
-
-.quiz-name {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.quiz-date,
-.quiz-questions {
-  font-size: 14px;
-  color: gray;
-}
-
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 280px;
+  padding: 1.5rem;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  background-color: #ffffff; /* Fundo branco */
-  padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  max-width: 80%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.close-modal-button {
-  background-color: #f44336;
-  color: white;
-  padding: 10px;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  border-radius: 8px;
 }
 
-.close-modal-button:hover {
-  background-color: #e53935;
+.quiz-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.quiz-card h3 {
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.quiz-card .qr-code {
+  margin-bottom: 1rem;
+}
+
+.menu-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: #02A09D;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  z-index: 1;
+}
+
+.menu {
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  display: none;
+  z-index: 2;
+}
+
+.menu.open {
+  display: block;
+}
+
+.menu-item {
+  padding: 10px 20px;
+  background-color: #02A09D;
+  color: white;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.menu-item:hover {
+  background-color: #035F9B;
+}
+
+.remove-button {
+  background-color: #DF5C0F;
+}
+
+.remove-button:hover {
+  background-color: #D15C1F;
 }

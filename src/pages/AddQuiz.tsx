@@ -1,391 +1,413 @@
-import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { QuizContext } from "../context/QuizContext";
+// src/components/AddQuiz.tsx
 
-const AddQuiz = () => {
-  const { addQuiz } = useContext(QuizContext);
-  const [form, setForm] = useState({
-    nome: "",
-    perguntas: [
+import React, { useState } from 'react';
+import axios from 'axios';
+
+// Interfaces para definir a estrutura dos dados
+interface Option {
+  optionText: string;
+  isCorrect: boolean;
+}
+
+interface Question {
+  questionText: string;
+  options: Option[];
+}
+
+interface Quiz {
+  title: string;
+  questions: Question[];
+}
+
+const AddQuiz: React.FC = () => {
+  // Estado para armazenar os dados do quiz
+  const [quiz, setQuiz] = useState<Quiz>({
+    title: '',
+    questions: [
       {
-        pergunta: "",
-        opcoes: ["", "", "", ""],
-        respostaCerta: null as number | null,
+        questionText: '',
+        options: [
+          { optionText: '', isCorrect: false },
+          { optionText: '', isCorrect: false },
+        ],
       },
     ],
-    tempo: 60,
   });
-  const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+  // Estado para mensagens de sucesso ou erro
+  const [message, setMessage] = useState<string>('');
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
+
+  // ID do usuário autenticado (substitua com a lógica de autenticação real)
+  const userId = 1; // Exemplo estático
+
+  // Função para atualizar o título do quiz
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuiz({ ...quiz, title: e.target.value });
   };
 
+  // Função para atualizar o texto de uma pergunta
   const handleQuestionChange = (
     index: number,
-    field: string,
-    value: string | number
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const novasPerguntas = [...form.perguntas];
-    if (field.startsWith("opcao")) {
-      const opcaoIndex = parseInt(field.split("_")[1]);
-      novasPerguntas[index].opcoes[opcaoIndex] = value as string;
-    } else if (field === "respostaCerta") {
-      novasPerguntas[index].respostaCerta = value as number;
-    } else if (field === "pergunta") {
-      novasPerguntas[index].pergunta = value as string;
-    }
-    setForm({ ...form, perguntas: novasPerguntas });
+    const newQuestions = [...quiz.questions];
+    newQuestions[index].questionText = e.target.value;
+    setQuiz({ ...quiz, questions: newQuestions });
   };
 
+  // Função para atualizar o texto de uma opção
+  const handleOptionChange = (
+    qIndex: number,
+    oIndex: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newQuestions = [...quiz.questions];
+    newQuestions[qIndex].options[oIndex].optionText = e.target.value;
+    setQuiz({ ...quiz, questions: newQuestions });
+  };
+
+  // Função para atualizar se uma opção está correta
+  const handleIsCorrectChange = (
+    qIndex: number,
+    oIndex: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newQuestions = [...quiz.questions];
+    newQuestions[qIndex].options[oIndex].isCorrect = e.target.checked;
+    setQuiz({ ...quiz, questions: newQuestions });
+  };
+
+  // Função para adicionar uma nova pergunta
   const addQuestion = () => {
-    setForm({
-      ...form,
-      perguntas: [
-        ...form.perguntas,
-        { pergunta: "", opcoes: ["", "", "", ""], respostaCerta: null },
+    setQuiz({
+      ...quiz,
+      questions: [
+        ...quiz.questions,
+        {
+          questionText: '',
+          options: [
+            { optionText: '', isCorrect: false },
+            { optionText: '', isCorrect: false },
+          ],
+        },
       ],
     });
   };
 
-  const removeQuestion = (index: number) => {
-    const novasPerguntas = form.perguntas.filter((_, i) => i !== index);
-    setForm({ ...form, perguntas: novasPerguntas });
+  // Função para remover uma pergunta
+  const removeQuestion = (qIndex: number) => {
+    const newQuestions = [...quiz.questions];
+    newQuestions.splice(qIndex, 1);
+    setQuiz({ ...quiz, questions: newQuestions });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Validação para garantir que todas as perguntas tenham uma resposta certa
-    for (let i = 0; i < form.perguntas.length; i++) {
-      if (form.perguntas[i].respostaCerta === null) {
-        alert(`Por favor, selecione a resposta certa para a pergunta ${i + 1}`);
-        return;
+  // Função para adicionar uma opção a uma pergunta
+  const addOption = (qIndex: number) => {
+    const newQuestions = [...quiz.questions];
+    newQuestions[qIndex].options.push({ optionText: '', isCorrect: false });
+    setQuiz({ ...quiz, questions: newQuestions });
+  };
+
+  // Função para remover uma opção de uma pergunta
+  const removeOption = (qIndex: number, oIndex: number) => {
+    const newQuestions = [...quiz.questions];
+    if (newQuestions[qIndex].options.length > 2) { // Mínimo de 2 opções
+      newQuestions[qIndex].options.splice(oIndex, 1);
+      setQuiz({ ...quiz, questions: newQuestions });
+    }
+  };
+
+  // Função para validar o formulário antes do envio
+  const validateQuiz = (): boolean => {
+    if (quiz.title.trim() === '') {
+      setMessage('O título do quiz é obrigatório.');
+      return false;
+    }
+
+    for (let i = 0; i < quiz.questions.length; i++) {
+      const question = quiz.questions[i];
+      if (question.questionText.trim() === '') {
+        setMessage(`O texto da pergunta ${i + 1} é obrigatório.`);
+        return false;
+      }
+      if (question.options.length < 2) {
+        setMessage(`A pergunta ${i + 1} deve ter pelo menos 2 opções.`);
+        return false;
+      }
+      let hasCorrect = false;
+      for (let j = 0; j < question.options.length; j++) {
+        const option = question.options[j];
+        if (option.optionText.trim() === '') {
+          setMessage(
+            `O texto da opção ${j + 1} da pergunta ${i + 1} é obrigatório.`
+          );
+          return false;
+        }
+        if (option.isCorrect) {
+          hasCorrect = true;
+        }
+      }
+      if (!hasCorrect) {
+        setMessage(
+          `A pergunta ${i + 1} deve ter pelo menos uma opção correta.`
+        );
+        return false;
       }
     }
 
-    const updatedForm = { ...form, respostas: [] };
-    addQuiz(updatedForm);
-    setForm({
-      nome: "",
-      perguntas: [
-        { pergunta: "", opcoes: ["", "", "", ""], respostaCerta: null },
-      ],
-      tempo: 60,
-    });
-
-    navigate("/qrview", { state: { quizData: updatedForm } });
+    setMessage('');
+    setErrorDetails(null);
+    return true;
   };
 
-  const styles = {
-    container: {
-      maxWidth: "900px",
-      margin: "30px auto",
-      padding: "20px",
-      fontFamily: "Quicksand",
-      backgroundColor: "#fff",
-      borderRadius: "12px",
-      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-      color: "#333",
-    },
-    header: {
-      textAlign: "center" as const,
-      marginBottom: "25px",
-      color: "#4CAF50",
-    },
-    formGroup: {
-      marginBottom: "20px",
-    },
-    label: {
-      display: "block",
-      marginBottom: "8px",
-      fontSize: "1.1em",
-      fontWeight: "bold" as const,
-    },
-    input: {
-      width: "100%",
-      padding: "10px",
-      boxSizing: "border-box" as const,
-      borderRadius: "6px",
-      border: "2px solid #ddd",
-      fontSize: "1em",
-      transition: "border-color 0.3s",
-    },
-    inputFocus: {
-      borderColor: "#4CAF50",
-      outline: "none",
-    },
-    questionCard: {
-      padding: "20px",
-      borderRadius: "10px",
-      marginBottom: "25px",
-    },
-    optionContainer: {
-      display: "flex",
-      alignItems: "center",
-      marginBottom: "12px",
-      cursor: "pointer",
-      padding: "10px",
-      borderRadius: "6px",
-      border: "2px solid #ddd",
-      backgroundColor: "#fafafa",
-      transition: "background-color 0.3s, border-color 0.3s",
-    },
-    optionSelected: {
-      backgroundColor: "#D1E7DD",
-      borderColor: "#0F5132",
-    },
-    optionInput: {
-      flex: 1,
-      border: "none",
-      backgroundColor: "transparent",
-      fontSize: "1em",
-      outline: "none",
-      paddingLeft: "10px",
-    },
-    button: {
-      padding: "12px 24px",
-      border: "none",
-      borderRadius: "8px",
-      cursor: "pointer",
-      fontWeight: "bold" as const,
-      fontSize: "1em",
-      transition: "background-color 0.3s, transform 0.2s",
-    },
-    addButton: {
-      backgroundColor: "#28a745",
-      color: "#fff",
-      marginBottom: "25px",
-    },
-    addButtonHover: {
-      backgroundColor: "#218838",
-      transform: "scale(1.05)",
-    },
-    removeButton: {
-      backgroundColor: "#dc3545",
-      color: "#fff",
-      marginTop: "10px",
-    },
-    removeButtonHover: {
-      backgroundColor: "#c82333",
-      transform: "scale(1.05)",
-    },
-    submitButton: {
-      backgroundColor: "#007bff",
-      color: "#fff",
-      width: "100%",
-      padding: "15px",
-      fontSize: "1.1em",
-      borderRadius: "8px",
-      transition: "background-color 0.3s, transform 0.2s",
-    },
-    submitButtonHover: {
-      backgroundColor: "#0069d9",
-      transform: "scale(1.02)",
-    },
-    responsive: {
-      // Placeholder for any responsive adjustments if needed
-    },
-  };
+  // Função para lidar com o envio do formulário
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  // State to handle hover effects for buttons
-  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+    if (!validateQuiz()) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/quizzes',
+        {
+          title: quiz.title,
+          questions: quiz.questions,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'userid': userId.toString(), // Header ajustado para 'userid'
+          },
+        }
+      );
+      console.log("🚀 ~ handleSubmit ~ response:", response);
+
+      setMessage('Quiz criado com sucesso!');
+      setErrorDetails(null);
+      // Resetar o formulário após o envio
+      setQuiz({
+        title: '',
+        questions: [
+          {
+            questionText: '',
+            options: [
+              { optionText: '', isCorrect: false },
+              { optionText: '', isCorrect: false },
+            ],
+          },
+        ],
+      });
+    } catch (error: any) {
+      console.error("Erro ao criar o quiz:", error);
+      if (error.response) {
+        // Erros de resposta do servidor
+        setMessage(error.response.data.error || 'Erro ao criar o quiz. Tente novamente.');
+        setErrorDetails(JSON.stringify(error.response.data, null, 2));
+      } else if (error.request) {
+        // Erros de solicitação
+        setMessage('Sem resposta do servidor. Verifique sua conexão.');
+        setErrorDetails('Sem resposta do servidor.');
+      } else {
+        // Outros erros
+        setMessage('Erro ao criar o quiz. Tente novamente.');
+        setErrorDetails(error.message);
+      }
+    }
+  };
 
   return (
     <div style={styles.container}>
-      <h2
-        style={{
-          textAlign: "center",
-          marginBottom: "20px",
-          fontWeight: "900",
-          fontSize: "1.5em",
-        }}
-      >
-        Adicionar Novo Quiz
-      </h2>
-      <form onSubmit={handleSubmit}>
-        {/* Nome do Quiz */}
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Nome do Quiz:</label>
+      <h2>Adicionar Novo Quiz</h2>
+      {message && <p style={styles.message}>{message}</p>}
+      {errorDetails && (
+        <pre style={styles.errorDetails}>{errorDetails}</pre>
+      )}
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <div style={styles.field}>
+          <label htmlFor="title">Título do Quiz:</label>
           <input
             type="text"
-            name="nome"
-            value={form.nome}
-            onChange={handleChange}
+            id="title"
+            value={quiz.title}
+            onChange={handleTitleChange}
             required
             style={styles.input}
-            placeholder="Digite o nome do quiz"
-            onFocus={(e) =>
-              (e.currentTarget.style.borderColor =
-                styles.inputFocus.borderColor)
-            }
           />
         </div>
 
-        {/* Tempo do Quiz */}
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Tempo (segundos):</label>
-          <input
-            type="number"
-            name="tempo"
-            value={form.tempo}
-            onChange={handleChange}
-            required
-            min="10"
-            style={styles.input}
-            placeholder="Ex: 60"
-            onFocus={(e) =>
-              (e.currentTarget.style.borderColor =
-                styles.inputFocus.borderColor)
-            }
-          />
-        </div>
-
-        {/* Perguntas */}
-        <h3
-          style={{
-            textAlign: "center",
-            marginBottom: "20px",
-            fontWeight: "900",
-            fontSize: "1.5em",
-          }}
-        >
-          Perguntas
-        </h3>
-        {form.perguntas.map((q, index) => (
-          <div key={index} style={styles.questionCard}>
-            {/* Pergunta */}
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Pergunta {index + 1}:</label>
-              <input
-                type="text"
-                value={q.pergunta}
-                onChange={(e) =>
-                  handleQuestionChange(index, "pergunta", e.target.value)
-                }
-                required
-                style={styles.input}
-                placeholder="Digite a pergunta"
-                onFocus={(e) =>
-                  (e.currentTarget.style.borderColor =
-                    styles.inputFocus.borderColor)
-                }
-              />
-            </div>
-
-            {/* Opções */}
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Opções:</label>
-              {q.opcoes.map((opcao, opIndex) => (
-                <div
-                  key={opIndex}
-                  style={{
-                    ...styles.optionContainer,
-                    ...(q.respostaCerta === opIndex
-                      ? styles.optionSelected
-                      : {}),
-                  }}
-                  onClick={() =>
-                    handleQuestionChange(index, "respostaCerta", opIndex)
-                  }
+        <h3>Perguntas</h3>
+        {quiz.questions.map((question, qIndex) => (
+          <div key={qIndex} style={styles.question}>
+            <div style={styles.questionHeader}>
+              <label>Pergunta {qIndex + 1}:</label>
+              {quiz.questions.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeQuestion(qIndex)}
+                  style={styles.removeButton}
                 >
-                  <input
-                    type="radio"
-                    name={`respostaCerta_${index}`}
-                    checked={q.respostaCerta === opIndex}
-                    readOnly
-                    style={{ display: "none" }}
-                  />
-                  <span
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      display: "inline-block",
-                      borderRadius: "50%",
-                      border: "2px solid #0F5132",
-                      backgroundColor:
-                        q.respostaCerta === opIndex ? "#0F5132" : "#fff",
-                      marginRight: "10px",
-                      flexShrink: 0,
-                    }}
-                  ></span>
+                  Remover Pergunta
+                </button>
+              )}
+            </div>
+            <input
+              type="text"
+              value={question.questionText}
+              onChange={(e) => handleQuestionChange(qIndex, e)}
+              required
+              placeholder="Texto da pergunta"
+              style={styles.input}
+            />
+
+            <div style={styles.options}>
+              <h4>Opções</h4>
+              {question.options.map((option, oIndex) => (
+                <div key={oIndex} style={styles.option}>
                   <input
                     type="text"
-                    placeholder={`Opção ${opIndex + 1}`}
-                    value={opcao}
+                    value={option.optionText}
                     onChange={(e) =>
-                      handleQuestionChange(
-                        index,
-                        `opcao_${opIndex}`,
-                        e.target.value
-                      )
+                      handleOptionChange(qIndex, oIndex, e)
                     }
                     required
-                    style={styles.optionInput}
+                    placeholder={`Opção ${oIndex + 1}`}
+                    style={styles.input}
                   />
+                  <label style={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={option.isCorrect}
+                      onChange={(e) =>
+                        handleIsCorrectChange(qIndex, oIndex, e)
+                      }
+                    />
+                    Correta
+                  </label>
+                  {question.options.length > 2 && (
+                    <button
+                      type="button"
+                      onClick={() => removeOption(qIndex, oIndex)}
+                      style={styles.removeButton}
+                    >
+                      Remover Opção
+                    </button>
+                  )}
                 </div>
               ))}
+              <button
+                type="button"
+                onClick={() => addOption(qIndex)}
+                style={styles.addButton}
+              >
+                Adicionar Opção
+              </button>
             </div>
-
-            {/* Remover Pergunta */}
-            <button
-              type="button"
-              style={{
-                ...styles.button,
-                ...styles.removeButton,
-                ...(hoveredButton === `remove_${index}`
-                  ? styles.removeButtonHover
-                  : {}),
-              }}
-              onClick={() => removeQuestion(index)}
-              onMouseEnter={() => setHoveredButton(`remove_${index}`)}
-              onMouseLeave={() => setHoveredButton(null)}
-            >
-              Remover Pergunta
-            </button>
           </div>
         ))}
 
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <button
-            type="button"
-            onClick={addQuestion}
-            style={{
-              ...styles.button,
-              ...styles.addButton,
-              ...(hoveredButton === "add" ? styles.addButtonHover : {}),
-            }}
-            onMouseEnter={() => setHoveredButton("add")}
-            onMouseLeave={() => setHoveredButton(null)}
-          >
-            Adicionar Pergunta
-          </button>
-        </div>
-
-        {/* Submeter Quiz */}
-
         <button
-          type="submit"
-          style={{
-            ...styles.button,
-            ...styles.submitButton,
-            ...(hoveredButton === "submit" ? styles.submitButtonHover : {}),
-          }}
-          onMouseEnter={() => setHoveredButton("submit")}
-          onMouseLeave={() => setHoveredButton(null)}
+          type="button"
+          onClick={addQuestion}
+          style={styles.addButton}
         >
-          Adicionar Quiz
+          Adicionar Pergunta
+        </button>
+
+        <button type="submit" style={styles.submitButton}>
+          Criar Quiz
         </button>
       </form>
     </div>
   );
+};
+
+// Estilos simples para o componente
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  field: {
+    marginBottom: '20px',
+  },
+  input: {
+    width: '100%',
+    padding: '8px',
+    marginTop: '5px',
+    boxSizing: 'border-box',
+  },
+  question: {
+    border: '1px solid #ccc',
+    padding: '15px',
+    marginBottom: '20px',
+    borderRadius: '5px',
+  },
+  questionHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  options: {
+    marginTop: '10px',
+  },
+  option: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px',
+  },
+  checkboxLabel: {
+    marginLeft: '10px',
+    marginRight: '10px',
+  },
+  addButton: {
+    padding: '8px 12px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    marginTop: '10px',
+  },
+  removeButton: {
+    padding: '6px 10px',
+    backgroundColor: '#f44336',
+    color: 'white',
+    border: 'none',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    marginLeft: '10px',
+  },
+  submitButton: {
+    padding: '10px 15px',
+    backgroundColor: '#008CBA',
+    color: 'white',
+    border: 'none',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    marginTop: '20px',
+    fontSize: '16px',
+  },
+  message: {
+    color: 'red',
+    marginBottom: '20px',
+  },
+  errorDetails: {
+    backgroundColor: '#fdd',
+    color: '#900',
+    padding: '10px',
+    borderRadius: '5px',
+    marginBottom: '20px',
+    whiteSpace: 'pre-wrap',
+  },
 };
 
 export default AddQuiz;

@@ -1,11 +1,13 @@
+// src/pages/QuizResponse.tsx
+
 import { v4 as uuidv4 } from "uuid";
 import { FaDice } from "react-icons/fa";
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { QuizContext } from "../context/QuizContext";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "../styles/QuizResponse.css";
+import { useQuizApi } from "../context/QuizApiContext";
 import { api } from "../api";
 
 interface UsuarioResposta {
@@ -15,19 +17,42 @@ interface UsuarioResposta {
   personagem: string;
 }
 
+interface QuestionWithOptions extends Question {
+  options: Option[];
+}
+
+interface Question {
+  id: number;
+  title: string;
+  description: string;
+}
+
+interface Option {
+  id: number;
+  description: string;
+  isRight: boolean;
+  questionId: number;
+}
+
 const characterOptions = [
-  "https://imgur.com/x1byl5O",
-  "https://imgur.com/eGGKCQk",
-  "https://imgur.com/mhf5qhD",
-  "https://imgur.com/UpkmJj7",
-  "https://imgur.com/7Nv2wN9",
-  "https://imgur.com/zF7LLvQ",
+  "https://i.imgur.com/x1byl5O.jpeg",
+  "https://i.imgur.com/eGGKCQk.jpeg",
+  "https://i.imgur.com/mhf5qhD.jpeg",
+  "https://i.imgur.com/UpkmJj7.jpeg",
+  "https://i.imgur.com/7Nv2wN9.jpeg",
 ];
 
 const QuizResponse: React.FC = () => {
-  const { registerResponse } = useContext(QuizContext);
   const navigate = useNavigate();
-  const [quiz, setQuiz] = useState<any | null>(null);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const quizCode = queryParams.get("code");
+
+  const { submitResponses, createGuest, joinQuiz, listQuestions } =
+    useQuizApi();
+
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [questions, setQuestions] = useState<QuestionWithOptions[]>([]);
   const [respostasUsuario, setRespostasUsuario] = useState<number[]>([]);
   const [nome, setNome] = useState<string>("");
   const [tempoRestante, setTempoRestante] = useState<number>(60);
@@ -35,27 +60,77 @@ const QuizResponse: React.FC = () => {
   const [step, setStep] = useState<"nome" | "quiz">("nome");
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [selectedCharacter, setSelectedCharacter] = useState<number>(0);
+  const [guestId, setGuestId] = useState<number | null>(null);
 
-  // Dados estáticos do quiz
-  const quizData = {
-    nome: "quiz de estatistica",
-    code: "CW22ODH",
-    perguntas: [
-      { pergunta: "adadadsawda", opcoes: ["Opção 1", "Opção 2", "Opção 3"] },
-      { pergunta: "quem descobriu", opcoes: ["Opção A", "Opção B", "Opção C"] },
-      {
-        pergunta: "quem é cezumario",
-        opcoes: ["Opção X", "Opção Y", "Opção Z"],
-      },
-    ],
+  interface Quiz {
+    id: number;
+    title: string;
+    code: string;
+    user: {
+      id: number;
+      name: string;
+      email: string;
+    };
+    guests: Guest[];
+    questions: Question[];
+    status: string;
+  }
+
+  interface Guest {
+    id: number;
+    name: string;
+    ip: string;
+    score: number;
+    profileUrl: string;
+  }
+
+  const fetchQuiz = async () => {
+    if (!quizCode) {
+      alert("Código do quiz não fornecido.");
+      navigate("/");
+      return;
+    }
+
+    try {
+      const response = await api.get<Quiz[]>("/quiz", {
+        params: { code: quizCode },
+        headers: getAuthHeaders(),
+      });
+
+      const quizzes: Quiz[] = response.data;
+      const foundQuiz = quizzes.find((q) => q.code === quizCode);
+
+      if (foundQuiz) {
+        setQuiz(foundQuiz);
+        setTempoTotal(60);
+        setTempoRestante(60);
+        await fetchQuestions(foundQuiz.id);
+      } else {
+        alert("Quiz não encontrado.");
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar quiz:", error);
+      alert("Ocorreu um erro ao buscar o quiz.");
+      navigate("/");
+    }
+  };
+
+  const fetchQuestions = async (quizId: number) => {
+    try {
+      const fetchedQuestions = await listQuestions(quizId);
+      setQuestions(fetchedQuestions);
+    } catch (error) {
+      console.error("Erro ao buscar perguntas:", error);
+      alert("Ocorreu um erro ao buscar as perguntas.");
+      navigate("/");
+    }
   };
 
   useEffect(() => {
-    // Setando os dados estáticos
-    setQuiz(quizData);
-    setTempoTotal(60);
-    setTempoRestante(60);
-  }, []);
+    fetchQuiz();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizCode]);
 
   useEffect(() => {
     if (step !== "quiz" || !quiz) return;
@@ -78,7 +153,7 @@ const QuizResponse: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (currentQuestion < quiz!.perguntas.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -89,28 +164,37 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (nome.trim() === "") {
       alert("Por favor, insira seu nome.");
       return;
     }
 
-    if (respostasUsuario.length !== quiz!.perguntas.length) {
+    if (respostasUsuario.length !== questions.length) {
       alert("Por favor, responda todas as perguntas.");
       return;
     }
 
-    const usuarioResposta: UsuarioResposta = {
-      nome,
-      respostas: respostasUsuario,
-      data: new Date().toISOString(),
-      personagem: characterOptions[selectedCharacter],
-    };
+    try {
+      // Criar um novo convidado
+      const newGuest = await createGuest(nome, uuidv4());
 
-    registerResponse(quiz!, usuarioResposta);
+      setGuestId(newGuest.id);
 
-    alert("Respostas registradas com sucesso!");
-    navigate("/");
+      // Associar o convidado ao quiz
+      await joinQuiz(newGuest.id, quiz!.code);
+
+      // Registrar as respostas do usuário
+      await submitResponses(newGuest.id, respostasUsuario);
+
+      alert("Respostas registradas com sucesso!");
+      navigate("/");
+    } catch (error) {
+      console.error("Erro ao registrar respostas:", error);
+      alert(
+        "Ocorreu um erro ao registrar suas respostas. Por favor, tente novamente."
+      );
+    }
   };
 
   const randomizeCharacter = () => {
@@ -120,45 +204,18 @@ const QuizResponse: React.FC = () => {
 
   useEffect(() => {
     randomizeCharacter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startQuiz = async () => {
-    try {
-      // Exemplo de chamada da API
-      const response = await api.post("/guest", {
-        name: nome,
-        ip: uuidv4(),
-        profileUrl: "https://example.com/profile", // Substitua com o URL real do perfil
-      });
-      console.log("guestJoinQuizResponse.data");
-      console.log(response.data);
-      const guestJoinQuizResponse = await api.post("/guest/join", {
-        guestId: response.data.id,
-        quizCode: quiz!.code,
-      });
-      console.log("guestJoinQuizResponse.data");
-      console.log("guestJoinQuizResponse.data");
-      console.log(guestJoinQuizResponse);
-    } catch (error) {
-      console.error("Erro ao iniciar o quiz:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (step === "quiz" && nome) {
-      startQuiz(); // Chama a API quando o quiz começa
-    }
-  }, [step, nome]);
-
-  if (!quiz) {
-    return <div>Carregando...</div>;
-  }
+  const getAuthHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+  });
 
   return (
     <div className="quiz-container">
       {step === "nome" && (
         <div className="input-nome">
-          <h2>Bem-vindo ao Quiz: {quiz.nome}</h2>
+          <h2>Bem-vindo ao Quiz: {quiz?.title}</h2>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -202,7 +259,7 @@ const QuizResponse: React.FC = () => {
 
       {step === "quiz" && (
         <>
-          <h2>Quiz: {quiz.nome}</h2>
+          <h2>Quiz: {quiz?.title}</h2>
 
           <div className="timer-container">
             <CircularProgressbar
@@ -221,34 +278,39 @@ const QuizResponse: React.FC = () => {
           <div className="question-container">
             <p>
               <strong>
-                Pergunta {currentQuestion + 1} de {quiz.perguntas.length}:
+                Pergunta {currentQuestion + 1} de {questions.length}:
               </strong>{" "}
-              {quiz.perguntas[currentQuestion].pergunta}
+              {questions[currentQuestion].title}
             </p>
-            {quiz.perguntas[currentQuestion].opcoes.map(
-              (opcao: string, opIndex: number) => (
-                <div
-                  key={opIndex}
-                  className={`option-container ${
-                    respostasUsuario[currentQuestion] === opIndex
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() => handleOptionChange(opIndex)}
-                >
-                  <span>{opcao}</span>
-                </div>
-              )
+            {questions[currentQuestion].description && (
+              <p>{questions[currentQuestion].description}</p>
             )}
+            <div className="options-list">
+              {questions[currentQuestion].options.map(
+                (opcao: Option, opIndex: number) => (
+                  <div
+                    key={opcao.id}
+                    className={`option-container ${
+                      respostasUsuario[currentQuestion] === opIndex
+                        ? "selected"
+                        : ""
+                    }`}
+                    onClick={() => handleOptionChange(opIndex)}
+                  >
+                    <span>{opcao.description}</span>
+                  </div>
+                )
+              )}
+            </div>
           </div>
           <div className="navigation-buttons">
             {currentQuestion > 0 && (
               <button onClick={handlePrevious}>Anterior</button>
             )}
-            {currentQuestion < quiz.perguntas.length - 1 && (
+            {currentQuestion < questions.length - 1 && (
               <button onClick={handleNext}>Próxima</button>
             )}
-            {currentQuestion === quiz.perguntas.length - 1 && (
+            {currentQuestion === questions.length - 1 && (
               <button onClick={handleSubmit}>Enviar Respostas</button>
             )}
           </div>

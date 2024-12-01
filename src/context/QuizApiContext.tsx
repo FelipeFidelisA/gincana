@@ -9,7 +9,7 @@ interface Quiz {
 interface QuizApiContextType {
   quizzes: Quiz[];
   setQuizzes: React.Dispatch<React.SetStateAction<Quiz[]>>;
-  createQuiz: (title: string) => Promise<void>;
+  createQuiz: (title: string) => Promise<any>;
   listQuizzes: () => Promise<void>;
   increaseScore: (
     guestId: number,
@@ -23,7 +23,7 @@ interface QuizApiContextType {
     title: string,
     description: string,
     quizId: number
-  ) => Promise<void>;
+  ) => Promise<any>;
   listQuestions: (quizId: number) => Promise<void>;
   createOption: (
     description: string,
@@ -31,6 +31,8 @@ interface QuizApiContextType {
     questionId: number
   ) => Promise<void>;
   listOptions: (questionId: number) => Promise<void>;
+  quizSelected: Quiz | null;
+  setQuizSelected: React.Dispatch<React.SetStateAction<Quiz | null>>;
 }
 
 const QuizApiContext = createContext<QuizApiContextType | undefined>(undefined);
@@ -38,14 +40,29 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [quizSelected, setQuizSelected] = useState<Quiz | null>(null);
 
   useEffect(() => {
     listQuizzes();
   }, []);
 
-  const createQuiz = async (title: string) => {
+  const listQuizzes = async () => {
     try {
-      await api.post(
+      const response: any = await api.get("/quiz", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      console.log("🚀 ~ listQuizzes ~ response:", response);
+      setQuizzes(response.data);
+    } catch (error) {
+      console.error("Error listing quizzes:", error);
+    }
+  };
+
+  const createQuiz = async (title: string): Promise<Quiz> => {
+    try {
+      const response: any = await api.post(
         "/quiz",
         { title },
         {
@@ -54,22 +71,11 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
           },
         }
       );
-      listQuizzes();
+      listQuizzes(); // Atualiza a lista de quizzes após a criação
+      return response.data; // Retorna diretamente o quiz criado
     } catch (error) {
       console.error("Error creating quiz:", error);
-    }
-  };
-
-  const listQuizzes = async () => {
-    try {
-      const response = await api.get("/quiz", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
-      setQuizzes(response.data); // Assuming the response returns a list of quizzes
-    } catch (error) {
-      console.error("Error listing quizzes:", error);
+      throw error; // Propaga o erro para que o chamador possa lidar com ele
     }
   };
 
@@ -134,12 +140,16 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
         description: description,
         quizId: quizId,
       };
-
-      await api.post("/question", body, {
+      const response = await api.post("/question", body, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
+      console.log("🚀 ~ response:", response)
+      console.log("🚀 ~ response:", response)
+      console.log("🚀 ~ response:", response)
+      console.log("🚀 ~ response:", response)
+      return response;
     } catch (error) {
       console.error("Error creating question:", error);
     }
@@ -207,6 +217,8 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
         listQuestions,
         createOption,
         listOptions,
+        quizSelected,
+        setQuizSelected,
       }}
     >
       {children}
