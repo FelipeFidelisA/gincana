@@ -544,16 +544,6 @@ const QuizResponse: React.FC = () => {
                   >
                     <FaDice size={20} />
                   </button>
-                  <label htmlFor="upload-image" className="upload-button">
-                    <FaUpload size={20} />
-                    <input
-                      type="file"
-                      id="upload-image"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      style={{ display: "none" }}
-                    />
-                  </label>
                 </div>
               </div>
 
