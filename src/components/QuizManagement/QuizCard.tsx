@@ -12,9 +12,6 @@ const QuizCard = ({ quiz, openModal }: any) => {
   const generateQuizURL = (quiz: any) => `https://example.com/quiz/${quiz.id}`;
 
   // Função para remover o quiz
-  const removeQuiz = (index: number) => {
-  };
-
   // Estilos globais
   const cardStyles: React.CSSProperties = {
     backgroundColor: "#ffffff",
@@ -130,7 +127,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
             if (
               window.confirm("Você tem certeza que deseja remover este quiz?")
             ) {
-              removeQuiz(quiz.id);
+              console.log("Removendo quiz...");
             }
           }}
           style={removeButtonStyles}

@@ -10,13 +10,6 @@ import "../styles/QuizResponse.css";
 import { useQuizApi } from "../context/QuizApiContext";
 import { api } from "../api";
 
-interface UsuarioResposta {
-  nome: string;
-  respostas: number[];
-  data: string;
-  personagem: string;
-}
-
 interface QuestionWithOptions extends Question {
   options: Option[];
 }
@@ -67,7 +60,7 @@ const QuizResponse: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [selectedCharacter, setSelectedCharacter] = useState<number>(0);
   const [guestId, setGuestId] = useState<number | null>(null);
-
+console.log(guestId);
   interface Quiz {
     id: number;
     title: string;

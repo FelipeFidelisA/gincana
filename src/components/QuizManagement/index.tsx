@@ -7,7 +7,6 @@ import QuizCard from "./QuizCard";
 import QuizModal from "./QuizModal";
 import GuestManagement from "../../pages/GuestManagement";
 import QuizRanking from "../../pages/QuizRanking";
-import AddQuizForm from "../../pages/AddQuizForm";
 import QuestionList from "../../pages/QuestionList";
 import { FaPlus } from "react-icons/fa";
 
@@ -15,7 +14,6 @@ Modal.setAppElement("#root");
 
 const QuizManagement: React.FC = () => {
   const { quizzes } = useQuizApi();
-  const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
     quiz: any;
@@ -26,8 +24,6 @@ const QuizManagement: React.FC = () => {
     type: "",
   });
   const navigate = useNavigate();
-
-  const addQuiz = (newQuiz: any) => {};
 
   const openModal = (quiz: any, type: string) => {
     setModalData({ isOpen: true, quiz, type });
@@ -71,7 +67,7 @@ const QuizManagement: React.FC = () => {
         <p>Nenhum quiz adicionado ainda.</p>
       ) : (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-          {quizzes.map((quiz: any, index: number) => (
+          {quizzes.map((quiz: any) => (
             <QuizCard
               key={quiz.id}
               quiz={quiz}
@@ -104,15 +100,6 @@ const QuizManagement: React.FC = () => {
         {modalData.quiz && (
           <QuizRanking quizId={modalData.quiz.id} onClose={closeModal} />
         )}
-      </Modal>
-
-      {/* Add Quiz Form Modal */}
-      <Modal
-        isOpen={modalData.isOpen && modalData.type === "addQuiz"}
-        onRequestClose={closeModal}
-        contentLabel="Add Quiz"
-      >
-        <AddQuizForm onAddQuiz={addQuiz} onClose={closeModal} />
       </Modal>
 
       {/* Add Question Modal */}
