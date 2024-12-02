@@ -159,7 +159,7 @@ const Ranking: React.FC = () => {
             <YAxis />
             <Tooltip />
             <Bar dataKey="score" animationDuration={1500}>
-              {data.map((entry, index) => (
+              {data.map((index: any) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
