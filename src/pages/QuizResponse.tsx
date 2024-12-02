@@ -94,7 +94,6 @@ const QuizResponse: React.FC = () => {
     "https://i.imgur.com/7Nv2wN9.jpeg",
   ];
 
-  // Função para buscar o quiz
   const fetchQuiz = async () => {
     if (!quizCode) {
       alert("Código do quiz não fornecido.");
@@ -103,11 +102,7 @@ const QuizResponse: React.FC = () => {
     }
 
     try {
-      const response = await api.get<Quiz>(`/quiz/code/${quizCode}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
+      const response = await api.get<Quiz>(`/quiz/code/${quizCode}`);
       const foundQuiz = response.data;
       if (foundQuiz) {
         setQuiz(foundQuiz);
