@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { FaDice, FaSpinner, FaUpload } from "react-icons/fa";
+import { FaDice, FaSpinner } from "react-icons/fa";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import Confetti from "react-confetti";
@@ -320,19 +320,6 @@ const QuizResponse: React.FC = () => {
     randomizeCharacter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Função para lidar com o upload de imagem personalizada
-  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Converter a imagem para uma URL base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedCharacter(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   // Gerenciar as dimensões da janela para os confetes
   useEffect(() => {

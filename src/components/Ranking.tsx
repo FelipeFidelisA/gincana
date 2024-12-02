@@ -135,7 +135,7 @@ const Ranking: React.FC = () => {
   const topGuests = sortedGuests.slice(0, 10);
 
   // Preparar os dados para o gráfico
-  const data = topGuests.map((guest, index) => ({
+  const data = topGuests.map((guest) => ({
     name: guest.name,
     score: guest.score,
     profileUrl: guest.profileUrl,
@@ -168,7 +168,7 @@ const Ranking: React.FC = () => {
               <LabelList
                 dataKey="score"
                 position="top"
-                content={({ x, y, width, value }) => (
+                content={({ x, y, value }) => (
                   <text x={x} y={y} dy={-10} fill="#333" textAnchor="middle">
                     <CountUp
                       end={typeof value === "number" ? value : 0}
