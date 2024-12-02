@@ -133,23 +133,15 @@ const QuizResponse: React.FC = () => {
       );
 
       setQuestions(questionsWithOptions);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao buscar perguntas:", error);
-      alert("Ocorreu um erro ao buscar as perguntas.");
       navigate("/");
     }
   };
 
   const listOptions = async (questionId: number): Promise<Option[]> => {
     try {
-      const options = await api.get<Option[]>(
-        `/option/question/${questionId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      );
+      const options = await api.get<Option[]>(`/option/question/${questionId}`);
       return options.data;
     } catch (error) {
       console.error("Erro ao listar opções:", error);
@@ -178,11 +170,7 @@ const QuizResponse: React.FC = () => {
 
     const interval = setInterval(async () => {
       try {
-        const response = await api.get<Quiz>(`/quiz/code/${quizCode}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        });
+        const response = await api.get<Quiz>(`/quiz/code/${quizCode}`);
         const currentStatus = response.data.status;
         setQuizStatus(currentStatus);
 

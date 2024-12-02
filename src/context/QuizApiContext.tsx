@@ -91,9 +91,11 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
   const optionsCache = useRef<{ [key: number]: Option[] }>({});
 
   useEffect(() => {
-    setTimeout(() => {
-      listQuizzes();
-    }, 500);
+    if (localStorage.getItem("authToken")) {
+      setTimeout(() => {
+        listQuizzes();
+      }, 500);
+    }
   }, []);
 
   const listQuizzes = async () => {
@@ -227,11 +229,7 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const listQuestions = async (quizId: number): Promise<Question[]> => {
     try {
-      const response = await api.get(`/question/quiz/${quizId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
+      const response = await api.get(`/question/quiz/${quizId}`);
       console.log(`Perguntas obtidas para o Quiz ID ${quizId}:`, response.data);
       return response.data;
     } catch (error) {

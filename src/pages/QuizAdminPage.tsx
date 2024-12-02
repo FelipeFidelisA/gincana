@@ -58,9 +58,7 @@ const QuizAdminPage: React.FC = () => {
     }
 
     try {
-      const response = await api.get<Quiz>(`/quiz/code/${quizCode}`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await api.get<Quiz>(`/quiz/code/${quizCode}`);
       setQuiz(response.data);
       setError(null);
     } catch (err) {

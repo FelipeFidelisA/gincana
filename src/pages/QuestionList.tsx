@@ -34,11 +34,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
 
   const listOptions = async (questionId: number) => {
     try {
-      const response = await api.get(`/option/question/${questionId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
+      const response = await api.get(`/option/question/${questionId}`);
       setOptions((prevOptions: any) => ({
         ...prevOptions,
         [questionId]: response.data,
@@ -67,7 +63,12 @@ const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
       options.forEach(async (option) => {
         await api.post(
           "/option",
-          { description: option.description, isRight: option.isRight, questionId, title },
+          {
+            description: option.description,
+            isRight: option.isRight,
+            questionId,
+            title,
+          },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,

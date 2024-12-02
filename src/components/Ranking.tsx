@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { api } from "../api"; 
-import "../styles/Ranking.css"; 
+import { api } from "../api";
+import "../styles/Ranking.css";
 
 interface Quiz {
   id: number;
@@ -56,11 +56,7 @@ const Ranking: React.FC = () => {
 
     const fetchRanking = async () => {
       try {
-        const response = await api.get<Quiz>(`/quiz/ranking/${quizCode}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        });
+        const response = await api.get<Quiz>(`/quiz/ranking/${quizCode}`);
         setQuiz(response.data);
         setLoading(false);
       } catch (err: any) {
