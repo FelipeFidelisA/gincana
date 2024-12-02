@@ -1,37 +1,40 @@
-import { useState } from "react";
+// components/QuizManagement/QuizManagement.tsx
+import React, { useState } from "react";
 import Modal from "react-modal";
 import { useQuizApi } from "../../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
-import QuizCard from "../QuizManagement/QuizCard";
-import QuizModal from "../QuizManagement/QuizModal";
-import GuestManagement from "../../pages/GuestManagement.tsx";
-import QuizRanking from "../../pages/QuizRanking.tsx";
-import AddQuizForm from "../../pages/AddQuizForm.tsx";
-import QuestionList from "../../pages/QuestionList.tsx";
-import { FaPlus } from "react-icons/fa"; // Ícone de adicionar quiz
+import QuizCard from "./QuizCard";
+import QuizModal from "./QuizModal";
+import GuestManagement from "../../pages/GuestManagement";
+import QuizRanking from "../../pages/QuizRanking";
+import AddQuizForm from "../../pages/AddQuizForm";
+import QuestionList from "../../pages/QuestionList";
+import { FaPlus } from "react-icons/fa";
 
 Modal.setAppElement("#root");
 
-const QuizManagement = () => {
+const QuizManagement: React.FC = () => {
   const { quizzes } = useQuizApi();
   const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
-  const [modalData, setModalData] = useState<any>({
+  const [modalData, setModalData] = useState<{
+    isOpen: boolean;
+    quiz: any;
+    type: string;
+  }>({
     isOpen: false,
     quiz: null,
+    type: "",
   });
   const navigate = useNavigate();
 
-  const addQuiz = (newQuiz: any) => {
-    // Add logic to handle adding a new quiz
-    console.log("Quiz added:", newQuiz);
-  };
+  const addQuiz = (newQuiz: any) => {};
 
-  const openModal = (quiz: any) => {
-    setModalData({ isOpen: true, quiz });
+  const openModal = (quiz: any, type: string) => {
+    setModalData({ isOpen: true, quiz, type });
   };
 
   const closeModal = () => {
-    setModalData({ isOpen: false, quiz: null });
+    setModalData({ isOpen: false, quiz: null, type: "" });
   };
 
   return (
@@ -69,43 +72,58 @@ const QuizManagement = () => {
       ) : (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
           {quizzes.map((quiz: any, index: number) => (
-            <QuizCard key={index} quiz={quiz} openModal={openModal} />
+            <QuizCard
+              key={quiz.id}
+              quiz={quiz}
+              openModal={(quiz: any, type: any) => openModal(quiz, type)}
+            />
           ))}
         </div>
       )}
 
+      {/* Quiz Details Modal */}
       <QuizModal modalData={modalData} closeModal={closeModal} />
 
+      {/* Guest Management Modal */}
       <Modal
-        isOpen={modalData.isOpen}
+        isOpen={modalData.isOpen && modalData.type === "guest"}
         onRequestClose={closeModal}
         contentLabel="Guest Management"
       >
-        <GuestManagement quizId={selectedQuizId} onClose={closeModal} />
+        {modalData.quiz && (
+          <GuestManagement quizId={modalData.quiz.id} onClose={closeModal} />
+        )}
       </Modal>
 
+      {/* Quiz Ranking Modal */}
       <Modal
-        isOpen={modalData.isOpen}
+        isOpen={modalData.isOpen && modalData.type === "ranking"}
         onRequestClose={closeModal}
         contentLabel="Quiz Ranking"
       >
-        <QuizRanking quizId={selectedQuizId} onClose={closeModal} />
+        {modalData.quiz && (
+          <QuizRanking quizId={modalData.quiz.id} onClose={closeModal} />
+        )}
       </Modal>
 
+      {/* Add Quiz Form Modal */}
       <Modal
-        isOpen={modalData.isOpen}
+        isOpen={modalData.isOpen && modalData.type === "addQuiz"}
         onRequestClose={closeModal}
         contentLabel="Add Quiz"
       >
         <AddQuizForm onAddQuiz={addQuiz} onClose={closeModal} />
       </Modal>
 
+      {/* Add Question Modal */}
       <Modal
-        isOpen={modalData.isOpen}
+        isOpen={modalData.isOpen && modalData.type === "addQuestion"}
         onRequestClose={closeModal}
         contentLabel="Add Question"
       >
-        <QuestionList quizId={selectedQuizId} onClose={closeModal} />
+        {modalData.quiz && (
+          <QuestionList quizId={modalData.quiz.id} onClose={closeModal} />
+        )}
       </Modal>
     </div>
   );

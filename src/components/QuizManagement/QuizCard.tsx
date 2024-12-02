@@ -13,7 +13,6 @@ const QuizCard = ({ quiz, openModal }: any) => {
 
   // Função para remover o quiz
   const removeQuiz = (index: number) => {
-    console.log(`Removendo quiz no índice ${index}`);
   };
 
   // Estilos globais
@@ -60,7 +59,6 @@ const QuizCard = ({ quiz, openModal }: any) => {
     padding: "8px",
     cursor: "pointer",
     fontSize: "1.5rem",
-    zIndex: 1,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -68,7 +66,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
 
   const menuStyles: React.CSSProperties = {
     position: "absolute",
-    top: "40px",
+    top: "70px",
     right: "10px",
     backgroundColor: "#fff",
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",

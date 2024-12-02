@@ -25,6 +25,7 @@ interface Question {
   id: number;
   title: string;
   description: string;
+  quizId: number;
 }
 
 interface Option {
@@ -46,10 +47,15 @@ const QuizResponse: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const quizCode = queryParams.get("code");
+  const quizCode: any = queryParams.get("code");
 
-  const { submitResponses, createGuest, joinQuiz, listQuestions } =
-    useQuizApi();
+  const {
+    submitResponses,
+    createGuest,
+    joinQuiz,
+    listQuestions,
+    increaseScore,
+  } = useQuizApi();
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [questions, setQuestions] = useState<QuestionWithOptions[]>([]);
@@ -92,13 +98,13 @@ const QuizResponse: React.FC = () => {
     }
 
     try {
-      const response = await api.get<Quiz[]>("/quiz", {
-        params: { code: quizCode },
-        headers: getAuthHeaders(),
+      const response = await api.get<Quiz>(`/quiz/code/${quizCode}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
       });
 
-      const quizzes: Quiz[] = response.data;
-      const foundQuiz = quizzes.find((q) => q.code === quizCode);
+      const foundQuiz = response.data;
 
       if (foundQuiz) {
         setQuiz(foundQuiz);
@@ -119,7 +125,16 @@ const QuizResponse: React.FC = () => {
   const fetchQuestions = async (quizId: number) => {
     try {
       const fetchedQuestions = await listQuestions(quizId);
-      setQuestions(fetchedQuestions);
+
+      // Para cada pergunta, buscar as opções
+      const questionsWithOptions: QuestionWithOptions[] = await Promise.all(
+        fetchedQuestions.map(async (question) => {
+          const options = await listOptions(question.id);
+          return { ...question, options };
+        })
+      );
+
+      setQuestions(questionsWithOptions);
     } catch (error) {
       console.error("Erro ao buscar perguntas:", error);
       alert("Ocorreu um erro ao buscar as perguntas.");
@@ -127,9 +142,25 @@ const QuizResponse: React.FC = () => {
     }
   };
 
+  const listOptions = async (questionId: number): Promise<Option[]> => {
+    try {
+      const options = await api.get<Option[]>(
+        `/option/question/${questionId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      return options.data;
+    } catch (error) {
+      console.error("Error listing options:", error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     fetchQuiz();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizCode]);
 
   useEffect(() => {
@@ -176,23 +207,30 @@ const QuizResponse: React.FC = () => {
     }
 
     try {
-      // Criar um novo convidado
-      const newGuest = await createGuest(nome, uuidv4());
+      const newGuest = await createGuest(nome, uuidv4(), "https://i");
 
       setGuestId(newGuest.id);
-
-      // Associar o convidado ao quiz
       await joinQuiz(newGuest.id, quiz!.code);
 
-      // Registrar as respostas do usuário
-      await submitResponses(newGuest.id, respostasUsuario);
+      await submitResponses(newGuest.id, quizCode, 1);
+      let score = 0;
+      questions.forEach((question, index) => {
+        const selectedOptionIndex = respostasUsuario[index];
+        const selectedOption = question.options[selectedOptionIndex];
+        if (selectedOption && selectedOption.isRight) {
+          score += 1;
+        }
+      });
 
-      alert("Respostas registradas com sucesso!");
+      // Enviar a pontuação para a API
+      await increaseScore(newGuest.id, quiz!.code, score);
+
+      alert("Respostas e pontuação registradas com sucesso!");
       navigate("/");
     } catch (error) {
-      console.error("Erro ao registrar respostas:", error);
+      console.error("Erro ao registrar respostas e pontuação:", error);
       alert(
-        "Ocorreu um erro ao registrar suas respostas. Por favor, tente novamente."
+        "Ocorreu um erro ao registrar suas respostas e pontuação. Por favor, tente novamente."
       );
     }
   };
@@ -206,10 +244,6 @@ const QuizResponse: React.FC = () => {
     randomizeCharacter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const getAuthHeaders = () => ({
-    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-  });
 
   return (
     <div className="quiz-container">
@@ -276,32 +310,38 @@ const QuizResponse: React.FC = () => {
           </div>
 
           <div className="question-container">
-            <p>
-              <strong>
-                Pergunta {currentQuestion + 1} de {questions.length}:
-              </strong>{" "}
-              {questions[currentQuestion].title}
-            </p>
-            {questions[currentQuestion].description && (
-              <p>{questions[currentQuestion].description}</p>
+            {questions.length > 0 ? (
+              <>
+                <p>
+                  <strong>
+                    Pergunta {currentQuestion + 1} de {questions.length}:
+                  </strong>{" "}
+                  {questions[currentQuestion].title}
+                </p>
+                {questions[currentQuestion].description && (
+                  <p>{questions[currentQuestion].description}</p>
+                )}
+                <div className="options-list">
+                  {questions[currentQuestion].options.map(
+                    (opcao: Option, opIndex: number) => (
+                      <div
+                        key={opcao.id}
+                        className={`option-container ${
+                          respostasUsuario[currentQuestion] === opIndex
+                            ? "selected"
+                            : ""
+                        }`}
+                        onClick={() => handleOptionChange(opIndex)}
+                      >
+                        <span>{opcao.description}</span>
+                      </div>
+                    )
+                  )}
+                </div>
+              </>
+            ) : (
+              <p>Carregando perguntas...</p>
             )}
-            <div className="options-list">
-              {questions[currentQuestion].options.map(
-                (opcao: Option, opIndex: number) => (
-                  <div
-                    key={opcao.id}
-                    className={`option-container ${
-                      respostasUsuario[currentQuestion] === opIndex
-                        ? "selected"
-                        : ""
-                    }`}
-                    onClick={() => handleOptionChange(opIndex)}
-                  >
-                    <span>{opcao.description}</span>
-                  </div>
-                )
-              )}
-            </div>
           </div>
           <div className="navigation-buttons">
             {currentQuestion > 0 && (

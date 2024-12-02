@@ -11,7 +11,6 @@ const Home: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    console.log(`Iniciar quiz com o código da sala: ${roomCode}`);
   };
 
   const containerStyle: React.CSSProperties = {

@@ -3,13 +3,11 @@
 import React, { useState } from "react";
 import { useQuizApi } from "../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Utilizando axios diretamente
+import { api } from "../api"; // Certifique-se de que o caminho está correto
 
 const QuizAdminPage: React.FC = () => {
   const { quizSelected, listQuizzes, setQuizSelected } = useQuizApi();
   const [isStarting, setIsStarting] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Se nenhum quiz estiver selecionado, exibe uma mensagem
@@ -21,17 +19,21 @@ const QuizAdminPage: React.FC = () => {
     );
   }
 
+  // Função para obter os headers de autenticação
+  const getAuthHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+  });
+
   // Função para iniciar o quiz
   const handleStartQuiz = async () => {
     if (window.confirm("Você tem certeza que deseja iniciar este quiz?")) {
       setIsStarting(true);
-      setMessage(null);
-      setError(null);
       try {
-        // Endpoint correto: POST /quizzes/:quizId/start
-        const response = await axios.post(
-          `http://localhost:3000/quizzes/${quizSelected.id}/start`,
-          {}
+        // Supondo que o endpoint para iniciar o quiz seja PUT /quiz/{id}/start
+        const response = await api.put(
+          `/quiz/${quizSelected.id}/start`,
+          {},
+          { headers: getAuthHeaders() }
         );
 
         // Atualiza o quiz selecionado com os novos dados retornados pela API
@@ -39,17 +41,11 @@ const QuizAdminPage: React.FC = () => {
         setQuizSelected(updatedQuiz);
         listQuizzes();
 
-        // Feedback de sucesso
-        setMessage("Quiz iniciado com sucesso!");
-
-        // Opcional: Redireciona para uma página de confirmação ou dashboard
-        // navigate("/quizstarted"); // Descomente e ajuste conforme necessário
-      } catch (err: any) {
-        console.error("Erro ao iniciar o quiz:", err);
-        setError(
-          err.response?.data?.error ||
-            "Ocorreu um erro ao iniciar o quiz. Por favor, tente novamente."
-        );
+        // Redireciona para uma página de confirmação ou para a página do quiz em andamento
+        navigate("/quizstarted"); // Ajuste a rota conforme necessário
+      } catch (error) {
+        console.error("Erro ao iniciar o quiz:", error);
+        alert("Ocorreu um erro ao iniciar o quiz. Por favor, tente novamente.");
       } finally {
         setIsStarting(false);
       }
@@ -63,8 +59,6 @@ const QuizAdminPage: React.FC = () => {
         <p style={countStyles}>
           Número de participantes: {quizSelected.guests.length}
         </p>
-        {message && <p style={successMessageStyle}>{message}</p>}
-        {error && <p style={errorMessageStyle}>{error}</p>}
         <button
           style={buttonStyles}
           onClick={handleStartQuiz}
@@ -91,7 +85,7 @@ const backgroundStyles: React.CSSProperties = {
 };
 
 const containerStyles: React.CSSProperties = {
-  backgroundColor: "rgba(255, 255, 255, 0.9)",
+  backgroundColor: "rgba(255, 255, 255, 0.8)",
   padding: "2rem 3rem",
   borderRadius: "10px",
   textAlign: "center",
@@ -107,7 +101,7 @@ const titleStyles: React.CSSProperties = {
 const countStyles: React.CSSProperties = {
   fontSize: "1.5rem",
   color: "#555",
-  marginBottom: "1rem",
+  marginBottom: "2rem",
 };
 
 const buttonStyles: React.CSSProperties = {
@@ -119,7 +113,6 @@ const buttonStyles: React.CSSProperties = {
   borderRadius: "5px",
   cursor: "pointer",
   transition: "background-color 0.3s ease",
-  marginTop: "1rem",
 };
 
 const noQuizStyle: React.CSSProperties = {
@@ -127,22 +120,6 @@ const noQuizStyle: React.CSSProperties = {
   justifyContent: "center",
   alignItems: "center",
   height: "100vh",
-  fontSize: "1.5rem",
-  color: "#777",
-};
-
-const successMessageStyle: React.CSSProperties = {
-  color: "green",
-  marginTop: "1rem",
-  marginBottom: "1rem",
-  fontWeight: "bold",
-};
-
-const errorMessageStyle: React.CSSProperties = {
-  color: "red",
-  marginTop: "1rem",
-  marginBottom: "1rem",
-  fontWeight: "bold",
 };
 
 export default QuizAdminPage;

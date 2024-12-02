@@ -16,7 +16,6 @@ const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
   };
 
   const listQuestions = async (quizId: number) => {
-    console.log("Listing questions for quiz:", quizId);
     try {
       const response = await api.get(`/question/quiz/${quizId}`, {
         headers: {
@@ -24,7 +23,6 @@ const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
         },
       });
       setQuestions(response.data);
-      console.log("Questions:", response.data);
 
       for (let question of response.data) {
         listOptions(question.id);
@@ -45,7 +43,6 @@ const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
         ...prevOptions,
         [questionId]: response.data,
       }));
-      console.log(`Options for question ${questionId}:`, response.data);
     } catch (error) {
       console.error(`Error listing options for question ${questionId}:`, error);
     }

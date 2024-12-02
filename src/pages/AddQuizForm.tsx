@@ -31,7 +31,6 @@ const AddQuizForm = ({ onClose }: any) => {
 
   const handleCreateQuiz = () => {
     console.log('Criar quiz com perguntas:', questions);
-    // Adicione aqui a lógica para salvar o quiz e suas perguntas
   };
 
   const handleClose = () => {
