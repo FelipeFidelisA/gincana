@@ -1,14 +1,14 @@
-import { v4 as uuidv4 } from "uuid";
-import { FaDice } from "react-icons/fa";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import { FaDice, FaSpinner, FaUpload } from "react-icons/fa";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import "../styles/QuizResponse.css";
-import { useQuizApi } from "../context/QuizApiContext";
-import { api } from "../api";
 import Confetti from "react-confetti";
 import { useSpring, animated } from "react-spring";
+import { useQuizApi } from "../context/QuizApiContext";
+import { api } from "../api";
+import "../styles/QuizResponse.css";
 
 interface QuestionWithOptions extends Question {
   options: Option[];
@@ -28,19 +28,33 @@ interface Option {
   questionId: number;
 }
 
-const characterOptions = [
-  "https://i.imgur.com/x1byl5O.jpeg",
-  "https://i.imgur.com/eGGKCQk.jpeg",
-  "https://i.imgur.com/mhf5qhD.jpeg",
-  "https://i.imgur.com/UpkmJj7.jpeg",
-  "https://i.imgur.com/7Nv2wN9.jpeg",
-];
+interface Quiz {
+  id: number;
+  title: string;
+  code: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  guests: Guest[];
+  questions: Question[];
+  status: string;
+}
+
+interface Guest {
+  id: number;
+  name: string;
+  ip: string;
+  score: number;
+  profileUrl: string;
+}
 
 const QuizResponse: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const quizCode: any = queryParams.get("code");
+  const quizCode: string | null = queryParams.get("code");
 
   const {
     submitResponses,
@@ -51,18 +65,19 @@ const QuizResponse: React.FC = () => {
   } = useQuizApi();
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [quizStatus, setQuizStatus] = useState<string>("WAITING_GUESTS");
   const [questions, setQuestions] = useState<QuestionWithOptions[]>([]);
-  const [respostasUsuario, setRespostasUsuario] = useState<number[]>([]);
-  const [nome, setNome] = useState<string>("");
-  const [tempoRestante, setTempoRestante] = useState<number>(60);
-  const [tempoTotal, setTempoTotal] = useState<number>(60);
-  const [step, setStep] = useState<"nome" | "quiz">("nome");
+  const [userResponses, setUserResponses] = useState<number[]>([]);
+  const [name, setName] = useState<string>("");
+  const [remainingTime, setRemainingTime] = useState<number>(60);
+  const [totalTime, setTotalTime] = useState<number>(60);
+  const [step, setStep] = useState<"character" | "quiz">("character");
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
-  const [selectedCharacter, setSelectedCharacter] = useState<number>(0);
+  const [selectedCharacter, setSelectedCharacter] = useState<string>("");
   const [guestId, setGuestId] = useState<number | null>(null);
 
-  const [quizEnviado, setQuizEnviado] = useState<boolean>(false);
-  const [contador, setContador] = useState<number>(3);
+  const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number>(3);
   const [windowDimensions, setWindowDimensions] = useState<{
     width: number;
     height: number;
@@ -71,30 +86,15 @@ const QuizResponse: React.FC = () => {
     height: window.innerHeight,
   });
 
-  console.log(guestId);
+  const predefinedCharacters: string[] = [
+    "https://i.imgur.com/x1byl5O.jpeg",
+    "https://i.imgur.com/eGGKCQk.jpeg",
+    "https://i.imgur.com/mhf5qhD.jpeg",
+    "https://i.imgur.com/UpkmJj7.jpeg",
+    "https://i.imgur.com/7Nv2wN9.jpeg",
+  ];
 
-  interface Quiz {
-    id: number;
-    title: string;
-    code: string;
-    user: {
-      id: number;
-      name: string;
-      email: string;
-    };
-    guests: Guest[];
-    questions: Question[];
-    status: string;
-  }
-
-  interface Guest {
-    id: number;
-    name: string;
-    ip: string;
-    score: number;
-    profileUrl: string;
-  }
-
+  // Função para buscar o quiz
   const fetchQuiz = async () => {
     if (!quizCode) {
       alert("Código do quiz não fornecido.");
@@ -108,13 +108,12 @@ const QuizResponse: React.FC = () => {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-
       const foundQuiz = response.data;
-
       if (foundQuiz) {
         setQuiz(foundQuiz);
-        setTempoTotal(60);
-        setTempoRestante(60);
+        setQuizStatus(foundQuiz.status);
+        setTotalTime(60);
+        setRemainingTime(60);
         await fetchQuestions(foundQuiz.id);
       } else {
         alert("Quiz não encontrado.");
@@ -127,6 +126,7 @@ const QuizResponse: React.FC = () => {
     }
   };
 
+  // Função para buscar perguntas
   const fetchQuestions = async (quizId: number) => {
     try {
       const fetchedQuestions = await listQuestions(quizId);
@@ -146,6 +146,7 @@ const QuizResponse: React.FC = () => {
     }
   };
 
+  // Função para listar opções
   const listOptions = async (questionId: number): Promise<Option[]> => {
     try {
       const options = await api.get<Option[]>(
@@ -163,8 +164,9 @@ const QuizResponse: React.FC = () => {
     }
   };
 
+  // useEffect para buscar o quiz ao montar o componente
   useEffect(() => {
-    const verificarResposta = () => {
+    const checkIfAlreadyAnswered = () => {
       if (
         quiz &&
         localStorage.getItem(`quiz_${quiz.id}_respondido`) === "true"
@@ -175,17 +177,45 @@ const QuizResponse: React.FC = () => {
     };
 
     fetchQuiz().then(() => {
-      verificarResposta();
+      checkIfAlreadyAnswered();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizCode]);
 
+  // Implementação do Polling para verificar o status do quiz
+  useEffect(() => {
+    if (!quizCode) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const response = await api.get<Quiz>(`/quiz/code/${quizCode}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        });
+        const currentStatus = response.data.status;
+        setQuizStatus(currentStatus);
+
+        if (currentStatus === "IN_PROGRESS") {
+          clearInterval(interval);
+          setTotalTime(60);
+          setRemainingTime(60);
+        }
+      } catch (error) {
+        console.error("Erro ao verificar status do quiz:", error);
+      }
+    }, 1000); // 1 segundo para melhor desempenho
+
+    return () => clearInterval(interval);
+  }, [quizCode]);
+
+  // useEffect para o temporizador
   useEffect(() => {
     if (step !== "quiz" || !quiz) return;
 
-    if (tempoRestante > 0) {
+    if (remainingTime > 0) {
       const timer = setInterval(() => {
-        setTempoRestante((prev) => prev - 1);
+        setRemainingTime((prev) => prev - 1);
       }, 1000);
 
       return () => clearInterval(timer);
@@ -193,14 +223,16 @@ const QuizResponse: React.FC = () => {
       handleSubmit();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tempoRestante, step, quiz]);
+  }, [remainingTime, step, quiz]);
 
+  // Função para lidar com a seleção de uma opção
   const handleOptionChange = (optionIndex: number) => {
-    const novasRespostas = [...respostasUsuario];
-    novasRespostas[currentQuestion] = optionIndex;
-    setRespostasUsuario(novasRespostas);
+    const newResponses = [...userResponses];
+    newResponses[currentQuestion] = optionIndex;
+    setUserResponses(newResponses);
   };
 
+  // Funções para navegação entre perguntas
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
@@ -213,63 +245,49 @@ const QuizResponse: React.FC = () => {
     }
   };
 
+  // Função para submeter as respostas
   const handleSubmit = async () => {
-    if (quizEnviado) {
+    if (quizSubmitted) {
       return; // Evita submissões múltiplas
     }
 
-    if (nome.trim() === "") {
-      alert("Por favor, insira seu nome.");
-      return;
-    }
-
-    if (respostasUsuario.length !== questions.length) {
+    if (userResponses.length !== questions.length) {
       alert("Por favor, responda todas as perguntas.");
       return;
     }
 
+    if (!guestId) {
+      alert("Erro interno: guestId não definido.");
+      return;
+    }
+
     try {
-      // Verificação opcional para garantir índice válido
-      if (
-        selectedCharacter < 0 ||
-        selectedCharacter >= characterOptions.length
-      ) {
-        alert("Personagem selecionado inválido.");
-        return;
-      }
-
-      const selectedCharacterUrl = characterOptions[selectedCharacter];
-      const newGuest = await createGuest(nome, uuidv4(), selectedCharacterUrl);
-
-      setGuestId(newGuest.id);
-      await joinQuiz(newGuest.id, quiz!.code);
-
       // Calcular o número de respostas corretas
-      let respostasCorretas = 0;
+      let correctAnswers = 0;
       questions.forEach((question, index) => {
-        const selectedOptionIndex = respostasUsuario[index];
+        const selectedOptionIndex = userResponses[index];
         const selectedOption = question.options[selectedOptionIndex];
         if (selectedOption && selectedOption.isRight) {
-          respostasCorretas += 1;
+          correctAnswers += 1;
         }
       });
 
       // Definir a fórmula de pontuação
-      const pontuacao = respostasCorretas * 10 + tempoRestante * 0.5;
+      const score = correctAnswers * 10 + remainingTime * 0.5;
 
       // Enviar as respostas
-      await submitResponses(newGuest.id, quizCode, 5000);
+      await submitResponses(guestId, quizCode!, 5000);
 
       // Atualizar a pontuação do usuário
-      await increaseScore(newGuest.id, quiz!.code, pontuacao);
+      await increaseScore(guestId, quiz!.code, score);
 
       // Atualização para exibir confetes e mensagem de sucesso
-      setQuizEnviado(true);
+      setQuizSubmitted(true);
       localStorage.setItem(`quiz_${quiz!.id}_respondido`, "true");
 
       // Iniciar a contagem regressiva
       const countdownInterval = setInterval(() => {
-        setContador((prev) => prev - 1);
+        setCountdown((prev) => prev - 1);
       }, 1000);
 
       // Redirecionar após a contagem regressiva
@@ -291,15 +309,30 @@ const QuizResponse: React.FC = () => {
     }
   };
 
+  // Função para randomizar a imagem do personagem
   const randomizeCharacter = () => {
-    const randomIndex = Math.floor(Math.random() * characterOptions.length);
-    setSelectedCharacter(randomIndex);
+    const randomIndex = Math.floor(Math.random() * predefinedCharacters.length);
+    setSelectedCharacter(predefinedCharacters[randomIndex]);
   };
 
+  // useEffect para randomizar personagem ao montar o componente
   useEffect(() => {
     randomizeCharacter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Função para lidar com o upload de imagem personalizada
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Converter a imagem para uma URL base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedCharacter(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Gerenciar as dimensões da janela para os confetes
   useEffect(() => {
@@ -316,15 +349,17 @@ const QuizResponse: React.FC = () => {
 
   // Animação com react-spring (Opcional)
   const props = useSpring({
-    opacity: quizEnviado ? 1 : 0,
-    transform: quizEnviado ? `translate(-50%, -50%)` : `translate(-50%, -60%)`,
+    opacity: quizSubmitted ? 1 : 0,
+    transform: quizSubmitted
+      ? `translate(-50%, -50%)`
+      : `translate(-50%, -60%)`,
     config: { tension: 200, friction: 20 },
   });
 
   return (
     <>
       {/* Exibir Confetes */}
-      {quizEnviado && (
+      {quizSubmitted && (
         <Confetti
           width={windowDimensions.width}
           height={windowDimensions.height}
@@ -334,82 +369,56 @@ const QuizResponse: React.FC = () => {
       )}
 
       {/* Exibir Mensagem de Sucesso */}
-      {quizEnviado && (
+      {quizSubmitted && (
         // Usando react-spring para animação (Opcional)
         <animated.div style={props} className="success-message">
           <h2>Quiz respondido com sucesso!</h2>
-          <p>Redirecionando para a tela de ranking em {contador}...</p>
+          <p>Redirecionando para a tela de ranking em {countdown}...</p>
         </animated.div>
       )}
 
       <div className="quiz-container">
-        {/* Verificação se já respondeu ao quiz */}
-        {quiz &&
-        localStorage.getItem(`quiz_${quiz.id}_respondido`) === "true" ? (
-          <div className="already-answered">
-            <h2>Você já respondeu a este quiz.</h2>
-            <button onClick={() => navigate(`/ranking?code=${quizCode}`)}>
-              Ver Ranking
-            </button>
+        {/* Exibir Mensagem de Espera se o Quiz Não Estiver em Progresso */}
+        {step === "quiz" && quizStatus !== "IN_PROGRESS" && (
+          <div className="waiting-container">
+            <img
+              src="https://i.imgur.com/6Iej2c3.png" // Substitua pela sua imagem lúdica
+              alt="Aguardando Início do Quiz"
+              className="waiting-image"
+            />
+            <h2>Aguardando início do Quiz...</h2>
+            <p>Por favor, aguarde até que o administrador inicie o quiz.</p>
+            <FaSpinner className="spinner" />
           </div>
-        ) : (
+        )}
+
+        {/* Permitir Responder ao Quiz Apenas se o Status Estiver em IN_PROGRESS */}
+        {step === "quiz" && quizStatus === "IN_PROGRESS" && (
           <>
-            {step === "nome" && (
-              <div className="input-nome">
-                <h2>Bem-vindo ao Quiz: {quiz?.title}</h2>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (nome.trim() === "") {
-                      alert("Por favor, insira seu nome.");
-                      return;
-                    }
-                    setStep("quiz");
-                  }}
+            {/* Verificação se já respondeu ao quiz */}
+            {quiz &&
+            localStorage.getItem(`quiz_${quiz.id}_respondido`) === "true" ? (
+              <div className="already-answered">
+                <h2>Você já respondeu a este quiz.</h2>
+                <button
+                  className="ranking-button"
+                  onClick={() => navigate(`/ranking?code=${quizCode}`)}
                 >
-                  <div className="character-display">
-                    <img
-                      src={characterOptions[selectedCharacter]}
-                      alt="Seu Personagem"
-                      className="character-image"
-                    />
-                    <button
-                      type="button"
-                      onClick={randomizeCharacter}
-                      className="dice-button"
-                    >
-                      <FaDice size={32} />
-                    </button>
-                  </div>
-
-                  <div className="input-group">
-                    <label htmlFor="nome">Seu Nome:</label>
-                    <input
-                      id="nome"
-                      type="text"
-                      value={nome}
-                      onChange={(e) => setNome(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <button type="submit">Iniciar Quiz</button>
-                </form>
+                  Ver Ranking
+                </button>
               </div>
-            )}
-
-            {step === "quiz" && (
+            ) : (
               <>
                 <h2>Quiz: {quiz?.title}</h2>
 
                 <div className="timer-container">
                   <CircularProgressbar
-                    value={tempoRestante}
-                    maxValue={tempoTotal}
-                    text={`${tempoRestante}s`}
+                    value={remainingTime}
+                    maxValue={totalTime}
+                    text={`${remainingTime}s`}
                     styles={buildStyles({
                       pathColor: `rgba(62, 152, 199, ${
-                        tempoRestante / tempoTotal
+                        remainingTime / totalTime
                       })`,
                       textColor: "#000",
                       trailColor: "#d6d6d6",
@@ -432,17 +441,17 @@ const QuizResponse: React.FC = () => {
                       )}
                       <div className="options-list">
                         {questions[currentQuestion].options.map(
-                          (opcao: Option, opIndex: number) => (
+                          (option: Option, opIndex: number) => (
                             <div
-                              key={opcao.id}
+                              key={option.id}
                               className={`option-container ${
-                                respostasUsuario[currentQuestion] === opIndex
+                                userResponses[currentQuestion] === opIndex
                                   ? "selected"
                                   : ""
                               }`}
                               onClick={() => handleOptionChange(opIndex)}
                             >
-                              <span>{opcao.description}</span>
+                              <span>{option.description}</span>
                             </div>
                           )
                         )}
@@ -454,18 +463,24 @@ const QuizResponse: React.FC = () => {
                 </div>
                 <div className="navigation-buttons">
                   {currentQuestion > 0 && (
-                    <button onClick={handlePrevious}>Anterior</button>
+                    <button onClick={handlePrevious} className="nav-button">
+                      Anterior
+                    </button>
                   )}
                   {currentQuestion < questions.length - 1 && (
-                    <button onClick={handleNext}>Próxima</button>
+                    <button onClick={handleNext} className="nav-button">
+                      Próxima
+                    </button>
                   )}
                   {currentQuestion === questions.length - 1 && (
                     <button
                       onClick={handleSubmit}
-                      disabled={quizEnviado}
-                      className={quizEnviado ? "disabled-button" : ""}
+                      disabled={quizSubmitted}
+                      className={`submit-button ${
+                        quizSubmitted ? "disabled-button" : ""
+                      }`}
                     >
-                      Enviar Respostas
+                      {quizSubmitted ? "Enviando..." : "Enviar Respostas"}
                     </button>
                   )}
                 </div>
@@ -473,10 +488,96 @@ const QuizResponse: React.FC = () => {
             )}
           </>
         )}
+
+        {/* Exibir Formulário de Criação de Perfil se estiver no passo 'character' */}
+        {step === "character" && (
+          <div className="character-creation">
+            <h2>Bem-vindo ao Quiz: {quiz?.title}</h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (name.trim() === "") {
+                  alert("Por favor, insira seu nome.");
+                  return;
+                }
+
+                if (selectedCharacter === "") {
+                  alert("Por favor, selecione uma imagem para seu personagem.");
+                  return;
+                }
+
+                try {
+                  const newGuest = await createGuest(
+                    name,
+                    uuidv4(),
+                    selectedCharacter
+                  );
+                  setGuestId(newGuest.id);
+                  await joinQuiz(newGuest.id, quiz!.code);
+                  console.log("Novo convidado:", newGuest);
+                  setStep("quiz");
+                } catch (error) {
+                  console.error(
+                    "Erro ao criar perfil e ingressar no quiz:",
+                    error
+                  );
+                  alert(
+                    "Ocorreu um erro ao criar seu perfil. Por favor, tente novamente."
+                  );
+                }
+              }}
+            >
+              <div className="character-display">
+                <img
+                  src={
+                    selectedCharacter || "https://i.imgur.com/x1byl5O.jpeg" // Imagem padrão
+                  }
+                  alt="Seu Personagem"
+                  className="character-image"
+                />
+                <div className="character-buttons">
+                  <button
+                    type="button"
+                    onClick={randomizeCharacter}
+                    className="dice-button"
+                    title="Randomizar Imagem"
+                  >
+                    <FaDice size={20} />
+                  </button>
+                  <label htmlFor="upload-image" className="upload-button">
+                    <FaUpload size={20} />
+                    <input
+                      type="file"
+                      id="upload-image"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="name">Seu Nome:</label>
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder="Digite seu nome"
+                />
+              </div>
+
+              <button type="submit" className="start-quiz-button">
+                Iniciar Quiz
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </>
   );
 };
 
 export default QuizResponse;
-  

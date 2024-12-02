@@ -116,7 +116,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
         <button
           onClick={() => {
             setQuizSelected(quiz);
-            navigate(`/quizadm`);
+            navigate(`/quizadm?codde=${quiz.code}`);
           }}
           style={menuItemStyles}
         >

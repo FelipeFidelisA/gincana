@@ -91,8 +91,9 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
   const optionsCache = useRef<{ [key: number]: Option[] }>({});
 
   useEffect(() => {
-    listQuizzes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setTimeout(() => {
+      listQuizzes();
+    }, 500);
   }, []);
 
   const listQuizzes = async () => {
@@ -175,14 +176,6 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
   ): Promise<Guest> => {
     try {
       const response = await api.post("/guest", { name, ip, profileUrl });
-      console.log("response");
-      console.log("response");
-      console.log(response);
-      console.log("response");
-      console.log("response");
-      console.log("response");
-      console.log("response");
-      console.log("Convidado criado com sucesso:", response.data);
       return response.data;
     } catch (error) {
       console.error("Erro ao criar o convidado:", error);

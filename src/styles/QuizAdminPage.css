@@ -1,0 +1,157 @@
+/* QuizAdminPage.css */
+
+/* Estilos de fundo */
+.admin-background {
+  background-image: url("https://i.imgur.com/6Iej2c3.png"); /* Substitua pela sua imagem de fundo lúdica */
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Container principal */
+.admin-container {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  max-width: 900px;
+  width: 100%;
+}
+
+/* Título */
+.admin-title {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Contagem de participantes */
+.admin-count {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 2rem;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Grade de convidados */
+.guests-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Cartão do convidado */
+.guest-card {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 180px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.guest-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Imagem do convidado */
+.guest-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+  border: 2px solid #02a09d;
+}
+
+/* Nome do convidado */
+.guest-name {
+  font-size: 1rem;
+  color: #333;
+  font-family: "Roboto", sans-serif;
+  margin-bottom: 0.5rem;
+}
+
+/* Botão de remoção */
+.remove-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.remove-button:hover {
+  transform: scale(1.1);
+}
+
+/* Botão de iniciar quiz */
+.start-quiz-button {
+  padding: 0.8rem 2.5rem;
+  font-size: 1.2rem;
+  background-color: #02a09d;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  font-family: "Roboto", sans-serif;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.start-quiz-button:hover:not(.disabled) {
+  background-color: #028a7e;
+  transform: translateY(-2px);
+}
+
+.start-quiz-button.disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+/* Mensagens de erro e carregamento */
+.error-message {
+  color: #e74c3c;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-family: "Roboto", sans-serif;
+}
+
+.loading-message {
+  color: #555;
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+  }
+
+  .guests-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .guest-card {
+    width: 90%;
+  }
+
+  .start-quiz-button {
+    width: 100%;
+  }
+}
