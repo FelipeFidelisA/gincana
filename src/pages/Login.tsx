@@ -8,14 +8,14 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({
+  /* const [credentials, setCredentials] = useState({
     username: "marceline@mail.com",
     password: "2308",
-  });
-  /*   const [credentials, setCredentials] = useState({
+  }); */
+  const [credentials, setCredentials] = useState({
     username: "",
     password: "",
-  }); */
+  });
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = ({

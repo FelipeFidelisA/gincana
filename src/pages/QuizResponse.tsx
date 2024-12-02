@@ -121,7 +121,6 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  // Função para buscar perguntas
   const fetchQuestions = async (quizId: number) => {
     try {
       const fetchedQuestions = await listQuestions(quizId);
@@ -141,7 +140,6 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  // Função para listar opções
   const listOptions = async (questionId: number): Promise<Option[]> => {
     try {
       const options = await api.get<Option[]>(
@@ -159,7 +157,6 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  // useEffect para buscar o quiz ao montar o componente
   useEffect(() => {
     const checkIfAlreadyAnswered = () => {
       if (
@@ -174,10 +171,8 @@ const QuizResponse: React.FC = () => {
     fetchQuiz().then(() => {
       checkIfAlreadyAnswered();
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizCode]);
 
-  // Implementação do Polling para verificar o status do quiz
   useEffect(() => {
     if (!quizCode) return;
 
@@ -199,12 +194,11 @@ const QuizResponse: React.FC = () => {
       } catch (error) {
         console.error("Erro ao verificar status do quiz:", error);
       }
-    }, 1000); // 1 segundo para melhor desempenho
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [quizCode]);
 
-  // useEffect para o temporizador
   useEffect(() => {
     if (step !== "quiz" || !quiz) return;
 
@@ -217,17 +211,14 @@ const QuizResponse: React.FC = () => {
     } else {
       handleSubmit();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remainingTime, step, quiz]);
 
-  // Função para lidar com a seleção de uma opção
   const handleOptionChange = (optionIndex: number) => {
     const newResponses = [...userResponses];
     newResponses[currentQuestion] = optionIndex;
     setUserResponses(newResponses);
   };
 
-  // Funções para navegação entre perguntas
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
@@ -240,10 +231,9 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  // Função para submeter as respostas
   const handleSubmit = async () => {
     if (quizSubmitted) {
-      return; // Evita submissões múltiplas
+      return;
     }
 
     if (userResponses.length !== questions.length) {
@@ -257,7 +247,6 @@ const QuizResponse: React.FC = () => {
     }
 
     try {
-      // Calcular o número de respostas corretas
       let correctAnswers = 0;
       questions.forEach((question, index) => {
         const selectedOptionIndex = userResponses[index];
@@ -267,31 +256,24 @@ const QuizResponse: React.FC = () => {
         }
       });
 
-      // Definir a fórmula de pontuação
       const score = correctAnswers * 10 + remainingTime * 0.5;
 
-      // Enviar as respostas
       await submitResponses(guestId, quizCode!, 5000);
 
-      // Atualizar a pontuação do usuário
       await increaseScore(guestId, quiz!.code, score);
 
-      // Atualização para exibir confetes e mensagem de sucesso
       setQuizSubmitted(true);
       localStorage.setItem(`quiz_${quiz!.id}_respondido`, "true");
 
-      // Iniciar a contagem regressiva
       const countdownInterval = setInterval(() => {
         setCountdown((prev) => prev - 1);
       }, 1000);
 
-      // Redirecionar após a contagem regressiva
       const redirectTimeout = setTimeout(() => {
         clearInterval(countdownInterval);
         navigate(`/ranking?code=${quizCode}`);
       }, 3000);
 
-      // Limpar os temporizadores caso o componente seja desmontado
       return () => {
         clearInterval(countdownInterval);
         clearTimeout(redirectTimeout);
@@ -304,19 +286,15 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  // Função para randomizar a imagem do personagem
   const randomizeCharacter = () => {
     const randomIndex = Math.floor(Math.random() * predefinedCharacters.length);
     setSelectedCharacter(predefinedCharacters[randomIndex]);
   };
 
-  // useEffect para randomizar personagem ao montar o componente
   useEffect(() => {
     randomizeCharacter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Gerenciar as dimensões da janela para os confetes
   useEffect(() => {
     const handleResize = () => {
       setWindowDimensions({
@@ -329,7 +307,6 @@ const QuizResponse: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Animação com react-spring (Opcional)
   const props = useSpring({
     opacity: quizSubmitted ? 1 : 0,
     transform: quizSubmitted
@@ -352,7 +329,6 @@ const QuizResponse: React.FC = () => {
 
       {/* Exibir Mensagem de Sucesso */}
       {quizSubmitted && (
-        // Usando react-spring para animação (Opcional)
         <animated.div style={props} className="success-message">
           <h2>Quiz respondido com sucesso!</h2>
           <p>Redirecionando para a tela de ranking em {countdown}...</p>
@@ -364,7 +340,7 @@ const QuizResponse: React.FC = () => {
         {step === "quiz" && quizStatus !== "IN_PROGRESS" && (
           <div className="waiting-container">
             <img
-              src="https://i.imgur.com/6Iej2c3.png" // Substitua pela sua imagem lúdica
+              src="https://i.imgur.com/6Iej2c3.png"
               alt="Aguardando Início do Quiz"
               className="waiting-image"
             />
@@ -511,9 +487,7 @@ const QuizResponse: React.FC = () => {
             >
               <div className="character-display">
                 <img
-                  src={
-                    selectedCharacter || "https://i.imgur.com/x1byl5O.jpeg" // Imagem padrão
-                  }
+                  src={selectedCharacter || "https://i.imgur.com/x1byl5O.jpeg"}
                   alt="Seu Personagem"
                   className="character-image"
                 />
