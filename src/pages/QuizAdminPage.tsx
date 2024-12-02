@@ -80,7 +80,6 @@ const QuizAdminPage: React.FC = () => {
 
     // Limpar intervalo ao desmontar o componente
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizCode]);
 
   // Função para iniciar o quiz
@@ -147,6 +146,15 @@ const QuizAdminPage: React.FC = () => {
     }
   };
 
+  // Ordenar os participantes com base no guest.ip e depois em ordem alfabética pelo nome
+  const sortedGuests = React.useMemo(() => {
+    if (!quiz) return [];
+    return quiz.guests
+      .slice()
+      .sort((a, b) => a.ip.localeCompare(b.ip))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [quiz]);
+
   // Renderização condicional com base no estado do quiz
   return (
     <div className="admin-background">
@@ -162,32 +170,36 @@ const QuizAdminPage: React.FC = () => {
             </p>
 
             <div className="guests-grid">
-              {quiz.guests.map((guest) => (
-                <div key={guest.id} className="guest-card">
-                  <img
-                    src={guest.profileUrl}
-                    alt={guest.name}
-                    className="guest-image"
-                  />
-                  <p className="guest-name">{guest.name}</p>
-                  <button
-                    className="remove-button"
-                    onClick={() => handleRemoveGuest(guest.id)}
-                    disabled={removingGuestId === guest.id}
-                    title="Remover Convidado"
-                  >
-                    {removingGuestId === guest.id ? (
-                      "Removendo..."
-                    ) : (
-                      <IconContext.Provider
-                        value={{ color: "#e74c3c", size: "1.2em" }}
-                      >
-                        <FaTrashAlt />
-                      </IconContext.Provider>
-                    )}
-                  </button>
-                </div>
-              ))}
+              {sortedGuests.length > 0 ? (
+                sortedGuests.map((guest) => (
+                  <div key={guest.id} className="guest-card">
+                    <img
+                      src={guest.profileUrl}
+                      alt={guest.name}
+                      className="guest-image"
+                    />
+                    <p className="guest-name">{guest.name}</p>
+                    <button
+                      className="remove-button"
+                      onClick={() => handleRemoveGuest(guest.id)}
+                      disabled={removingGuestId === guest.id}
+                      title="Remover Convidado"
+                    >
+                      {removingGuestId === guest.id ? (
+                        "Removendo..."
+                      ) : (
+                        <IconContext.Provider
+                          value={{ color: "#e74c3c", size: "1.2em" }}
+                        >
+                          <FaTrashAlt />
+                        </IconContext.Provider>
+                      )}
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p>Nenhum participante no momento.</p>
+              )}
             </div>
 
             <button

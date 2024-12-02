@@ -2,7 +2,7 @@
 
 /* Estilos de fundo */
 .admin-background {
-  background-image: url("https://i.imgur.com/6Iej2c3.png"); /* Substitua pela sua imagem de fundo lúdica */
+  background-image: url("https://i.imgur.com/NniFL09.png"); /* Substitua pela sua imagem de fundo lúdica */
   background-size: cover;
   background-position: center;
   width: 100vw;
@@ -14,7 +14,7 @@
 
 /* Container principal */
 .admin-container {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.5);
   padding: 2rem;
   border-radius: 12px;
   text-align: center;
