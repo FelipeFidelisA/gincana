@@ -1,6 +1,7 @@
 // components/AddQuiz.tsx
 import React, { useState } from "react";
 import { useQuizApi } from "../context/QuizApiContext";
+import { useNavigate } from "react-router-dom";
 
 interface Option {
   id: number;
@@ -17,7 +18,7 @@ interface Question {
 
 const AddQuiz: React.FC = () => {
   const { createQuiz, createQuestion, createOption } = useQuizApi();
-
+  const navigate = useNavigate();
   const [quizTitle, setQuizTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([
     {
@@ -163,21 +164,6 @@ const AddQuiz: React.FC = () => {
           question.description,
           quizId + 1
         );
-
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:", newQuestion);
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
-        console.log("  newQuestion:");
         const questionId = newQuestion.id;
         if (!questionId) {
           throw new Error(
@@ -187,31 +173,16 @@ const AddQuiz: React.FC = () => {
           );
         }
         for (const [oIndex, option] of question.options.entries()) {
+          console.log("🚀 ~ handleSubmit ~ oIndex:", oIndex)
           console.log(
             "  option:",
             option.description,
             option.isRight,
             questionId + 1
           );
-          await createOption(
-            option.description,
-            option.isRight,
-            questionId
-          );
-          console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-          console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-          console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-          console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-          console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-          console.log(
-            `Opção ${oIndex + 1} para a Pergunta ${
-              qIndex + 1
-            } criada com sucesso: "${option.description}"`
-          );
+          await createOption(option.description, option.isRight, questionId);
         }
       }
-
-      alert("Quiz criado com sucesso!");
       setQuizTitle("");
       setQuestions([
         {
@@ -224,6 +195,7 @@ const AddQuiz: React.FC = () => {
           ],
         },
       ]);
+      navigate("/manage");
     } catch (error: any) {
       console.error("2Erro ao criar o quiz:", error);
       alert(
