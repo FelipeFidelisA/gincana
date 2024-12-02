@@ -328,7 +328,7 @@ const QuizResponse: React.FC = () => {
         {step === "quiz" && quizStatus !== "IN_PROGRESS" && (
           <div className="waiting-container">
             <img
-              src="https://i.imgur.com/6Iej2c3.png"
+              src="https://i.imgur.com/nhR1ye7.jpeg"
               alt="Aguardando Início do Quiz"
               className="waiting-image"
             />
