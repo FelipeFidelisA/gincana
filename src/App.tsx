@@ -10,6 +10,7 @@ import { QuizApiProvider } from "./context/QuizApiContext";
 import Home from "./pages/Home";
 import QuizManagement from "./components/QuizManagement";
 import QuizAdminPage from "./pages/QuizAdminPage";
+import Ranking from "./components/Ranking";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
               <Route path="/qrview" element={<QrView />} />
               <Route path="/respond" element={<QuizResponse />} />
               <Route path="/quizadm" element={<QuizAdminPage />} />
+              <Route path="/ranking" element={<Ranking />} />
               <Route path="/" element={<Home />} />
             </Routes>
           </Router>

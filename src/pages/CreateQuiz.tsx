@@ -9,7 +9,7 @@ const CreateQuiz: React.FC = () => {
     if (quizTitle.trim()) {
       await createQuiz(quizTitle);
       setQuizTitle("");
-      listQuizzes(); // Atualiza a lista de quizzes
+      listQuizzes();
     }
   };
 

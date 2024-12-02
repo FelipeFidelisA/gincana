@@ -111,7 +111,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
       </button>
       <div style={menuStyles}>
         <button onClick={() => openModal(quiz)} style={menuItemStyles}>
-          Ver Respostas
+          Ver Detalhes
         </button>
         <button
           onClick={() => {

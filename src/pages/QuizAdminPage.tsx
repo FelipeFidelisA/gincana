@@ -1,54 +1,92 @@
-// src/pages/QuizAdminPage.tsx
-
 import React, { useState } from "react";
 import { useQuizApi } from "../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
-import { api } from "../api"; // Certifique-se de que o caminho está correto
+import { api } from "../api";
+import { FaTrashAlt } from "react-icons/fa";
+import { IconContext } from "react-icons";
 
 const QuizAdminPage: React.FC = () => {
   const { quizSelected, listQuizzes, setQuizSelected } = useQuizApi();
-  const [isStarting, setIsStarting] = useState(false);
   const navigate = useNavigate();
+  const [isStarting, setIsStarting] = useState(false);
+  const [removingGuestId, setRemovingGuestId] = useState<number | null>(null);
 
-  // Se nenhum quiz estiver selecionado, exibe uma mensagem
   if (!quizSelected) {
     return (
       <div style={noQuizStyle}>
-        <p>Nenhum quiz selecionado.</p>
+        <p style={noQuizTextStyle}>Nenhum quiz selecionado.</p>
       </div>
     );
   }
 
-  // Função para obter os headers de autenticação
   const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("authToken")}`,
   });
 
-  // Função para iniciar o quiz
   const handleStartQuiz = async () => {
-    if (window.confirm("Você tem certeza que deseja iniciar este quiz?")) {
-      setIsStarting(true);
-      try {
-        // Supondo que o endpoint para iniciar o quiz seja PUT /quiz/{id}/start
-        const response = await api.put(
-          `/quiz/${quizSelected.id}/start`,
-          {},
-          { headers: getAuthHeaders() }
-        );
+    setIsStarting(true);
+    try {
+      const response = await api.put(
+        `/quiz`,
+        {
+          id: quizSelected.id,
+          title: quizSelected.title,
+          status: "IN_PROGRESS",
+        },
+        { headers: getAuthHeaders() }
+      );
+      const updatedQuiz = response.data;
+      console.log("🚀 ~ handleStartQuiz ~ updatedQuiz:", updatedQuiz);
+      setQuizSelected(updatedQuiz);
+      listQuizzes();
+      navigate("/ranking?code=" + quizSelected.code);
+    } catch (error) {
+      console.error("Erro ao iniciar o quiz:", error);
+      alert("Ocorreu um erro ao iniciar o quiz. Por favor, tente novamente.");
+    } finally {
+      setIsStarting(false);
+    }
+  };
 
-        // Atualiza o quiz selecionado com os novos dados retornados pela API
-        const updatedQuiz = response.data;
-        setQuizSelected(updatedQuiz);
-        listQuizzes();
+  const handleRemoveGuest = async (guestId: number) => {
+    const confirmRemove = window.confirm(
+      "Tem certeza de que deseja remover este convidado?"
+    );
+    if (!confirmRemove) return;
 
-        // Redireciona para uma página de confirmação ou para a página do quiz em andamento
-        navigate("/quizstarted"); // Ajuste a rota conforme necessário
-      } catch (error) {
-        console.error("Erro ao iniciar o quiz:", error);
-        alert("Ocorreu um erro ao iniciar o quiz. Por favor, tente novamente.");
-      } finally {
-        setIsStarting(false);
-      }
+    setRemovingGuestId(guestId);
+    console.log(`Bearer ${localStorage.getItem("authToken")}`)
+    console.log(`Bearer ${localStorage.getItem("authToken")}`)
+    console.log(`Bearer ${localStorage.getItem("authToken")}`)
+    console.log(`Bearer ${localStorage.getItem("authToken")}`)
+    console.log(`Bearer ${localStorage.getItem("authToken")}`)
+    console.log(`Bearer ${localStorage.getItem("authToken")}`)
+    try {
+      await api.delete(`https://api-teste-a.5lsiua.easypanel.host/quiz/guest`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        data: {
+          guestId: guestId,
+          quizCode: quizSelected.code,
+        },
+      });
+      alert("Convidado removido com sucesso.");
+
+      setQuizSelected({
+        ...quizSelected,
+        guests: quizSelected.guests.filter(
+          (guest: any) => guest.id !== guestId
+        ),
+      });
+      listQuizzes();
+    } catch (error) {
+      console.error("Erro ao remover o convidado:", error);
+      alert(
+        "Ocorreu um erro ao remover o convidado. Por favor, tente novamente."
+      );
+    } finally {
+      setRemovingGuestId(null);
     }
   };
 
@@ -59,8 +97,40 @@ const QuizAdminPage: React.FC = () => {
         <p style={countStyles}>
           Número de participantes: {quizSelected.guests.length}
         </p>
+        <div style={guestsContainerStyles}>
+          {quizSelected.guests.map((guest: any) => (
+            <div key={guest.id} style={guestCardStyles}>
+              <img
+                src={guest.profileUrl}
+                alt={guest.name}
+                style={guestImageStyles}
+              />
+              <p style={guestNameStyles}>{guest.name}</p>
+              {/* <button
+                style={removeButtonStyles}
+                onClick={() => handleRemoveGuest(guest.id)}
+                disabled={removingGuestId === guest.id}
+                title="Remover Convidado"
+              >
+                {removingGuestId === guest.id ? (
+                  "Removendo..."
+                ) : (
+                  <IconContext.Provider
+                    value={{ color: "#e74c3c", size: "1.2em" }}
+                  >
+                    <FaTrashAlt />
+                  </IconContext.Provider>
+                )}
+              </button> */}
+            </div>
+          ))}
+        </div>
         <button
-          style={buttonStyles}
+          style={
+            isStarting
+              ? { ...buttonStyles, ...buttonDisabledStyles }
+              : buttonStyles
+          }
           onClick={handleStartQuiz}
           disabled={isStarting}
         >
@@ -71,10 +141,8 @@ const QuizAdminPage: React.FC = () => {
   );
 };
 
-// Estilos Inline
-
 const backgroundStyles: React.CSSProperties = {
-  backgroundImage: 'url("https://example.com/background.jpg")', // Substitua pela URL da sua imagem ou pelo caminho local
+  backgroundImage: 'url("https://example.com/background.jpg")',
   backgroundSize: "cover",
   backgroundPosition: "center",
   width: "100vw",
@@ -82,26 +150,78 @@ const backgroundStyles: React.CSSProperties = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  padding: "1rem",
+  boxSizing: "border-box",
 };
 
 const containerStyles: React.CSSProperties = {
-  backgroundColor: "rgba(255, 255, 255, 0.8)",
-  padding: "2rem 3rem",
-  borderRadius: "10px",
+  backgroundColor: "rgba(255, 255, 255, 0.95)",
+  padding: "2rem",
+  borderRadius: "12px",
   textAlign: "center",
-  boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+  boxShadow: "0 8px 30px rgba(0, 0, 0, 0.12)",
+  maxWidth: "900px",
+  width: "100%",
 };
 
 const titleStyles: React.CSSProperties = {
   fontSize: "2.5rem",
   color: "#333",
-  marginBottom: "1.5rem",
+  marginBottom: "1rem",
+  fontFamily: "'Roboto', sans-serif",
 };
 
 const countStyles: React.CSSProperties = {
-  fontSize: "1.5rem",
+  fontSize: "1.2rem",
   color: "#555",
   marginBottom: "2rem",
+  fontFamily: "'Roboto', sans-serif",
+};
+
+const guestsContainerStyles: React.CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  gap: "1.5rem",
+  marginBottom: "2rem",
+};
+
+const guestCardStyles: React.CSSProperties = {
+  backgroundColor: "#f9f9f9",
+  padding: "1.5rem",
+  borderRadius: "12px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+  textAlign: "center",
+  width: "180px",
+  position: "relative",
+  transition: "transform 0.2s, box-shadow 0.2s",
+  cursor: "default",
+};
+
+const guestImageStyles: React.CSSProperties = {
+  width: "100px",
+  height: "100px",
+  borderRadius: "50%",
+  objectFit: "cover",
+  marginBottom: "0.5rem",
+  border: "2px solid #02A09D",
+};
+
+const guestNameStyles: React.CSSProperties = {
+  fontSize: "1rem",
+  color: "#333",
+  fontFamily: "'Roboto', sans-serif",
+  marginBottom: "0.5rem",
+};
+
+const removeButtonStyles: React.CSSProperties = {
+  position: "absolute",
+  top: "10px",
+  right: "10px",
+  background: "transparent",
+  border: "none",
+  cursor: "pointer",
+  transition: "transform 0.2s",
 };
 
 const buttonStyles: React.CSSProperties = {
@@ -112,7 +232,14 @@ const buttonStyles: React.CSSProperties = {
   border: "none",
   borderRadius: "5px",
   cursor: "pointer",
-  transition: "background-color 0.3s ease",
+  transition: "background-color 0.3s ease, transform 0.2s",
+  fontFamily: "'Roboto', sans-serif",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+};
+
+const buttonDisabledStyles: React.CSSProperties = {
+  backgroundColor: "#a0a0a0",
+  cursor: "not-allowed",
 };
 
 const noQuizStyle: React.CSSProperties = {
@@ -120,6 +247,13 @@ const noQuizStyle: React.CSSProperties = {
   justifyContent: "center",
   alignItems: "center",
   height: "100vh",
+  backgroundColor: "#f0f0f0",
+};
+
+const noQuizTextStyle: React.CSSProperties = {
+  fontSize: "1.5rem",
+  color: "#666",
+  fontFamily: "'Roboto', sans-serif",
 };
 
 export default QuizAdminPage;

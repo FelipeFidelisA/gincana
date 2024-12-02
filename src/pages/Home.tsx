@@ -1,16 +1,19 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
   const [roomCode, setRoomCode] = useState("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if (/^[a-zA-Z0-9]*$/.test(value) && value.length <= 6) {
-      setRoomCode(value.toLowerCase());
+    if (/^[a-zA-Z0-9]*$/.test(value) && value.length <= 10) {
+      setRoomCode(value.toUpperCase());
     }
   };
 
+  const navigate = useNavigate();
   const handleSubmit = () => {
+    navigate("/respond?code=" + roomCode);
   };
 
   const containerStyle: React.CSSProperties = {
@@ -39,9 +42,9 @@ const Home: React.FC = () => {
     borderRadius: "20px",
     padding: "2rem",
     width: "80%",
-    maxWidth: "400px",
+    maxWidth: "500px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-    maxHeight: "350px",
+    maxHeight: "400px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -56,12 +59,12 @@ const Home: React.FC = () => {
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    padding: "0.75rem 2rem 0.75rem 0.75rem",
+    padding: "0.75rem 1rem",
     marginBottom: "1rem",
-    fontSize: "1.5rem",
+    fontSize: "1.2rem",
     fontWeight: "bold",
     textAlign: "center",
-    borderRadius: "20px",
+    borderRadius: "10px",
     border: "1px solid #ccc",
     fontFamily: "Poppins, sans-serif",
     textTransform: "uppercase",
@@ -75,8 +78,8 @@ const Home: React.FC = () => {
     backgroundColor: "#2575fc",
     color: "#fff",
     border: "none",
-    borderRadius: "20px",
-    fontSize: "1.5rem",
+    borderRadius: "10px",
+    fontSize: "1.2rem",
     cursor: "pointer",
     transition: "background-color 0.3s",
   };
@@ -87,7 +90,6 @@ const Home: React.FC = () => {
 
   const [buttonHover, setButtonHover] = useState(false);
 
-  // Estilo do rodapé
   const footerStyle: React.CSSProperties = {
     position: "absolute",
     bottom: "10px",
@@ -110,7 +112,7 @@ const Home: React.FC = () => {
             onChange={handleInputChange}
             style={inputStyle}
             autoFocus
-            maxLength={6}
+            maxLength={10}
           />
         </div>
         <button
@@ -122,7 +124,9 @@ const Home: React.FC = () => {
           Iniciar Quiz
         </button>
       </div>
-      <a href="/login" style={footerStyle}>Login</a> 
+      <a href="/login" style={footerStyle}>
+        Login
+      </a>
     </div>
   );
 };

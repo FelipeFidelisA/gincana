@@ -2,7 +2,12 @@ import React, { useState } from "react";
 
 interface CreateQuestionFormProps {
   quizId: number;
-  onCreateQuestion: (title: string, description: string, quizId: number, options: any[]) => void;
+  onCreateQuestion: (
+    title: string,
+    description: string,
+    quizId: number,
+    options: any[]
+  ) => void;
 }
 
 const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
@@ -11,7 +16,9 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
 }) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [options, setOptions] = useState<{ description: string; isRight: boolean }[]>([
+  const [options, setOptions] = useState<
+    { description: string; isRight: boolean }[]
+  >([
     { description: "", isRight: false },
     { description: "", isRight: false },
     { description: "", isRight: false },
@@ -41,7 +48,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
   };
 
   const handleCreate = () => {
-    if (title && description && options.every(option => option.description)) {
+    if (title && description && options.every((option) => option.description)) {
       onCreateQuestion(title, description, quizId, options);
       setTitle("");
       setDescription("");
@@ -71,7 +78,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
         value={description}
         onChange={handleDescriptionChange}
       />
-      
+
       <h4>Opções</h4>
       {options.map((option, index) => (
         <div key={index}>

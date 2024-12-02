@@ -136,23 +136,14 @@ const QuizModal: React.FC<QuizModalProps> = ({ modalData, closeModal }) => {
                   <th style={tableHeaderStyle}>Nome</th>
                   <th style={tableHeaderStyle}>IP</th>
                   <th style={tableHeaderStyle}>Pontuação</th>
-                  <th style={tableHeaderStyle}>Perfil</th>
                 </tr>
               </thead>
               <tbody>
-                {quiz.guests.map((guest) => (
+                {quiz.guests.map((guest: any) => (
                   <tr key={guest.id}>
                     <td style={tableCellStyle}>{guest.name}</td>
                     <td style={tableCellStyle}>{guest.ip}</td>
-                    <td style={tableCellStyle}>
-                      <a
-                        href={guest.profileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Ver Perfil
-                      </a>
-                    </td>
+                    <td style={tableCellStyle}>{guest.score}</td>
                   </tr>
                 ))}
               </tbody>
