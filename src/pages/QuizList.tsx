@@ -44,8 +44,8 @@ const QuizList = ({
             {/* QR Code */}
             <div style={{ position: "relative", width: "150px", height: "150px" }}>
               <QRCodeCanvas
-                value={`http://localhost/respond?code=${quiz.code}`}
-                size={150}
+              value={`${window.location.origin}/respond?code=${quiz.code}`}
+              size={150}
               />
             </div>
 

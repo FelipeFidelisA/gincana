@@ -2,19 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { api } from "../api";
-import "../styles/Ranking.css";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  LabelList,
-} from "recharts";
-import CountUp from "react-countup";
+import { api } from "../api"; 
+import "../styles/Ranking.css"; 
 
 interface Quiz {
   id: number;
@@ -30,6 +19,7 @@ interface User {
   id: number;
   name: string;
   email: string;
+  // Adicione outros campos se necessário
 }
 
 interface Guest {
@@ -66,7 +56,7 @@ const Ranking: React.FC = () => {
 
     const fetchRanking = async () => {
       try {
-        const response = await api.get<Quiz>(`/quiz/code/${quizCode}`, {
+        const response = await api.get<Quiz>(`/quiz/ranking/${quizCode}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
@@ -120,81 +110,37 @@ const Ranking: React.FC = () => {
   }
 
   // Ordenar os guests pelo score em ordem decrescente
-  let sortedGuests = [...quiz.guests].sort((a, b) => b.score - a.score);
-
-  // Excluir os guests com score 0
-  sortedGuests = sortedGuests.filter((guest) => guest.score > 0);
-
-  // Aumentar a precisão do score para evitar empates
-  sortedGuests = sortedGuests.map((guest) => ({
-    ...guest,
-    score: parseFloat(guest.score.toFixed(2)),
-  }));
-
-  // Pegar os top 10
-  const topGuests = sortedGuests.slice(0, 10);
-
-  // Preparar os dados para o gráfico
-  const data = topGuests.map((guest) => ({
-    name: guest.name,
-    score: guest.score,
-    profileUrl: guest.profileUrl,
-    id: guest.id,
-  }));
-
-  // Definir cores para as barras (opcional)
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#d0ed57", "#a4de6c"];
+  const sortedGuests = [...quiz.guests].sort((a, b) => b.score - a.score);
 
   return (
     <div className="ranking-container">
       <h1>Ranking - {quiz.title}</h1>
-      <div className="chart-container">
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart
-            data={data}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            barCategoryGap="20%"
-          >
-            <XAxis dataKey="name" tick={{ fill: "#333", fontSize: 14 }} />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="score" animationDuration={1500}>
-              {data.map((index: any) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
+      <table className="ranking-table">
+        <thead>
+          <tr>
+            <th>Posição</th>
+            <th>Perfil</th>
+            <th>Nome</th>
+            <th>Pontuação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedGuests.map((guest, index) => (
+            <tr key={guest.id}>
+              <td>{index + 1}</td>
+              <td>
+                <img
+                  src={guest.profileUrl}
+                  alt={`${guest.name} Perfil`}
+                  className="profile-image"
                 />
-              ))}
-              <LabelList
-                dataKey="score"
-                position="top"
-                content={({ x, y, value }) => (
-                  <text x={x} y={y} dy={-10} fill="#333" textAnchor="middle">
-                    <CountUp
-                      end={typeof value === "number" ? value : 0}
-                      duration={1.5}
-                      decimals={2}
-                    />
-                  </text>
-                )}
-              />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      {/* Listar os demais participantes */}
-      {sortedGuests.length > 10 && (
-        <div className="other-participants">
-          <h2>Outros Participantes</h2>
-          <ul>
-            {sortedGuests.slice(10).map((guest, index) => (
-              <li key={guest.id}>
-                {index + 11}. {guest.name} - {guest.score}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+              </td>
+              <td>{guest.name}</td>
+              <td>{guest.score}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <button onClick={() => navigate("/")} className="back-button">
         Voltar para Home
       </button>
