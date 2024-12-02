@@ -9,7 +9,8 @@ const QuizCard = ({ quiz, openModal }: any) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { setQuizSelected } = useQuizApi();
   // Função para gerar URL do quiz
-  const generateQuizURL = (quiz: any) => `https://example.com/quiz/${quiz.id}`;
+  const generateQuizURL = (quiz: any) =>
+    `${window.location.origin}/respond?code=${quiz.code}`;
 
   // Função para remover o quiz
   // Estilos globais
@@ -116,7 +117,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
         <button
           onClick={() => {
             setQuizSelected(quiz);
-            navigate(`/quizadm?codde=${quiz.code}`);
+            navigate(`/quizadm?code=${quiz.code}`);
           }}
           style={menuItemStyles}
         >

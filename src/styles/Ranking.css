@@ -1,44 +1,98 @@
 /* src/styles/Ranking.css */
 
 .ranking-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  padding: 2rem;
   text-align: center;
+  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.ranking-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+.ranking-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #333;
+  font-family: "Roboto", sans-serif;
 }
 
-.ranking-table th,
-.ranking-table td {
-  border: 1px solid #ddd;
-  padding: 12px;
+.ranking-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
 }
 
-.ranking-table th {
-  background-color: #f2f2f2;
+.chart-container {
+  flex: 1;
+  min-width: 300px;
+  max-width: 700px;
 }
 
-.profile-image {
-  width: 50px;
-  height: 50px;
+.others-container {
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.others-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  font-family: "Roboto", sans-serif;
+}
+
+.others-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.others-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.profile-image-small {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.5rem;
+  border: 2px solid #02A09D;
+}
+
+.guest-name {
+  flex: 1;
+  font-size: 1rem;
+  color: #333;
+  font-family: "Roboto", sans-serif;
+}
+
+.guest-score {
+  font-size: 1rem;
+  color: #555;
+  font-family: "Roboto", sans-serif;
 }
 
 .back-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #4caf50;
+  margin-top: 2rem;
+  padding: 0.8rem 2rem;
+  background: #02A09D;
+  color: #fff;
   border: none;
-  color: white;
+  border-radius: 25px;
+  font-size: 1.1rem;
   cursor: pointer;
-  border-radius: 5px;
+  transition: background 0.3s ease, transform 0.2s;
+  font-family: "Roboto", sans-serif;
 }
 
 .back-button:hover {
-  background-color: #45a049;
+  background: #028a7e;
+  transform: translateY(-2px);
 }
