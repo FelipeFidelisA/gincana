@@ -89,11 +89,6 @@ const QuizCard = ({ quiz, openModal }: any) => {
     fontWeight: 500,
   };
 
-  const removeButtonStyles: React.CSSProperties = {
-    ...menuItemStyles,
-    backgroundColor: "#DF5C0F",
-  };
-
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
@@ -122,18 +117,6 @@ const QuizCard = ({ quiz, openModal }: any) => {
           style={menuItemStyles}
         >
           Iniciar
-        </button>
-        <button
-          onClick={() => {
-            if (
-              window.confirm("Você tem certeza que deseja remover este quiz?")
-            ) {
-              console.log("Removendo quiz...");
-            }
-          }}
-          style={removeButtonStyles}
-        >
-          Remover
         </button>
       </div>
     </div>

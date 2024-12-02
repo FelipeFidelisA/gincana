@@ -56,7 +56,7 @@ const Ranking: React.FC = () => {
 
     const fetchRanking = async () => {
       try {
-        const response = await api.get<Quiz>(`/quiz/ranking/${quizCode}`);
+        const response = await api.get<Quiz>(`/quiz/code/${quizCode}`);
         setQuiz(response.data);
         setLoading(false);
       } catch (err: any) {

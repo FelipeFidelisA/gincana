@@ -4,6 +4,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { IconContext } from "react-icons";
 import { api } from "../api";
 import "../styles/QuizAdminPage.css";
+import { QRCodeCanvas } from "qrcode.react";
 
 interface Quiz {
   id: number;
@@ -152,6 +153,12 @@ const QuizAdminPage: React.FC = () => {
       .sort((a, b) => a.ip.localeCompare(b.ip))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [quiz]);
+  const generateQuizURL = (quiz: any) =>
+    `${window.location.origin}/respond?code=${quiz.code}`;
+
+  const qrCodeStyles: React.CSSProperties = {
+    marginBottom: "1.5rem",
+  };
 
   // Renderização condicional com base no estado do quiz
   return (
@@ -159,54 +166,65 @@ const QuizAdminPage: React.FC = () => {
       <div className="admin-container">
         {error && <p className="error-message">{error}</p>}
         {!error && !quiz && <p className="loading-message">Carregando...</p>}
-
         {quiz && (
           <>
             <h1 className="admin-title">{quiz.title}</h1>
-            <p className="admin-count">
-              Número de participantes: {quiz.guests.length}
-            </p>
-
-            <div className="guests-grid">
-              {sortedGuests.length > 0 ? (
-                sortedGuests.map((guest) => (
-                  <div key={guest.id} className="guest-card">
-                    <img
-                      src={guest.profileUrl}
-                      alt={guest.name}
-                      className="guest-image"
-                    />
-                    <p className="guest-name">{guest.name}</p>
-                    <button
-                      className="remove-button"
-                      onClick={() => handleRemoveGuest(guest.id)}
-                      disabled={removingGuestId === guest.id}
-                      title="Remover Convidado"
-                    >
-                      {removingGuestId === guest.id ? (
-                        "Removendo..."
-                      ) : (
-                        <IconContext.Provider
-                          value={{ color: "#e74c3c", size: "1.2em" }}
+            <div className="main-content">
+              <div className="qr-code-section">
+                <QRCodeCanvas
+                  value={generateQuizURL(quiz)}
+                  size={300} // Aumentado o tamanho do QR Code
+                  style={qrCodeStyles}
+                />
+                <p className="admin-count">
+                  Número de participantes: {quiz.guests.length}
+                </p>
+                <button
+                  className={`start-quiz-button ${
+                    isStarting ? "disabled" : ""
+                  }`}
+                  onClick={handleStartQuiz}
+                  disabled={isStarting}
+                >
+                  {isStarting ? "Iniciando..." : "Iniciar Quiz"}
+                </button>
+              </div>
+              <div className="guest-list-section">
+                <h2 className="guest-list-title">Participantes</h2>
+                <div className="guests-grid">
+                  {sortedGuests.length > 0 ? (
+                    sortedGuests.map((guest) => (
+                      <div key={guest.id} className="guest-card">
+                        <img
+                          src={guest.profileUrl}
+                          alt={guest.name}
+                          className="guest-image"
+                        />
+                        <p className="guest-name">{guest.name}</p>
+                        <button
+                          className="remove-button"
+                          onClick={() => handleRemoveGuest(guest.id)}
+                          disabled={removingGuestId === guest.id}
+                          title="Remover Convidado"
                         >
-                          <FaTrashAlt />
-                        </IconContext.Provider>
-                      )}
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <p>Nenhum participante no momento.</p>
-              )}
+                          {removingGuestId === guest.id ? (
+                            "Removendo..."
+                          ) : (
+                            <IconContext.Provider
+                              value={{ color: "#e74c3c", size: "1.2em" }}
+                            >
+                              <FaTrashAlt />
+                            </IconContext.Provider>
+                          )}
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p>Nenhum participante no momento.</p>
+                  )}
+                </div>
+              </div>
             </div>
-
-            <button
-              className={`start-quiz-button ${isStarting ? "disabled" : ""}`}
-              onClick={handleStartQuiz}
-              disabled={isStarting}
-            >
-              {isStarting ? "Iniciando..." : "Iniciar Quiz"}
-            </button>
           </>
         )}
       </div>
