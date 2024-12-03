@@ -212,7 +212,7 @@ const AddQuiz: React.FC = () => {
 
   return (
     <div className="container">
-      <h2>Criar Novo Quiz</h2>
+      <h1>Criar Novo Quiz</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="quizTitle">Título do Quiz:</label>
