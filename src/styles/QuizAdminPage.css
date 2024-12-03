@@ -11,7 +11,10 @@
 }
 
 .admin-container {
-  background-color: rgba(255, 255, 255, 0.5);
+  margin: 10px;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.233);
+  background-color: transparent;
   padding: 2rem;
   border-radius: 12px;
   text-align: center;
@@ -22,9 +25,10 @@
 
 .admin-title {
   font-size: 2.5rem;
-  color: #333;
+  color: #fff;
   margin-bottom: 1rem;
   font-family: "Poppins", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .main-content {
@@ -63,9 +67,10 @@
 
 .remaining-guests-title {
   font-size: 1.5rem;
-  color: #333;
+  color: #fff;
   margin-bottom: 1rem;
   font-family: "Poppins", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .remaining-guests-list {
@@ -90,8 +95,9 @@
 
 .remaining-guest-name {
   font-size: 1rem;
-  color: #333;
+  color: #fff;
   font-family: "Poppins", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .guest-list-section {
@@ -101,9 +107,10 @@
 
 .guest-list-title {
   font-size: 1.8rem;
-  color: #333;
+  color: #fff;
   margin-bottom: 1rem;
   font-family: "Poppins", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .guests-grid {
@@ -141,10 +148,11 @@
 
 .guest-name {
   font-size: 1.2rem;
-  color: #333;
+  color: #fff;
   font-family: "Poppins", sans-serif;
   margin-bottom: 0.5rem;
   font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .remove-button {
@@ -172,6 +180,7 @@
   transition: background-color 0.3s ease, transform 0.2s;
   font-family: "Poppins", sans-serif;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .start-quiz-button:hover:not(.disabled) {
@@ -189,19 +198,24 @@
   font-size: 1.2rem;
   margin-bottom: 1rem;
   font-family: "Poppins", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .loading-message {
   color: #555;
   font-size: 1.2rem;
   font-family: "Poppins", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .chart-title {
   font-size: 1.8rem;
-  color: #333;
+  color: #fff;
   margin-bottom: 1rem;
   font-family: "Poppins", sans-serif;
+  text-align: "center";
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
 }
 
 @media (max-width: 992px) {

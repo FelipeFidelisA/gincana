@@ -15,7 +15,8 @@ const QuizCard = ({ quiz, openModal }: any) => {
   const generateQuizURL = (quiz: any) =>
     `${window.location.origin}/respond?code=${quiz.code}`;
 
-  const toggleMenu = () => {
+  const toggleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation(); // Prevent the card's onClick from being triggered
     setIsMenuOpen((prevState) => !prevState);
   };
 
@@ -24,8 +25,13 @@ const QuizCard = ({ quiz, openModal }: any) => {
     navigate(`/quizadm?code=${quiz.code}`);
   };
 
+  const handleOpenModal = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation(); // Prevent the card's onClick from being triggered
+    openModal(quiz);
+  };
+
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         menuRef.current &&
         !menuRef.current.contains(event.target) &&
@@ -48,15 +54,16 @@ const QuizCard = ({ quiz, openModal }: any) => {
   }, [isMenuOpen]);
 
   return (
-    <div className="quiz-card">
-      <h2 className="quiz-card-code">{quiz.code}</h2>
-      <QRCodeCanvas
-        value={generateQuizURL(quiz)}
-        size={150}
-        className="quiz-card-qr-code"
-        includeMargin={false}
-      />
-      <h3 className="quiz-card-title">{quiz.title}</h3>
+    <div onClick={handleNavigateToQuizAdmin} className="quiz-card">
+      <div>
+        <h2 className="quiz-card-code">{quiz.code}</h2>
+        <QRCodeCanvas
+          value={generateQuizURL(quiz)}
+          size={150}
+          className="quiz-card-qr-code"
+        />
+        <h3 className="quiz-card-title">{quiz.title}</h3>
+      </div>
       <button
         className="menu-toggle-button"
         onClick={toggleMenu}
@@ -66,12 +73,15 @@ const QuizCard = ({ quiz, openModal }: any) => {
         <FaEllipsisV />
       </button>
       {isMenuOpen && (
-        <div className="menu" ref={menuRef}>
-          <button onClick={() => openModal(quiz)} className="menu-item">
+        <div
+          style={{
+            zIndex: 1000,
+          }}
+          className="menu"
+          ref={menuRef}
+        >
+          <button onClick={handleOpenModal} className="menu-item">
             Ver Detalhes
-          </button>
-          <button onClick={handleNavigateToQuizAdmin} className="menu-item">
-            Iniciar
           </button>
         </div>
       )}

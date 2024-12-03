@@ -7,6 +7,7 @@ import { api } from "../api";
 import "../styles/QuizAdminPage.css";
 import { QRCodeCanvas } from "qrcode.react";
 import { Bar } from "react-chartjs-2";
+import { useNavigate } from "react-router-dom";
 import {
   Chart as ChartJS,
   BarElement,
@@ -46,6 +47,7 @@ interface Question {
 }
 
 const QuizAdminPage: React.FC = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const quizCode: string | null = queryParams.get("code");
@@ -188,12 +190,65 @@ const QuizAdminPage: React.FC = () => {
             <div className="main-content">
               <div className="top-section">
                 <div className="qr-code-section">
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-start", // Alinha o conteúdo à direita
+                      marginBottom: "1rem",
+                      width: "100%",
+                      backgroundColor: "transparent",
+                    }}
+                  >
+                    <button
+                      style={{
+                        color: "#fff",
+                        padding: "0.5rem 1rem",
+                        border: "none",
+                        borderRadius: "0.5rem",
+                        cursor: "pointer",
+                        fontSize: "1rem",
+                        fontWeight: 600,
+                        alignSelf: "end",
+                        backdropFilter: "blur(10px)",
+                        backgroundColor: "rgba(0, 0, 0, 0.2)",
+                        transition:
+                          "background-color 0.3s ease, transform 0.3s ease", // Transição suave
+                      }}
+                      onMouseEnter={(e) => {
+                        // Altera a cor e aplica o translate (movimento)
+                        (e.target as HTMLElement).style.backgroundColor =
+                          "rgba(0, 0, 0, 0.4)";
+                        (e.target as HTMLElement).style.transform =
+                          "translateY(-5px)"; // Desloca para cima
+                      }}
+                      onMouseLeave={(e) => {
+                        // Reverte a cor e o movimento
+                        (e.target as HTMLElement).style.backgroundColor =
+                          "rgba(0, 0, 0, 0.2)";
+                        (e.target as HTMLElement).style.transform =
+                          "translateY(0)"; // Retorna ao normal
+                      }}
+                      onClick={() => navigate("/manage")}
+                    >
+                      Voltar ao menu
+                    </button>
+                  </div>
+
                   <QRCodeCanvas
                     value={generateQuizURL(quiz)}
                     size={300}
                     style={qrCodeStyles}
                   />
-                  <p className="admin-count">
+                  <p
+                    style={{
+                      color: "#fff",
+                      fontSize: "1.2rem",
+                      fontWeight: 600,
+                      textAlign: "center",
+                      padding: "1rem",
+                      textShadow: "0 0 5px rgba(0, 0, 0, 0.2)",
+                    }}
+                  >
                     Número de participantes: {quiz.guests.length}
                   </p>
                   <button
@@ -235,7 +290,17 @@ const QuizAdminPage: React.FC = () => {
                         </div>
                       ))
                     ) : (
-                      <p>Nenhum outro participante.</p>
+                      <p
+                        style={{
+                          textAlign: "center",
+                          fontSize: "1.2rem",
+                          color: "#fff",
+                          fontWeight: 600,
+                          textShadow: "0 0 5px rgba(0, 0, 0, 0.2)",
+                        }}
+                      >
+                        Nenhum outro participante.
+                      </p>
                     )}
                   </div>
                 </div>
@@ -271,7 +336,18 @@ const QuizAdminPage: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <p>Nenhum participante no momento.</p>
+                    <p
+                      style={{
+                        gridColumn: "1 / -1",
+                        textAlign: "center",
+                        fontSize: "1.2rem",
+                        color: "#fff",
+                        fontWeight: 600,
+                        textShadow: "0 0 5px rgba(0, 0, 0, 0.2)",
+                      }}
+                    >
+                      Nenhum participante no momento.
+                    </p>
                   )}
                 </div>
               </div>

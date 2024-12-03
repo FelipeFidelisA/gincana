@@ -202,17 +202,23 @@ const Ranking: React.FC = () => {
       </div>
       {otherGuests.length > 0 && (
         <div style={{ width: "100%", overflowX: "auto" }}>
-          <div style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "1rem",
-            marginBottom: "0.5rem",
-          }}>
-            <h2 style={{
-              color: "#fff",
-              fontFamily: "Poppins, sans-serif",
-              fontWeight: 600,
-            }}>Outros Participantes</h2>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "1rem",
+              marginBottom: "0.5rem",
+            }}
+          >
+            <h2
+              style={{
+                color: "#fff",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: 600,
+              }}
+            >
+              Outros Participantes
+            </h2>
           </div>
           <table className="ranking-table">
             <thead>
