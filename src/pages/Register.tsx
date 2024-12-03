@@ -58,7 +58,7 @@ const Register: React.FC = () => {
             navigate={navigate}
           />
         </div>
-        <div className="image-section" aria-hidden="true">
+        <div className="image-section">
         </div>
       </div>
       <footer className="footer">© 2024 Produzido por Sistemas de Informação</footer>

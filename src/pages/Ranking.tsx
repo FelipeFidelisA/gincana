@@ -1,5 +1,3 @@
-// src/components/Ranking.tsx
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../api";
@@ -19,7 +17,6 @@ interface User {
   id: number;
   name: string;
   email: string;
-  // Adicione outros campos se necessário
 }
 
 interface Guest {
@@ -66,15 +63,12 @@ const Ranking: React.FC = () => {
       }
     };
 
-    // Função para buscar o ranking a cada 0.3 segundos
     const intervalId = setInterval(() => {
       fetchRanking();
-    }, 300); // 300ms
+    }, 300);
 
-    // Busca imediata ao montar o componente
     fetchRanking();
 
-    // Limpar o intervalo ao desmontar o componente
     return () => clearInterval(intervalId);
   }, [quizCode, navigate]);
 
@@ -82,7 +76,6 @@ const Ranking: React.FC = () => {
     return (
       <div className="ranking-container">
         <h2>Carregando ranking...</h2>
-        {/* Você pode adicionar um spinner ou algum indicador de carregamento */}
       </div>
     );
   }
@@ -105,7 +98,6 @@ const Ranking: React.FC = () => {
     );
   }
 
-  // Ordenar os guests pelo score em ordem decrescente
   const sortedGuests = [...quiz.guests].sort((a, b) => b.score - a.score);
 
   return (

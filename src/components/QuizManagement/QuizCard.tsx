@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useNavigate } from "react-router-dom";
-import { FaEllipsisV } from "react-icons/fa"; // Ícone do menu
+import { FaEllipsisV } from "react-icons/fa";
 import { useQuizApi } from "../../context/QuizApiContext";
 
 const QuizCard = ({ quiz, openModal }: any) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const { setQuizSelected } = useQuizApi();
-  // Função para gerar URL do quiz
+
   const generateQuizURL = (quiz: any) =>
     `${window.location.origin}/respond?code=${quiz.code}`;
 
-  // Função para remover o quiz
-  // Estilos globais
   const cardStyles: React.CSSProperties = {
     backgroundColor: "#ffffff",
     borderRadius: "15px",
@@ -21,7 +19,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
     padding: "1rem",
     margin: "1rem auto",
     width: "100%",
-    maxWidth: "280px", // Reduzido para diminuir o tamanho do card
+    maxWidth: "280px",
     height: "auto",
     display: "flex",
     flexDirection: "column",
@@ -29,14 +27,14 @@ const QuizCard = ({ quiz, openModal }: any) => {
     justifyContent: "center",
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
     position: "relative",
-    fontFamily: "'Poppins', sans-serif", // Fonte Poppins
+    fontFamily: "'Poppins', sans-serif",
   };
 
   const headerStyles: React.CSSProperties = {
-    fontSize: "1.3rem", // Fonte do título um pouco menor
+    fontSize: "1.3rem",
     fontWeight: 600,
-    marginTop: "1rem", // Distância do título do QR Code
-    marginBottom: "0.8rem", // Distância reduzida
+    marginTop: "1rem",
+    marginBottom: "0.8rem",
     color: "#333",
     textAlign: "center",
     wordWrap: "break-word",
@@ -71,7 +69,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
     borderRadius: "8px",
     padding: "10px",
     display: menuOpen ? "block" : "none",
-    width: "200px", // Limita a largura do menu
+    width: "200px",
   };
 
   const menuItemStyles: React.CSSProperties = {
@@ -98,7 +96,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
       <h2 style={headerStyles}>{quiz.code}</h2>
       <QRCodeCanvas
         value={generateQuizURL(quiz)}
-        size={150} // Aumentado o tamanho do QR Code
+        size={150}
         style={qrCodeStyles}
       />
       <h3 style={headerStyles}>{quiz.title}</h3>

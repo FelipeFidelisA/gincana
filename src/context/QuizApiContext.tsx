@@ -1,4 +1,3 @@
-// context/QuizApiContext.tsx
 import React, {
   createContext,
   useContext,
@@ -87,7 +86,6 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [quizSelected, setQuizSelected] = useState<Quiz | null>(null);
 
-  // Cache para armazenar opções já buscadas
   const optionsCache = useRef<{ [key: number]: Option[] }>({});
 
   useEffect(() => {
@@ -124,14 +122,14 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
       console.log("Quiz criado com sucesso:", response.data);
-      await listQuizzes(); // Atualiza a lista de quizzes após a criação
+      await listQuizzes();
       const lastIndex = quizzes.length - 1;
       const lastQuiz = quizzes[lastIndex];
       console.log("Último quiz na lista após criação:", lastQuiz);
-      return lastQuiz.id; // Retorna o ID real do quiz criado
+      return lastQuiz.id;
     } catch (error) {
       console.error("1Erro ao criar o quiz:", error);
-      throw error; // Propaga o erro para que o chamador possa tratar
+      throw error;
     }
   };
 
@@ -220,7 +218,7 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
         `Pergunta criada com sucesso para o Quiz ID ${quizId}:`,
         response.data
       );
-      return response.data; // Retorna os dados da pergunta criada
+      return response.data;
     } catch (error) {
       console.error("Erro ao criar a pergunta:", error);
       throw error;
@@ -299,7 +297,6 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchOptionsForQuestion = async (
     questionId: number
   ): Promise<Option[]> => {
-    // Verifica se as opções já estão no cache
     if (optionsCache.current[questionId]) {
       console.log(`Opções para a Pergunta ID ${questionId} obtidas do cache.`);
       return optionsCache.current[questionId];
@@ -312,7 +309,7 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
         },
       });
       const options: Option[] = response.data;
-      // Armazena as opções no cache
+
       optionsCache.current[questionId] = options;
       console.log(
         `Opções para a Pergunta ID ${questionId} obtidas da API e armazenadas no cache:`,
@@ -334,14 +331,11 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
     value: string
   ): Promise<any> => {
     try {
-      const response = await api.put(
-        `/quiz/score/plus`,
-        {
-          guestId,
-          quizCode,
-          value,
-        }
-      );
+      const response = await api.put(`/quiz/score/plus`, {
+        guestId,
+        quizCode,
+        value,
+      });
       console.log(response);
       console.log(
         `Respostas enviadas com sucesso para o convidado ID ${guestId}.`
@@ -367,7 +361,7 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
         listQuestions,
         createOption,
         listOptions,
-        fetchOptionsForQuestion, // Adicionamos o novo método ao contexto
+        fetchOptionsForQuestion,
         quizSelected,
         setQuizSelected,
         submitResponses,

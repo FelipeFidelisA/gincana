@@ -38,7 +38,7 @@ const GuestManagement = ({ quizCode, onClose }: any) => {
       );
       if (response.status === 200) {
         console.log("Quiz started:", response.data);
-        fetchQuizData(); // Refresh quiz data after starting
+        fetchQuizData();
       }
     } catch (error) {
       console.error("Error starting quiz:", error);
@@ -82,11 +82,13 @@ const GuestManagement = ({ quizCode, onClose }: any) => {
     return <div>Loading quiz data...</div>;
   }
 
-  // Ordenando os guests por nome em ordem alfabética
-  const sortedGuests = quizData.guests.sort((a: any, b: any) => a.name.localeCompare(b.name));
+  const sortedGuests = quizData.guests.sort((a: any, b: any) =>
+    a.name.localeCompare(b.name)
+  );
 
-  // As questões já estão ordenadas por índice no array, mas para garantir a ordem, você pode usar .sort() no array
-  const sortedQuestions = [...quizData.questions].sort((a: any, b: any) => a.id - b.id);
+  const sortedQuestions = [...quizData.questions].sort(
+    (a: any, b: any) => a.id - b.id
+  );
 
   return (
     <div className="guest-management">

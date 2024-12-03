@@ -8,14 +8,14 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  /* const [credentials, setCredentials] = useState({
+  const [credentials, setCredentials] = useState({
     username: "marceline@mail.com",
     password: "2308",
-  }); */
-  const [credentials, setCredentials] = useState({
+  });
+  /* const [credentials, setCredentials] = useState({
     username: "",
     password: "",
-  });
+  }); */
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = ({
@@ -70,7 +70,7 @@ const Login: React.FC = () => {
             navigate={navigate}
           />
         </div>
-        <div className="image-section" aria-hidden="true"></div>
+        <div className="image-section" ></div>
       </div>
       <footer className="footer">
         © 2024 Produzido por Sistemas de Informação

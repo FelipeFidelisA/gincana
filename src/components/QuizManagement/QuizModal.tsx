@@ -93,7 +93,6 @@ const QuizModal: React.FC<QuizModalProps> = ({ modalData, closeModal }) => {
           &times;
         </button>
 
-        {/* Quiz Information */}
         <section style={{ marginBottom: "20px" }}>
           <h3>Informações Gerais</h3>
           <p>
@@ -107,7 +106,6 @@ const QuizModal: React.FC<QuizModalProps> = ({ modalData, closeModal }) => {
           </p>
         </section>
 
-        {/* User Information */}
         <section style={{ marginBottom: "20px" }}>
           <h3>Informações do Usuário</h3>
           <p>
@@ -118,7 +116,6 @@ const QuizModal: React.FC<QuizModalProps> = ({ modalData, closeModal }) => {
           </p>
         </section>
 
-        {/* Guests Information */}
         <section style={{ marginBottom: "20px" }}>
           <h3>Convidados</h3>
           {quiz.guests.length === 0 ? (
@@ -151,7 +148,6 @@ const QuizModal: React.FC<QuizModalProps> = ({ modalData, closeModal }) => {
           )}
         </section>
 
-        {/* Questions and Options */}
         <section>
           <h3>Perguntas</h3>
           {loading && <p>Carregando opções das perguntas...</p>}

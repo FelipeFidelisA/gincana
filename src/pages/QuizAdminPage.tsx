@@ -46,12 +46,10 @@ const QuizAdminPage: React.FC = () => {
   const [removingGuestId, setRemovingGuestId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Função para obter headers de autenticação
   const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("authToken")}`,
   });
 
-  // Função para buscar os dados do quiz
   const fetchQuizData = async () => {
     if (!quizCode) {
       setError("Código do quiz não fornecido na URL.");
@@ -68,20 +66,16 @@ const QuizAdminPage: React.FC = () => {
     }
   };
 
-  // useEffect para buscar dados do quiz ao montar o componente e configurar polling
   useEffect(() => {
     fetchQuizData();
 
-    // Configurar polling a cada 500ms
     const interval = setInterval(() => {
       fetchQuizData();
     }, 500);
 
-    // Limpar intervalo ao desmontar o componente
     return () => clearInterval(interval);
   }, [quizCode]);
 
-  // Função para iniciar o quiz
   const handleStartQuiz = async () => {
     if (!quiz) return;
 
@@ -108,7 +102,6 @@ const QuizAdminPage: React.FC = () => {
     }
   };
 
-  // Função para remover um convidado
   const handleRemoveGuest = async (guestId: number) => {
     const confirmRemove = window.confirm(
       "Tem certeza de que deseja remover este convidado?"
@@ -126,7 +119,6 @@ const QuizAdminPage: React.FC = () => {
       });
       alert("Convidado removido com sucesso.");
 
-      // Atualizar o estado local removendo o convidado
       setQuiz((prevQuiz) =>
         prevQuiz
           ? {
@@ -145,7 +137,6 @@ const QuizAdminPage: React.FC = () => {
     }
   };
 
-  // Ordenar os participantes com base no guest.ip e depois em ordem alfabética pelo nome
   const sortedGuests = React.useMemo(() => {
     if (!quiz) return [];
     return quiz.guests
@@ -160,7 +151,6 @@ const QuizAdminPage: React.FC = () => {
     marginBottom: "1.5rem",
   };
 
-  // Renderização condicional com base no estado do quiz
   return (
     <div className="admin-background">
       <div className="admin-container">
@@ -173,7 +163,7 @@ const QuizAdminPage: React.FC = () => {
               <div className="qr-code-section">
                 <QRCodeCanvas
                   value={generateQuizURL(quiz)}
-                  size={300} // Aumentado o tamanho do QR Code
+                  size={300}
                   style={qrCodeStyles}
                 />
                 <p className="admin-count">

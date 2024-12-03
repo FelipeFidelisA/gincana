@@ -23,35 +23,33 @@ const InputComponent: React.FC<InputComponentProps> = ({
   const styles = {
     inputGroup: {
       display: "flex",
-      flexDirection: "column" as const, // Alinha label acima do input
-      alignItems: "flex-start" as const, // Alinha à esquerda
+      flexDirection: "column" as const,
+      alignItems: "flex-start" as const,
       marginBottom: "1rem",
-      maxWidth: "400px", // Define uma largura máxima conforme necessário
-      width: "100%", // Permite que ocupe 100% do contêiner pai até o maxWidth
+      maxWidth: "400px",
+      width: "100%",
       boxSizing: "border-box" as const,
-      margin: "0 auto 1rem", // Centraliza o grupo de entrada horizontalmente
+      margin: "0 auto 1rem",
     },
     label: {
       fontSize: "1rem",
       color: isLabelHovered ? "#007bff" : "#555",
-      marginBottom: "0.5rem", // Espaço entre label e input
+      marginBottom: "0.5rem",
       transition: "color 0.3s ease",
       cursor: "pointer",
-      textAlign: "left" as const, // Alinha o texto à esquerda
-      alignSelf: "flex-start", // Centraliza verticalmente se necessário
+      textAlign: "left" as const,
+      alignSelf: "flex-start",
     },
     input: {
-      width: "100%", // Garante que o input ocupe toda a largura disponível do inputGroup
+      width: "100%",
       padding: "0.75rem",
       border: `1px solid ${isInputFocused ? "#007bff" : "#ccc"}`,
       borderRadius: "5px",
       transition: "border-color 0.3s ease, box-shadow 0.3s ease",
       fontSize: "1rem",
-      boxShadow: isInputFocused
-        ? "0 0 5px rgba(0, 123, 255, 0.5)"
-        : "none",
+      boxShadow: isInputFocused ? "0 0 5px rgba(0, 123, 255, 0.5)" : "none",
       outline: "none",
-      boxSizing: "border-box" as const, // Inclui padding e borda na largura total
+      boxSizing: "border-box" as const,
     },
   };
 

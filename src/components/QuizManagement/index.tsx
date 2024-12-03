@@ -1,4 +1,3 @@
-// components/QuizManagement/QuizManagement.tsx
 import React, { useState } from "react";
 import Modal from "react-modal";
 import { useQuizApi } from "../../context/QuizApiContext";
@@ -77,10 +76,8 @@ const QuizManagement: React.FC = () => {
         </div>
       )}
 
-      {/* Quiz Details Modal */}
       <QuizModal modalData={modalData} closeModal={closeModal} />
 
-      {/* Guest Management Modal */}
       <Modal
         isOpen={modalData.isOpen && modalData.type === "guest"}
         onRequestClose={closeModal}
@@ -91,7 +88,6 @@ const QuizManagement: React.FC = () => {
         )}
       </Modal>
 
-      {/* Quiz Ranking Modal */}
       <Modal
         isOpen={modalData.isOpen && modalData.type === "ranking"}
         onRequestClose={closeModal}
@@ -102,7 +98,6 @@ const QuizManagement: React.FC = () => {
         )}
       </Modal>
 
-      {/* Add Question Modal */}
       <Modal
         isOpen={modalData.isOpen && modalData.type === "addQuestion"}
         onRequestClose={closeModal}

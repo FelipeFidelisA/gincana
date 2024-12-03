@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useQuizApi } from '../context/QuizApiContext';
-import CreateQuestionForm from './CreateQuestionForm';
-import '../styles/AddQuizForm.css';
+import React, { useState } from "react";
+import { useQuizApi } from "../context/QuizApiContext";
+import CreateQuestionForm from "./CreateQuestionForm";
+import "../styles/AddQuizForm.css";
 const AddQuizForm = ({ onClose }: any) => {
-  const [quizName, setQuizName] = useState<string>('');
+  const [quizName, setQuizName] = useState<string>("");
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const { createQuiz, listQuizzes } = useQuizApi();
@@ -12,8 +12,8 @@ const AddQuizForm = ({ onClose }: any) => {
     e.preventDefault();
     if (quizName.trim()) {
       createQuiz(quizName);
-      setQuizName('');
-      listQuizzes(); // Atualize a lista de quizzes após a criação
+      setQuizName("");
+      listQuizzes();
     }
   };
 
@@ -30,7 +30,7 @@ const AddQuizForm = ({ onClose }: any) => {
   };
 
   const handleCreateQuiz = () => {
-    console.log('Criar quiz com perguntas:', questions);
+    console.log("Criar quiz com perguntas:", questions);
   };
 
   const handleClose = () => {
@@ -41,7 +41,7 @@ const AddQuizForm = ({ onClose }: any) => {
     <div className="add-quiz-form">
       <form onSubmit={handleQuizSubmit} className="quiz-form">
         <h2 className="form-title">Adicionar Quiz</h2>
-        
+
         <div className="input-group">
           <input
             type="text"
@@ -53,9 +53,11 @@ const AddQuizForm = ({ onClose }: any) => {
         </div>
 
         <div className="question-container">
-          <CreateQuestionForm 
+          <CreateQuestionForm
             quizId={1}
-            onCreateQuestion={(question) => setQuestions([...questions, question])}
+            onCreateQuestion={(question) =>
+              setQuestions([...questions, question])
+            }
           />
         </div>
 
@@ -86,18 +88,16 @@ const AddQuizForm = ({ onClose }: any) => {
           >
             Criar Quiz
           </button>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="close-button"
-          >
+          <button type="button" onClick={handleClose} className="close-button">
             Fechar
           </button>
         </div>
       </form>
 
       <div className="question-pagination">
-        <span>{`Pergunta ${currentQuestionIndex + 1} de ${questions.length}`}</span>
+        <span>{`Pergunta ${currentQuestionIndex + 1} de ${
+          questions.length
+        }`}</span>
       </div>
     </div>
   );

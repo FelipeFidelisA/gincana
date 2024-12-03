@@ -1,4 +1,3 @@
-// FormComponent.tsx
 import React, { useState } from "react";
 import InputComponent from "./InputComponent";
 
@@ -8,7 +7,12 @@ interface FormComponentProps {
   handleSubmit: (e: any) => void;
   error: string | null;
   navigate: any;
-  fields: Array<{ label: string; type: string; name: string; placeholder: string }>;
+  fields: Array<{
+    label: string;
+    type: string;
+    name: string;
+    placeholder: string;
+  }>;
   title: string;
   submitButtonText: string;
   footerText: string;
@@ -42,7 +46,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       flexDirection: "column" as const,
       justifyContent: "center",
       animation: "slideIn 1s ease-out",
-      fontFamily: "'Poppins', sans-serif", // Fonte Poppins aplicada aqui
+      fontFamily: "'Poppins', sans-serif",
     },
     h2: {
       fontSize: "2rem",
@@ -61,12 +65,12 @@ const FormComponent: React.FC<FormComponentProps> = ({
       borderRadius: "5px",
       marginBottom: "1rem",
       textAlign: "center" as const,
-      fontFamily: "'Poppins', sans-serif", // Fonte Poppins no erro também
+      fontFamily: "'Poppins', sans-serif",
     },
     form: {
       display: "flex",
       flexDirection: "column" as const,
-      fontFamily: "'Poppins', sans-serif", // Fonte Poppins para os inputs
+      fontFamily: "'Poppins', sans-serif",
     },
     buttonContainer: {
       display: "flex",
@@ -85,14 +89,14 @@ const FormComponent: React.FC<FormComponentProps> = ({
       transition: "background-color 0.3s ease, transform 0.2s ease",
       textAlign: "center" as const,
       transform: isButtonActive ? "scale(0.95)" : "scale(1)",
-      fontFamily: "'Poppins', sans-serif", // Fonte Poppins no botão
+      fontFamily: "'Poppins', sans-serif",
     },
     registerLink: {
       textAlign: "center" as const,
       fontSize: "0.9rem",
       color: "#555",
       marginTop: "1.5rem",
-      fontFamily: "'Poppins', sans-serif", // Fonte Poppins no link do rodapé
+      fontFamily: "'Poppins', sans-serif",
     },
     linkText: {
       color: isLinkTextHovered ? "#0056b3" : "#007bff",
@@ -100,7 +104,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       cursor: "pointer",
       textDecoration: "underline",
       transition: "color 0.3s ease",
-      fontFamily: "'Poppins', sans-serif", // Fonte Poppins no link de navegação
+      fontFamily: "'Poppins', sans-serif",
     },
   };
 

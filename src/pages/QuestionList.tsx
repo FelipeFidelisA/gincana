@@ -59,7 +59,6 @@ const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
       });
       const questionId = response.data.id;
 
-      // Criação das opções
       options.forEach(async (option) => {
         await api.post(
           "/option",
