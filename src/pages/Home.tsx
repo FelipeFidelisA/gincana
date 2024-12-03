@@ -27,7 +27,7 @@ const Home: React.FC = () => {
     backgroundPosition: "center",
     textAlign: "center",
     flexDirection: "column",
-    padding: "1rem", // Adicionado para telas menores
+    padding: "1rem",
   };
 
   const titleStyle: React.CSSProperties = {
@@ -43,7 +43,7 @@ const Home: React.FC = () => {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: "20px",
     padding: "2rem",
-    width: "80vw", // Responsivo para largura
+    width: "80vw",
     maxWidth: "500px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
     maxHeight: "400px",
@@ -58,7 +58,7 @@ const Home: React.FC = () => {
     width: "100%",
     padding: "0.75rem 1rem",
     marginBottom: "1rem",
-    fontSize: "1rem", // Ajustado para telas menores
+    fontSize: "1rem",
     fontWeight: "bold",
     textAlign: "center",
     borderRadius: "10px",
@@ -76,7 +76,7 @@ const Home: React.FC = () => {
     color: "#fff",
     border: "none",
     borderRadius: "10px",
-    fontSize: "1rem", // Ajustado para telas menores
+    fontSize: "1rem",
     cursor: "pointer",
     transition: "background-color 0.3s",
   };
@@ -93,7 +93,7 @@ const Home: React.FC = () => {
     textDecoration: "none",
     opacity: 0.7,
     cursor: "pointer",
-    width: "100%", // Centralizado
+    width: "100%",
     textAlign: "center",
   };
 
