@@ -340,11 +340,6 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
           guestId,
           quizCode,
           value,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
         }
       );
       console.log(response);
