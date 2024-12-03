@@ -1,3 +1,10 @@
+body {
+  font-family: "Poppins", sans-serif !important;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #4caf50, #3498db);
+}
+
 .quiz-container {
   display: flex;
   justify-content: center;
@@ -70,7 +77,7 @@
 .character-creation h2 {
   margin-bottom: 1.5rem;
   color: #333;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .character-display {
@@ -152,7 +159,7 @@
   font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .start-quiz-button:hover {
@@ -173,7 +180,7 @@
 .already-answered h2 {
   margin-bottom: 1.5rem;
   color: #333;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .ranking-button {
@@ -185,7 +192,7 @@
   font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .ranking-button:hover {
@@ -206,7 +213,7 @@
 .question-container h2 {
   margin-bottom: 1rem;
   color: #333;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .options-list {
@@ -253,7 +260,7 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .nav-button:hover,
@@ -289,15 +296,14 @@
 .success-message h2 {
   margin-bottom: 1rem;
   color: #28a745;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .success-message p {
   color: #333;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .quiz-container {
     padding: 1rem;
@@ -314,3 +320,4 @@
     height: 60px;
   }
 }
+

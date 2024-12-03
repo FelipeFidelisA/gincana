@@ -305,7 +305,6 @@ const QuizResponse: React.FC = () => {
 
   return (
     <>
-      {/* Exibir Confetes */}
       {quizSubmitted && (
         <Confetti
           width={windowDimensions.width}
@@ -315,7 +314,6 @@ const QuizResponse: React.FC = () => {
         />
       )}
 
-      {/* Exibir Mensagem de Sucesso */}
       {quizSubmitted && (
         <animated.div style={props} className="success-message">
           <h2>Quiz respondido com sucesso!</h2>
@@ -324,7 +322,6 @@ const QuizResponse: React.FC = () => {
       )}
 
       <div className="quiz-container">
-        {/* Exibir Mensagem de Espera se o Quiz Não Estiver em Progresso */}
         {step === "quiz" && quizStatus !== "IN_PROGRESS" && (
           <div className="waiting-container">
             <img
@@ -338,10 +335,8 @@ const QuizResponse: React.FC = () => {
           </div>
         )}
 
-        {/* Permitir Responder ao Quiz Apenas se o Status Estiver em IN_PROGRESS */}
         {step === "quiz" && quizStatus === "IN_PROGRESS" && (
           <>
-            {/* Verificação se já respondeu ao quiz */}
             {quiz &&
             localStorage.getItem(`quiz_${quiz.id}_respondido`) === "true" ? (
               <div className="already-answered">
@@ -435,7 +430,6 @@ const QuizResponse: React.FC = () => {
           </>
         )}
 
-        {/* Exibir Formulário de Criação de Perfil se estiver no passo 'character' */}
         {step === "character" && (
           <div className="character-creation">
             <h2>Bem-vindo ao Quiz: {quiz?.title}</h2>

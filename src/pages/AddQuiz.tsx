@@ -211,8 +211,15 @@ const AddQuiz: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Criar Novo Quiz</h1>
+    <div className="container-quiz-add">
+      <h1
+        style={{
+          textAlign: "center",
+          margin: "8px",
+        }}
+      >
+        Criar Novo Quiz
+      </h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="quizTitle">Título do Quiz:</label>
@@ -250,6 +257,7 @@ const AddQuiz: React.FC = () => {
                       type="button"
                       onClick={() => handleRemoveQuestion(question.id)}
                       className="remove-question-button"
+                      aria-label={`Remover Pergunta ${qIndex + 1}`}
                     >
                       Remover
                     </button>
@@ -327,6 +335,7 @@ const AddQuiz: React.FC = () => {
                             type="button"
                             onClick={() => handleRemoveOption(option.id)}
                             className="remove-option-button"
+                            aria-label={`Remover Opção ${oIndex + 1}`}
                           >
                             Remover
                           </button>

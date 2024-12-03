@@ -1,10 +1,20 @@
+// QuizAdminPage.tsx
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 import { IconContext } from "react-icons";
 import { api } from "../api";
 import "../styles/QuizAdminPage.css";
 import { QRCodeCanvas } from "qrcode.react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
+
+ChartJS.register(BarElement, CategoryScale, LinearScale);
 
 interface Quiz {
   id: number;
@@ -36,7 +46,6 @@ interface Question {
 }
 
 const QuizAdminPage: React.FC = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const quizCode: string | null = queryParams.get("code");
@@ -93,7 +102,6 @@ const QuizAdminPage: React.FC = () => {
       const updatedQuiz = response.data;
       setQuiz(updatedQuiz);
       alert("Quiz iniciado com sucesso!");
-      navigate(`/ranking?code=${quiz.code}`);
     } catch (error) {
       console.error("Erro ao iniciar o quiz:", error);
       alert("Ocorreu um erro ao iniciar o quiz. Por favor, tente novamente.");
@@ -139,16 +147,34 @@ const QuizAdminPage: React.FC = () => {
 
   const sortedGuests = React.useMemo(() => {
     if (!quiz) return [];
-    return quiz.guests
-      .slice()
-      .sort((a, b) => a.ip.localeCompare(b.ip))
-      .sort((a, b) => a.name.localeCompare(b.name));
+    return quiz.guests.slice().sort((a, b) => b.score - a.score);
   }, [quiz]);
+
+  const topGuests = sortedGuests.slice(0, 5);
+  const remainingGuests = sortedGuests.slice(5);
+
   const generateQuizURL = (quiz: any) =>
     `${window.location.origin}/respond?code=${quiz.code}`;
 
   const qrCodeStyles: React.CSSProperties = {
     marginBottom: "1.5rem",
+  };
+
+  // Dados para o gráfico
+  const chartData = {
+    labels: topGuests.map((guest) => guest.name),
+    datasets: [
+      {
+        label: "Pontuação",
+        data: topGuests.map((guest) => guest.score),
+        backgroundColor: "rgba(2, 160, 157, 0.6)",
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
   };
 
   return (
@@ -160,24 +186,59 @@ const QuizAdminPage: React.FC = () => {
           <>
             <h1 className="admin-title">{quiz.title}</h1>
             <div className="main-content">
-              <div className="qr-code-section">
-                <QRCodeCanvas
-                  value={generateQuizURL(quiz)}
-                  size={300}
-                  style={qrCodeStyles}
-                />
-                <p className="admin-count">
-                  Número de participantes: {quiz.guests.length}
-                </p>
-                <button
-                  className={`start-quiz-button ${
-                    isStarting ? "disabled" : ""
-                  }`}
-                  onClick={handleStartQuiz}
-                  disabled={isStarting}
-                >
-                  {isStarting ? "Iniciando..." : "Iniciar Quiz"}
-                </button>
+              <div className="top-section">
+                <div className="qr-code-section">
+                  <QRCodeCanvas
+                    value={generateQuizURL(quiz)}
+                    size={300}
+                    style={qrCodeStyles}
+                  />
+                  <p className="admin-count">
+                    Número de participantes: {quiz.guests.length}
+                  </p>
+                  <button
+                    className={`start-quiz-button ${
+                      isStarting || quiz.status !== "WAITING_GUESTS"
+                        ? "disabled"
+                        : ""
+                    }`}
+                    onClick={handleStartQuiz}
+                    disabled={isStarting || quiz.status !== "WAITING_GUESTS"}
+                  >
+                    {isStarting
+                      ? "Iniciando..."
+                      : quiz.status === "IN_PROGRESS" || quiz.status === "END"
+                      ? "Quiz já iniciado"
+                      : "Iniciar Quiz"}
+                  </button>
+                </div>
+                <div className="chart-section">
+                  <h2 className="chart-title">Top 5 Participantes</h2>
+                  <div style={{ height: "400px", width: "100%" }}>
+                    <Bar data={chartData} options={chartOptions} />
+                  </div>
+                </div>
+                <div className="remaining-guests-section">
+                  <h2 className="remaining-guests-title">
+                    Outros Participantes
+                  </h2>
+                  <div className="remaining-guests-list">
+                    {remainingGuests.length > 0 ? (
+                      remainingGuests.map((guest) => (
+                        <div key={guest.id} className="remaining-guest-item">
+                          <img
+                            src={guest.profileUrl}
+                            alt={guest.name}
+                            className="remaining-guest-image"
+                          />
+                          <p className="remaining-guest-name">{guest.name}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>Nenhum outro participante.</p>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="guest-list-section">
                 <h2 className="guest-list-title">Participantes</h2>

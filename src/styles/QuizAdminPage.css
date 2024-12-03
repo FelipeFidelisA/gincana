@@ -1,9 +1,10 @@
+/* QuizAdminPage.css */
 .admin-background {
   background-image: url("https://i.imgur.com/NniFL09.png");
   background-size: cover;
   background-position: center;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,7 +16,7 @@
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  max-width: 900px;
+  max-width: 1200px;
   width: 100%;
 }
 
@@ -23,14 +24,86 @@
   font-size: 2.5rem;
   color: #333;
   margin-bottom: 1rem;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
-.admin-count {
-  font-size: 1.2rem;
-  color: #555;
-  margin-bottom: 2rem;
-  font-family: "Roboto", sans-serif;
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.top-section {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.qr-code-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.remaining-guests-section {
+  flex: 0.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.remaining-guests-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-family: "Poppins", sans-serif;
+}
+
+.remaining-guests-list {
+  max-height: 400px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.remaining-guest-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.remaining-guest-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.5rem;
+}
+
+.remaining-guest-name {
+  font-size: 1rem;
+  color: #333;
+  font-family: "Poppins", sans-serif;
+}
+
+.guest-list-section {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.guest-list-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-family: "Poppins", sans-serif;
 }
 
 .guests-grid {
@@ -67,10 +140,11 @@
 }
 
 .guest-name {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #333;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
   margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
 .remove-button {
@@ -96,7 +170,7 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -114,30 +188,37 @@
   color: #e74c3c;
   font-size: 1.2rem;
   margin-bottom: 1rem;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .loading-message {
   color: #555;
   font-size: 1.2rem;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
-@media (max-width: 768px) {
-  .admin-container {
-    padding: 1rem;
-  }
+.chart-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-family: "Poppins", sans-serif;
+}
 
-  .guests-grid {
+@media (max-width: 992px) {
+  .top-section {
     flex-direction: column;
     align-items: center;
   }
 
-  .guest-card {
-    width: 90%;
+  .qr-code-section,
+  .chart-section,
+  .remaining-guests-section {
+    width: 100%;
+    margin-bottom: 1.5rem;
   }
 
-  .start-quiz-button {
-    width: 100%;
+  .remaining-guests-list {
+    max-height: none;
+    overflow-y: visible;
   }
 }
