@@ -254,7 +254,7 @@ const QuizResponse: React.FC = () => {
         }
       });
       const score = correctAnswers * 10 + remainingTime * 0.5;
-      await submitResponses(guestId, quizCode!, 5000);
+      await submitResponses(guestId, quizCode!, score);
       await increaseScore(guestId, quiz!.code, score);
       setQuizSubmitted(true);
       localStorage.setItem(`quiz_${quiz!.id}_respondido`, "true");

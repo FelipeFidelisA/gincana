@@ -169,11 +169,13 @@ const AddQuiz: React.FC = () => {
       }
 
       for (const [qIndex, question] of questions.entries()) {
+        setTimeout(() => {}, 500);
         const newQuestion: any = await createQuestion(
           question.title,
           question.description,
           quizId + 1
         );
+        setTimeout(() => {}, 500);
         const questionId = newQuestion.id;
         if (!questionId) {
           throw new Error(
@@ -184,7 +186,9 @@ const AddQuiz: React.FC = () => {
         }
         for (const [oIndex, option] of question.options.entries()) {
           console.log(oIndex);
+          setTimeout(() => {}, 500);
           await createOption(option.description, option.isRight, questionId);
+          setTimeout(() => {}, 500);
         }
       }
       setQuizTitle("");
