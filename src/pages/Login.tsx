@@ -72,7 +72,14 @@ const Login: React.FC = () => {
         </div>
         <div className="image-section"></div>
       </div>
-      <footer className="footer">
+      <footer style={{
+        position: "absolute",
+        bottom: 0,
+        width: "100%",
+        textAlign: "center",
+        padding: "1rem",
+        color: "#fff",
+      }} className="footer">
         © 2024 Produzido por Sistemas de Informação
       </footer>
     </div>
