@@ -149,7 +149,16 @@ const QuizAdminPage: React.FC = () => {
 
   const sortedGuests = React.useMemo(() => {
     if (!quiz) return [];
-    return quiz.guests.slice().sort((a, b) => b.score - a.score);
+    return quiz.guests.slice().sort((a, b) => {
+      // Primeiro, compara pelo score em ordem decrescente
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      // Se os scores forem iguais, compara pelo IP em ordem ascendente
+      if (a.ip < b.ip) return -1;
+      if (a.ip > b.ip) return 1;
+      return 0;
+    });
   }, [quiz]);
 
   const topGuests = sortedGuests.slice(0, 5);
@@ -164,7 +173,7 @@ const QuizAdminPage: React.FC = () => {
 
   // Dados para o gráfico
   const chartData = {
-    labels: topGuests.map((guest) => guest.name),
+    labels: topGuests.map((guest) => guest.name + " #" + guest.ip.slice(-4)),
     datasets: [
       {
         label: "Pontuação",
@@ -286,7 +295,9 @@ const QuizAdminPage: React.FC = () => {
                             alt={guest.name}
                             className="remaining-guest-image"
                           />
-                          <p className="remaining-guest-name">{guest.name}</p>
+                          <p className="remaining-guest-name">
+                            {guest.name} #{guest.ip.slice(-4)}
+                          </p>
                         </div>
                       ))
                     ) : (
@@ -313,10 +324,12 @@ const QuizAdminPage: React.FC = () => {
                       <div key={guest.id} className="guest-card">
                         <img
                           src={guest.profileUrl}
-                          alt={guest.name}
+                          alt={guest.name + "#" + guest.ip.slice(-4)}
                           className="guest-image"
                         />
-                        <p className="guest-name">{guest.name}</p>
+                        <p className="guest-name">
+                          {guest.name} #{guest.ip.slice(-4)}
+                        </p>
                         <button
                           className="remove-button"
                           onClick={() => handleRemoveGuest(guest.id)}

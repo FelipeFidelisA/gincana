@@ -109,17 +109,27 @@ const AddQuiz: React.FC = () => {
     value: any
   ) => {
     if (selectedQuestionId === null) return;
-    setQuestions(
-      questions.map((q) =>
-        q.id === selectedQuestionId
-          ? {
-              ...q,
-              options: q.options.map((o) =>
-                o.id === optionId ? { ...o, [field]: value } : o
-              ),
-            }
-          : q
-      )
+
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) => {
+        if (q.id !== selectedQuestionId) return q;
+
+        const updatedOptions = q.options.map((o) => {
+          if (o.id === optionId) {
+            return { ...o, [field]: value };
+          }
+
+          // Se o campo sendo alterado for 'isRight' e o valor está sendo marcado como correto,
+          // desmarque as outras opções.
+          if (field === "isRight" && value === true) {
+            return { ...o, isRight: false };
+          }
+
+          return o;
+        });
+
+        return { ...q, options: updatedOptions };
+      })
     );
   };
 
@@ -254,7 +264,7 @@ const AddQuiz: React.FC = () => {
                     onChange={(e) =>
                       handleQuestionChange(question.id, "title", e.target.value)
                     }
-                    placeholder={`Pergunta ${qIndex + 1}`}
+                    placeholder={`Digite a pergunta ${qIndex + 1} Aqui`}
                   />
                   {questions.length > 1 && (
                     <button
@@ -317,7 +327,7 @@ const AddQuiz: React.FC = () => {
                               e.target.value
                             )
                           }
-                          placeholder={`Opção ${oIndex + 1}`}
+                          placeholder={`Digite a opção ${oIndex + 1} aqui`}
                         />
                         <label className="checkbox-label">
                           <input
