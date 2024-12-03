@@ -70,7 +70,7 @@ const Login: React.FC = () => {
             navigate={navigate}
           />
         </div>
-        <div className="image-section" ></div>
+        <div className="image-section"></div>
       </div>
       <footer className="footer">
         © 2024 Produzido por Sistemas de Informação

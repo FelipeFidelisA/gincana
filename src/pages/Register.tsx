@@ -8,11 +8,16 @@ const Register: React.FC = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({ name: "marceline", email: "marceline@mail.com", password: "2308" });
+  const [credentials, setCredentials] = useState({
+    name: "marceline",
+    email: "marceline@mail.com",
+    password: "2308",
+  });
   const [error, setError] = useState<string | null>(null);
 
-
-  const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = ({
+    target: { name, value },
+  }: React.ChangeEvent<HTMLInputElement>) => {
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -22,7 +27,7 @@ const Register: React.FC = () => {
     try {
       const response = await register(credentials);
       if (response.status === 201) {
-        navigate("/login")
+        navigate("/login");
       }
       if (response?.data.message) {
         setError("Usuário com este email já existe.");
@@ -35,9 +40,24 @@ const Register: React.FC = () => {
   };
 
   const fields = [
-    { label: "Nome:", type: "text", name: "name", placeholder: "Digite seu nome" },
-    { label: "Email:", type: "text", name: "email", placeholder: "Digite seu email" },
-    { label: "Senha:", type: "password", name: "password", placeholder: "Digite sua senha" },
+    {
+      label: "Nome:",
+      type: "text",
+      name: "name",
+      placeholder: "Digite seu nome",
+    },
+    {
+      label: "Email:",
+      type: "text",
+      name: "email",
+      placeholder: "Digite seu email",
+    },
+    {
+      label: "Senha:",
+      type: "password",
+      name: "password",
+      placeholder: "Digite sua senha",
+    },
   ];
 
   return (
@@ -58,10 +78,11 @@ const Register: React.FC = () => {
             navigate={navigate}
           />
         </div>
-        <div className="image-section">
-        </div>
+        <div className="image-section"></div>
       </div>
-      <footer className="footer">© 2024 Produzido por Sistemas de Informação</footer>
+      <footer className="footer">
+        © 2024 Produzido por Sistemas de Informação
+      </footer>
     </div>
   );
 };
