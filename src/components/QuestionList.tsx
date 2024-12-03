@@ -9,13 +9,13 @@ interface QuestionListProps {
 
 const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
   const [questions, setQuestions] = useState<any[]>([]);
-  const [options, setOptions] = useState<any>({});
+  const [questionOptions, setQuestionOptions] = useState<any>({});
 
-  const onCloseModal = () => {
+  const handleClose = () => {
     onClose();
   };
 
-  const listQuestions = async (quizId: number) => {
+  const fetchQuestions = async (quizId: number) => {
     try {
       const response = await api.get(`/question/quiz/${quizId}`, {
         headers: {
@@ -24,74 +24,82 @@ const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
       });
       setQuestions(response.data);
 
-      for (let question of response.data) {
-        listOptions(question.id);
-      }
+      response.data.forEach((question: any) => {
+        fetchOptions(question.id);
+      });
     } catch (error) {
-      console.error("Error listing questions:", error);
+      console.error("Error fetching questions:", error);
     }
   };
 
-  const listOptions = async (questionId: number) => {
+  const fetchOptions = async (questionId: number) => {
     try {
       const response = await api.get(`/option/question/${questionId}`);
-      setOptions((prevOptions: any) => ({
-        ...prevOptions,
+      setQuestionOptions((prev: any) => ({
+        ...prev,
         [questionId]: response.data,
       }));
     } catch (error) {
-      console.error(`Error listing options for question ${questionId}:`, error);
+      console.error(
+        `Error fetching options for question ${questionId}:`,
+        error
+      );
     }
   };
 
-  const createQuestion = async (
+  const handleCreateQuestion = async (
     title: string,
     description: string,
     quizId: number,
     options: any[]
   ) => {
     try {
-      const body = { title, description, quizId };
-      const response = await api.post("/question", body, {
+      const newQuestion = { title, description, quizId };
+      const response = await api.post("/question", newQuestion, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-      const questionId = response.data.id;
+      const newQuestionId = response.data.id;
 
-      options.forEach(async (option) => {
-        await api.post(
-          "/option",
-          {
-            description: option.description,
-            isRight: option.isRight,
-            questionId,
-            title,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      await Promise.all(
+        options.map((option) =>
+          api.post(
+            "/option",
+            {
+              description: option.description,
+              isRight: option.isRight,
+              questionId: newQuestionId,
+              title,
             },
-          }
-        );
-      });
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              },
+            }
+          )
+        )
+      );
 
-      listQuestions(quizId);
+      fetchQuestions(quizId);
     } catch (error) {
       console.error("Error creating question:", error);
     }
   };
 
   useEffect(() => {
-    listQuestions(quizId);
+    fetchQuestions(quizId);
   }, [quizId]);
 
   return (
     <div>
       <h2>Perguntas do Quiz {quizId}</h2>
-      <button onClick={onCloseModal}>Fechar</button>
+      <button onClick={handleClose}>Fechar</button>
 
-      <CreateQuestionForm quizId={quizId} onCreateQuestion={createQuestion} />
+      <CreateQuestionForm
+        quizId={quizId}
+        onCreateQuestion={handleCreateQuestion}
+      />
 
       <h3>Perguntas Existentes</h3>
       <ul>
@@ -100,9 +108,9 @@ const QuestionList: React.FC<QuestionListProps> = ({ quizId, onClose }) => {
             <strong>{question.title}</strong>: {question.description}
             <div>
               <h4>Opções</h4>
-              {options[question.id] ? (
+              {questionOptions[question.id] ? (
                 <ul>
-                  {options[question.id].map((option: any) => (
+                  {questionOptions[question.id].map((option: any) => (
                     <li key={option.id}>
                       {option.description} -{" "}
                       {option.isRight ? "Correta" : "Incorreta"}

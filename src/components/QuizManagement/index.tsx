@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import Modal from "react-modal";
-import { useQuizApi } from "../../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
+import { useQuizApi } from "../../context/QuizApiContext";
+import Modal from "react-modal";
 import QuizCard from "./QuizCard";
 import QuizModal from "./QuizModal";
-import GuestManagement from "../GuestManagement";
 import QuestionList from "../QuestionList";
-import { FaPlus } from "react-icons/fa";
 
-Modal.setAppElement("#root");
+Modal.setAppElement("#root"); 
 
 const QuizManagement: React.FC = () => {
   const { quizzes } = useQuizApi();
@@ -76,16 +75,6 @@ const QuizManagement: React.FC = () => {
       )}
 
       <QuizModal modalData={modalData} closeModal={closeModal} />
-
-      <Modal
-        isOpen={modalData.isOpen && modalData.type === "guest"}
-        onRequestClose={closeModal}
-        contentLabel="Guest Management"
-      >
-        {modalData.quiz && (
-          <GuestManagement quizId={modalData.quiz.id} onClose={closeModal} />
-        )}
-      </Modal>
 
       <Modal
         isOpen={modalData.isOpen && modalData.type === "addQuestion"}

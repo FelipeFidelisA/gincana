@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
   const [roomCode, setRoomCode] = useState("");
+  const [buttonHover, setButtonHover] = useState(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -26,6 +27,7 @@ const Home: React.FC = () => {
     backgroundPosition: "center",
     textAlign: "center",
     flexDirection: "column",
+    padding: "1rem", // Adicionado para telas menores
   };
 
   const titleStyle: React.CSSProperties = {
@@ -41,7 +43,7 @@ const Home: React.FC = () => {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: "20px",
     padding: "2rem",
-    width: "80%",
+    width: "80vw", // Responsivo para largura
     maxWidth: "500px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
     maxHeight: "400px",
@@ -52,16 +54,11 @@ const Home: React.FC = () => {
     boxSizing: "border-box",
   };
 
-  const inputContainerStyle: React.CSSProperties = {
-    position: "relative",
-    width: "100%",
-  };
-
   const inputStyle: React.CSSProperties = {
     width: "100%",
     padding: "0.75rem 1rem",
     marginBottom: "1rem",
-    fontSize: "1.2rem",
+    fontSize: "1rem", // Ajustado para telas menores
     fontWeight: "bold",
     textAlign: "center",
     borderRadius: "10px",
@@ -79,7 +76,7 @@ const Home: React.FC = () => {
     color: "#fff",
     border: "none",
     borderRadius: "10px",
-    fontSize: "1.2rem",
+    fontSize: "1rem", // Ajustado para telas menores
     cursor: "pointer",
     transition: "background-color 0.3s",
   };
@@ -87,8 +84,6 @@ const Home: React.FC = () => {
   const buttonHoverStyle: React.CSSProperties = {
     backgroundColor: "#6a11cb",
   };
-
-  const [buttonHover, setButtonHover] = useState(false);
 
   const footerStyle: React.CSSProperties = {
     position: "absolute",
@@ -98,23 +93,23 @@ const Home: React.FC = () => {
     textDecoration: "none",
     opacity: 0.7,
     cursor: "pointer",
+    width: "100%", // Centralizado
+    textAlign: "center",
   };
 
   return (
     <div style={containerStyle}>
       <h3 style={titleStyle}>Insira o Código da Sala para Iniciar</h3>
       <div style={cardStyle}>
-        <div style={inputContainerStyle}>
-          <input
-            type="text"
-            placeholder="Código da sala"
-            value={roomCode.toUpperCase()}
-            onChange={handleInputChange}
-            style={inputStyle}
-            autoFocus
-            maxLength={10}
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Código da sala"
+          value={roomCode.toUpperCase()}
+          onChange={handleInputChange}
+          style={inputStyle}
+          autoFocus
+          maxLength={10}
+        />
         <button
           style={{ ...buttonStyle, ...(buttonHover ? buttonHoverStyle : {}) }}
           onClick={handleSubmit}

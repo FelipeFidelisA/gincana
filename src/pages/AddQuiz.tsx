@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuizApi } from "../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
-import "./addQuiz.css";
+import "../styles/addQuiz.css";
 
 interface Option {
   id: number;
