@@ -1,3 +1,4 @@
+/* Estilos globais */
 body {
   font-family: "Poppins", sans-serif !important;
   margin: 0;
@@ -5,6 +6,7 @@ body {
   background: linear-gradient(135deg, #4caf50, #3498db);
 }
 
+/* Container principal do quiz */
 .quiz-container {
   display: flex;
   justify-content: center;
@@ -15,8 +17,10 @@ body {
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
+  flex-direction: column; /* Adicionado para melhor responsividade */
 }
 
+/* Container de espera */
 .waiting-container {
   display: flex;
   flex-direction: column;
@@ -29,6 +33,7 @@ body {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
+/* Imagem de espera com animação */
 .waiting-image {
   width: 150px;
   height: 150px;
@@ -36,18 +41,20 @@ body {
   animation: float 6s ease-in-out infinite;
 }
 
+/* Animação de flutuação */
 @keyframes float {
   0% {
-    transform: translatey(0px);
+    transform: translateY(0px); /* Corrigido para translateY */
   }
   50% {
-    transform: translatey(-20px);
+    transform: translateY(-20px);
   }
   100% {
-    transform: translatey(0px);
+    transform: translateY(0px);
   }
 }
 
+/* Spinner de carregamento */
 .spinner {
   font-size: 2rem;
   color: #02a09d;
@@ -55,6 +62,7 @@ body {
   margin-top: 1rem;
 }
 
+/* Animação de rotação */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -64,6 +72,7 @@ body {
   }
 }
 
+/* Container para criação de personagem */
 .character-creation {
   background: rgba(255, 255, 255, 0.95);
   padding: 2rem;
@@ -72,19 +81,23 @@ body {
   max-width: 500px;
   width: 100%;
   text-align: center;
+  margin-bottom: 1rem; /* Adicionado para espaçamento em telas menores */
 }
 
+/* Título da criação de personagem */
 .character-creation h2 {
   margin-bottom: 1.5rem;
   color: #333;
   font-family: "Poppins", sans-serif;
 }
 
+/* Exibição do personagem */
 .character-display {
   position: relative;
   margin-bottom: 1.5rem;
 }
 
+/* Imagem do personagem */
 .character-image {
   width: 120px;
   height: 120px;
@@ -94,10 +107,12 @@ body {
   transition: transform 0.3s ease;
 }
 
+/* Efeito ao passar o mouse sobre a imagem */
 .character-image:hover {
   transform: scale(1.05);
 }
 
+/* Botões relacionados ao personagem */
 .character-buttons {
   display: flex;
   justify-content: center;
@@ -105,6 +120,7 @@ body {
   margin-top: 0.5rem;
 }
 
+/* Botões de dados e upload */
 .dice-button,
 .upload-button {
   background: #02a09d;
@@ -119,16 +135,19 @@ body {
   justify-content: center;
 }
 
+/* Efeito hover nos botões */
 .dice-button:hover,
 .upload-button:hover {
   background: #028a7e;
 }
 
+/* Grupo de entrada */
 .input-group {
   margin-bottom: 1.5rem;
   text-align: left;
 }
 
+/* Label do input */
 .input-group label {
   display: block;
   margin-bottom: 0.5rem;
@@ -136,6 +155,7 @@ body {
   font-weight: bold;
 }
 
+/* Input de texto */
 .input-group input {
   width: 100%;
   padding: 0.7rem;
@@ -145,11 +165,13 @@ body {
   transition: border-color 0.3s ease;
 }
 
+/* Efeito focus no input */
 .input-group input:focus {
   border-color: #028a7e;
   outline: none;
 }
 
+/* Botão para iniciar o quiz */
 .start-quiz-button {
   padding: 0.8rem 2rem;
   background: #02a09d;
@@ -162,11 +184,13 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+/* Efeito hover no botão de iniciar quiz */
 .start-quiz-button:hover {
   background: #028a7e;
   transform: translateY(-2px);
 }
 
+/* Container para o status "já respondido" */
 .already-answered {
   background: rgba(255, 255, 255, 0.95);
   padding: 2rem;
@@ -177,12 +201,14 @@ body {
   text-align: center;
 }
 
+/* Título do status "já respondido" */
 .already-answered h2 {
   margin-bottom: 1.5rem;
   color: #333;
   font-family: "Poppins", sans-serif;
 }
 
+/* Botão para ver o ranking */
 .ranking-button {
   padding: 0.8rem 2rem;
   background: #02a09d;
@@ -195,11 +221,13 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+/* Efeito hover no botão de ranking */
 .ranking-button:hover {
   background: #028a7e;
   transform: translateY(-2px);
 }
 
+/* Container da pergunta */
 .question-container {
   background: rgba(255, 255, 255, 0.95);
   padding: 2rem;
@@ -210,12 +238,14 @@ body {
   margin-bottom: 1.5rem;
 }
 
+/* Título da pergunta */
 .question-container h2 {
   margin-bottom: 1rem;
   color: #333;
   font-family: "Poppins", sans-serif;
 }
 
+/* Lista de opções */
 .options-list {
   display: flex;
   flex-direction: column;
@@ -223,6 +253,7 @@ body {
   margin-top: 1rem;
 }
 
+/* Container de cada opção */
 .option-container {
   padding: 1rem;
   background: #f0f4f8;
@@ -232,23 +263,28 @@ body {
   border: 2px solid transparent;
 }
 
+/* Efeito hover nas opções */
 .option-container:hover {
   background: #d9e2ec;
   transform: translateY(-2px);
 }
 
+/* Estilo para opção selecionada */
 .option-container.selected {
   background: #02a09d;
   color: #fff;
   border-color: #028a7e;
 }
 
+/* Botões de navegação */
 .navigation-buttons {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: wrap; /* Adicionado para melhor responsividade */
 }
 
+/* Botões de navegação e envio */
 .nav-button,
 .submit-button {
   flex: 1;
@@ -261,25 +297,30 @@ body {
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s;
   font-family: "Poppins", sans-serif;
+  min-width: 120px; /* Adicionado para consistência */
 }
 
+/* Efeito hover nos botões */
 .nav-button:hover,
 .submit-button:hover:not(.disabled-button) {
   background: #028a7e;
   transform: translateY(-2px);
 }
 
+/* Estilo para botão desabilitado */
 .submit-button.disabled-button {
   background: #a0a0a0;
   cursor: not-allowed;
 }
 
+/* Container do temporizador */
 .timer-container {
   width: 80px;
   height: 80px;
   margin: 1.5rem auto;
 }
 
+/* Mensagem de sucesso */
 .success-message {
   position: fixed;
   top: 50%;
@@ -293,17 +334,20 @@ body {
   z-index: 1000;
 }
 
+/* Título da mensagem de sucesso */
 .success-message h2 {
   margin-bottom: 1rem;
   color: #28a745;
   font-family: "Poppins", sans-serif;
 }
 
+/* Texto da mensagem de sucesso */
 .success-message p {
   color: #333;
   font-family: "Poppins", sans-serif;
 }
 
+/* Ajustes para telas menores */
 @media (max-width: 768px) {
   .quiz-container {
     padding: 1rem;
@@ -312,12 +356,20 @@ body {
   .character-creation,
   .already-answered,
   .question-container {
-    max-width: 90%;
+    max-width: 100%; /* Ajustado para 100% */
   }
 
   .timer-container {
     width: 60px;
     height: 60px;
   }
-}
 
+  .navigation-buttons {
+    flex-direction: column; /* Botões empilhados em telas menores */
+  }
+
+  .nav-button,
+  .submit-button {
+    margin-bottom: 0.5rem;
+  }
+}
