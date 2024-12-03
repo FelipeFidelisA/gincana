@@ -1,16 +1,10 @@
-// components/QuizManagement/QuizModal.tsx
-
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import { Quiz, Question, Option } from "../../context/QuizApiContext";
+import { Question, Option } from "../../context/QuizApiContext";
 import { useQuizApi } from "../../context/QuizApiContext";
 
 interface QuizModalProps {
-  modalData: {
-    isOpen: boolean;
-    quiz: Quiz | null;
-    type: string; // To determine the modal type
-  };
+  modalData: any;
   closeModal: () => void;
 }
 
@@ -34,7 +28,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ modalData, closeModal }) => {
         setLoading(true);
         setError(null);
         try {
-          const promises = quiz.questions.map(async (question) => {
+          const promises = quiz.questions.map(async (question: any) => {
             const options = await fetchOptionsForQuestion(question.id);
             return { ...question, options };
           });
@@ -180,7 +174,6 @@ const QuizModal: React.FC<QuizModalProps> = ({ modalData, closeModal }) => {
   );
 };
 
-// Styles for table headers and cells
 const tableHeaderStyle: React.CSSProperties = {
   border: "1px solid #ddd",
   padding: "8px",

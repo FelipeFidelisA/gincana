@@ -1,7 +1,7 @@
-// components/AddQuiz.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuizApi } from "../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
+import "./addQuiz.css";
 
 interface Option {
   id: number;
@@ -31,24 +31,35 @@ const AddQuiz: React.FC = () => {
       ],
     },
   ]);
+  const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (questions.length > 0 && selectedQuestionId === null) {
+      setSelectedQuestionId(questions[0].id);
+    }
+  }, [questions, selectedQuestionId]);
 
   const handleAddQuestion = () => {
-    setQuestions([
-      ...questions,
-      {
-        id: Date.now(),
-        title: "",
-        description: "",
-        options: [
-          { id: Date.now() + 1, description: "", isRight: false },
-          { id: Date.now() + 2, description: "", isRight: false },
-        ],
-      },
-    ]);
+    const newQuestion: Question = {
+      id: Date.now(),
+      title: "",
+      description: "",
+      options: [
+        { id: Date.now() + 1, description: "", isRight: false },
+        { id: Date.now() + 2, description: "", isRight: false },
+      ],
+    };
+    setQuestions([...questions, newQuestion]);
+    setSelectedQuestionId(newQuestion.id);
   };
 
   const handleRemoveQuestion = (id: number) => {
     setQuestions(questions.filter((q) => q.id !== id));
+    if (selectedQuestionId === id) {
+      setSelectedQuestionId(questions.length > 1 ? questions[0].id : null);
+    }
   };
 
   const handleQuestionChange = (
@@ -61,10 +72,11 @@ const AddQuiz: React.FC = () => {
     );
   };
 
-  const handleAddOption = (questionId: number) => {
+  const handleAddOption = () => {
+    if (selectedQuestionId === null) return;
     setQuestions(
       questions.map((q) =>
-        q.id === questionId
+        q.id === selectedQuestionId
           ? {
               ...q,
               options: [
@@ -77,10 +89,11 @@ const AddQuiz: React.FC = () => {
     );
   };
 
-  const handleRemoveOption = (questionId: number, optionId: number) => {
+  const handleRemoveOption = (optionId: number) => {
+    if (selectedQuestionId === null) return;
     setQuestions(
       questions.map((q) =>
-        q.id === questionId
+        q.id === selectedQuestionId
           ? {
               ...q,
               options: q.options.filter((o) => o.id !== optionId),
@@ -91,14 +104,14 @@ const AddQuiz: React.FC = () => {
   };
 
   const handleOptionChange = (
-    questionId: number,
     optionId: number,
     field: keyof Option,
     value: any
   ) => {
+    if (selectedQuestionId === null) return;
     setQuestions(
       questions.map((q) =>
-        q.id === questionId
+        q.id === selectedQuestionId
           ? {
               ...q,
               options: q.options.map((o) =>
@@ -149,15 +162,12 @@ const AddQuiz: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      // 1. Criar o Quiz
       const newQuiz = await createQuiz(quizTitle);
-
       const quizId: any = newQuiz;
       if (!quizId) {
         throw new Error("Falha ao obter o ID do Quiz criado.");
       }
 
-      // 2. Criar Perguntas e Opções
       for (const [qIndex, question] of questions.entries()) {
         const newQuestion: any = await createQuestion(
           question.title,
@@ -173,13 +183,7 @@ const AddQuiz: React.FC = () => {
           );
         }
         for (const [oIndex, option] of question.options.entries()) {
-          console.log("🚀 ~ handleSubmit ~ oIndex:", oIndex)
-          console.log(
-            "  option:",
-            option.description,
-            option.isRight,
-            questionId + 1
-          );
+          console.log(oIndex);
           await createOption(option.description, option.isRight, questionId);
         }
       }
@@ -195,9 +199,10 @@ const AddQuiz: React.FC = () => {
           ],
         },
       ]);
+      setSelectedQuestionId(null);
       navigate("/manage");
     } catch (error: any) {
-      console.error("2Erro ao criar o quiz:", error);
+      console.error("Erro ao criar o quiz:", error);
       alert(
         error.message ||
           "Ocorreu um erro ao criar o quiz. Por favor, tente novamente."
@@ -206,225 +211,143 @@ const AddQuiz: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
+    <div className="container">
       <h2>Criar Novo Quiz</h2>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "20px" }}>
-          <label
-            htmlFor="quizTitle"
-            style={{ display: "block", marginBottom: "5px" }}
-          >
-            Título do Quiz:
-          </label>
+        <div className="form-group">
+          <label htmlFor="quizTitle">Título do Quiz:</label>
           <input
             id="quizTitle"
             type="text"
             value={quizTitle}
             onChange={(e) => setQuizTitle(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px" }}
             placeholder="Insira o título do quiz"
           />
         </div>
-
-        {questions.map((question, qIndex) => (
-          <div
-            key={question.id}
-            style={{
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-              padding: "15px",
-              marginBottom: "20px",
-              position: "relative",
-            }}
-          >
-            <h3>Pergunta {qIndex + 1}</h3>
-            {questions.length > 1 && (
-              <button
-                type="button"
-                onClick={() => handleRemoveQuestion(question.id)}
-                style={{
-                  position: "absolute",
-                  top: "15px",
-                  right: "15px",
-                  background: "#e74c3c",
-                  color: "#fff",
-                  border: "none",
-                  padding: "5px 10px",
-                  borderRadius: "3px",
-                  cursor: "pointer",
-                }}
-              >
-                Remover Pergunta
-              </button>
-            )}
-            <div style={{ marginBottom: "10px" }}>
-              <label
-                htmlFor={`questionTitle-${question.id}`}
-                style={{ display: "block", marginBottom: "5px" }}
-              >
-                Título da Pergunta:
-              </label>
-              <input
-                id={`questionTitle-${question.id}`}
-                type="text"
-                value={question.title}
-                onChange={(e) =>
-                  handleQuestionChange(question.id, "title", e.target.value)
-                }
-                required
-                style={{ width: "100%", padding: "8px" }}
-                placeholder="Insira o título da pergunta"
-              />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label
-                htmlFor={`questionDescription-${question.id}`}
-                style={{ display: "block", marginBottom: "5px" }}
-              >
-                Descrição da Pergunta:
-              </label>
-              <textarea
-                id={`questionDescription-${question.id}`}
-                value={question.description}
-                onChange={(e) =>
-                  handleQuestionChange(
-                    question.id,
-                    "description",
-                    e.target.value
-                  )
-                }
-                style={{ width: "100%", padding: "8px" }}
-                placeholder="Insira a descrição da pergunta (opcional)"
-                rows={3}
-              />
-            </div>
-            <h4>Opções</h4>
-            {question.options.map((option, oIndex) => (
-              <div
-                key={option.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "10px",
-                }}
-              >
-                <div style={{ flex: 1 }}>
-                  <label
-                    htmlFor={`optionDescription-${option.id}`}
-                    style={{ display: "block", marginBottom: "5px" }}
-                  >
-                    Opção {oIndex + 1}:
-                  </label>
+        <div className="columns">
+          <div className="left-column">
+            <h3>Perguntas</h3>
+            <ul className="question-list">
+              {questions.map((question, qIndex) => (
+                <li
+                  key={question.id}
+                  className={`question-item ${
+                    selectedQuestionId === question.id ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedQuestionId(question.id)}
+                >
                   <input
-                    id={`optionDescription-${option.id}`}
                     type="text"
-                    value={option.description}
+                    value={question.title}
                     onChange={(e) =>
-                      handleOptionChange(
-                        question.id,
-                        option.id,
+                      handleQuestionChange(question.id, "title", e.target.value)
+                    }
+                    placeholder={`Pergunta ${qIndex + 1}`}
+                  />
+                  {questions.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveQuestion(question.id)}
+                      className="remove-question-button"
+                    >
+                      Remover
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={handleAddQuestion}
+              className="add-question-button"
+            >
+              Adicionar Pergunta
+            </button>
+          </div>
+          <div className="right-column">
+            {selectedQuestionId !== null && (
+              <>
+                <h3>Opções da Pergunta</h3>
+                <div className="form-group">
+                  <label htmlFor={`questionDescription-${selectedQuestionId}`}>
+                    Descrição da Pergunta:
+                  </label>
+                  <textarea
+                    id={`questionDescription-${selectedQuestionId}`}
+                    value={
+                      questions.find((q) => q.id === selectedQuestionId)
+                        ?.description || ""
+                    }
+                    onChange={(e) =>
+                      handleQuestionChange(
+                        selectedQuestionId,
                         "description",
                         e.target.value
                       )
                     }
-                    required
-                    style={{ width: "100%", padding: "8px" }}
-                    placeholder="Insira a descrição da opção"
+                    placeholder="Insira a descrição da pergunta (opcional)"
+                    rows={3}
                   />
                 </div>
-                <div
-                  style={{
-                    marginLeft: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                <ul className="option-list">
+                  {questions
+                    .find((q) => q.id === selectedQuestionId)
+                    ?.options.map((option, oIndex) => (
+                      <li key={option.id} className="option-item">
+                        <input
+                          type="text"
+                          value={option.description}
+                          onChange={(e) =>
+                            handleOptionChange(
+                              option.id,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          placeholder={`Opção ${oIndex + 1}`}
+                        />
+                        <label className="checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={option.isRight}
+                            onChange={(e) =>
+                              handleOptionChange(
+                                option.id,
+                                "isRight",
+                                e.target.checked
+                              )
+                            }
+                          />
+                          Correta
+                        </label>
+                        {questions.find((q) => q.id === selectedQuestionId)!
+                          .options.length > 2 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveOption(option.id)}
+                            className="remove-option-button"
+                          >
+                            Remover
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                </ul>
+                <button
+                  type="button"
+                  onClick={handleAddOption}
+                  className="add-option-button"
                 >
-                  <label style={{ display: "flex", alignItems: "center" }}>
-                    <input
-                      type="checkbox"
-                      checked={option.isRight}
-                      onChange={(e) =>
-                        handleOptionChange(
-                          question.id,
-                          option.id,
-                          "isRight",
-                          e.target.checked
-                        )
-                      }
-                      style={{ marginRight: "5px" }}
-                    />
-                    Correta
-                  </label>
-                </div>
-                {question.options.length > 2 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveOption(question.id, option.id)}
-                    style={{
-                      marginLeft: "10px",
-                      background: "#e74c3c",
-                      color: "#fff",
-                      border: "none",
-                      padding: "5px 10px",
-                      borderRadius: "3px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Remover Opção
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => handleAddOption(question.id)}
-              style={{
-                background: "#3498db",
-                color: "#fff",
-                border: "none",
-                padding: "5px 10px",
-                borderRadius: "3px",
-                cursor: "pointer",
-              }}
-            >
-              Adicionar Opção
-            </button>
+                  Adicionar Opção
+                </button>
+              </>
+            )}
           </div>
-        ))}
-
-        <button
-          type="button"
-          onClick={handleAddQuestion}
-          style={{
-            background: "#2ecc71",
-            color: "#fff",
-            border: "none",
-            padding: "10px 15px",
-            borderRadius: "5px",
-            cursor: "pointer",
-            marginBottom: "20px",
-          }}
-        >
-          Adicionar Pergunta
-        </button>
-
-        <div>
-          <button
-            type="submit"
-            style={{
-              background: "#9b59b6",
-              color: "#fff",
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: "5px",
-              cursor: "pointer",
-              fontSize: "16px",
-            }}
-          >
-            Criar Quiz
-          </button>
         </div>
+        <button type="submit" className="submit-button">
+          Criar Quiz
+        </button>
       </form>
     </div>
   );

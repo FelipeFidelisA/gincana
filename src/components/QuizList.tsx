@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IoEllipsisVertical } from "react-icons/io5"; // Importando o ícone de 3 pontos verticais
+import { IoEllipsisVertical } from "react-icons/io5";
 import { QRCodeCanvas } from "qrcode.react";
 
 const QuizList = ({
@@ -10,7 +10,7 @@ const QuizList = ({
   onOpenAddQuestionModal,
 }: any) => {
   const navigate = useNavigate();
-  const [showOptions, setShowOptions] = useState<number | null>(null); // Controle de exibição do menu de opções
+  const [showOptions, setShowOptions] = useState<number | null>(null);
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
@@ -23,29 +23,31 @@ const QuizList = ({
           padding: "0",
           display: "flex",
           flexWrap: "wrap",
-          gap: "20px", // Espaço entre os cards
+          gap: "20px",
         }}
       >
         {quizzes.map((quiz: any) => (
           <li
             key={quiz.id}
             style={{
-              width: "250px", // Tamanho fixo para o card
+              width: "250px",
               padding: "15px",
               borderRadius: "8px",
-              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.15)", // Sombra mais suave
+              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.15)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               backgroundColor: "#f4f4f4",
-              position: "relative", // Necessário para posicionar as opções corretamente
+              position: "relative",
             }}
           >
             {/* QR Code */}
-            <div style={{ position: "relative", width: "150px", height: "150px" }}>
+            <div
+              style={{ position: "relative", width: "150px", height: "150px" }}
+            >
               <QRCodeCanvas
-              value={`${window.location.origin}/respond?code=${quiz.code}`}
-              size={150}
+                value={`${window.location.origin}/respond?code=${quiz.code}`}
+                size={150}
               />
             </div>
 
@@ -53,7 +55,7 @@ const QuizList = ({
             <div
               style={{
                 position: "absolute",
-                top: "10px", // Ajuste para as opções ficarem no topo
+                top: "10px",
                 right: "10px",
               }}
             >
@@ -68,22 +70,22 @@ const QuizList = ({
                   color: "#333",
                   transition: "color 0.3s ease",
                   padding: "5px",
-                  borderRadius: "50%", // Botão circular para melhor visibilidade
-                  backgroundColor: "rgba(255, 255, 255, 0.8)", // Fundo semitransparente
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(255, 255, 255, 0.8)",
                 }}
               />
               {showOptions === quiz.id && (
                 <div
                   style={{
                     position: "absolute",
-                    top: "30px", // Ajusta a posição para baixo do ícone
+                    top: "30px",
                     right: "0",
                     backgroundColor: "#fff",
                     borderRadius: "8px",
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                     padding: "10px",
                     zIndex: 10,
-                    minWidth: "200px", // Largura mínima para o menu
+                    minWidth: "200px",
                   }}
                 >
                   <button
