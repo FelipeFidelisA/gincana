@@ -4,9 +4,8 @@ import { useQuizApi } from "../../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
 import QuizCard from "./QuizCard";
 import QuizModal from "./QuizModal";
-import GuestManagement from "../../pages/GuestManagement";
-import QuizRanking from "../../pages/QuizRanking";
-import QuestionList from "../../pages/QuestionList";
+import GuestManagement from "../GuestManagement";
+import QuestionList from "../QuestionList";
 import { FaPlus } from "react-icons/fa";
 
 Modal.setAppElement("#root");
@@ -85,16 +84,6 @@ const QuizManagement: React.FC = () => {
       >
         {modalData.quiz && (
           <GuestManagement quizId={modalData.quiz.id} onClose={closeModal} />
-        )}
-      </Modal>
-
-      <Modal
-        isOpen={modalData.isOpen && modalData.type === "ranking"}
-        onRequestClose={closeModal}
-        contentLabel="Quiz Ranking"
-      >
-        {modalData.quiz && (
-          <QuizRanking quizId={modalData.quiz.id} onClose={closeModal} />
         )}
       </Modal>
 

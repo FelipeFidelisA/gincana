@@ -2,14 +2,14 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Páginas
-import QuizResponse from "./pages/QuizResponse";
 import AddQuiz from "./pages/AddQuiz";
-import QrView from "./pages/QrView";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import QrView from "./pages/QrView";
 import QuizAdminPage from "./pages/QuizAdminPage";
+import QuizResponse from "./pages/QuizResponse";
 import Ranking from "./pages/Ranking";
+import Register from "./pages/Register";
 
 // Componentes
 import QuizManagement from "./components/QuizManagement";
