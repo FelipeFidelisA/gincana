@@ -1,7 +1,21 @@
+// Ranking.tsx
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../api";
 import "../styles/Ranking.css";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// Registro dos componentes do ChartJS
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 interface Quiz {
   id: number;
@@ -65,7 +79,7 @@ const Ranking: React.FC = () => {
 
     const intervalId = setInterval(() => {
       fetchRanking();
-    }, 300);
+    }, 30000); // Atualiza a cada 30 segundos para evitar excesso de requisições
 
     fetchRanking();
 
@@ -84,7 +98,9 @@ const Ranking: React.FC = () => {
     return (
       <div className="ranking-container">
         <h2>{error}</h2>
-        <button onClick={() => navigate("/")}>Voltar para Home</button>
+        <button onClick={() => navigate("/")} className="back-button">
+          Voltar para Home
+        </button>
       </div>
     );
   }
@@ -93,42 +109,140 @@ const Ranking: React.FC = () => {
     return (
       <div className="ranking-container">
         <h2>Quiz não encontrado.</h2>
-        <button onClick={() => navigate("/")}>Voltar para Home</button>
+        <button onClick={() => navigate("/")} className="back-button">
+          Voltar para Home
+        </button>
       </div>
     );
   }
 
   const sortedGuests = [...quiz.guests].sort((a, b) => b.score - a.score);
+  const topGuests = sortedGuests.slice(0, 5);
+  const otherGuests = sortedGuests.slice(5);
+
+  // Preparação dos dados para o gráfico (apenas Top 5)
+  const chartData = {
+    labels: topGuests.map((guest) => guest.name),
+    datasets: [
+      {
+        label: "Pontuação",
+        data: topGuests.map((guest) => guest.score),
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Opções do gráfico
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: true,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: "#fff",
+          font: {
+            size: 14,
+            family: "Poppins, sans-serif",
+            weight: 600,
+          },
+        },
+        grid: {
+          color: "rgba(255, 255, 255, 0.2)",
+        },
+      },
+      x: {
+        ticks: {
+          color: "#fff",
+          font: {
+            size: 14,
+            family: "Poppins, sans-serif",
+            weight: 600,
+          },
+        },
+        grid: {
+          display: false,
+        },
+      },
+    },
+  };
 
   return (
     <div className="ranking-container">
       <h1>Ranking - {quiz.title}</h1>
-      <table className="ranking-table">
-        <thead>
-          <tr>
-            <th>Posição</th>
-            <th>Perfil</th>
-            <th>Nome</th>
-            <th>Pontuação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedGuests.map((guest, index) => (
-            <tr key={guest.id}>
-              <td>{index + 1}</td>
-              <td>
+      <div className="ranking-content">
+        <div className="chart-container">
+          <Bar data={chartData} options={chartOptions} />
+        </div>
+        <div className="others-container">
+          <h2>Top 5 Melhores</h2>
+          <ul className="others-list">
+            {topGuests.map((guest) => (
+              <li key={guest.id}>
                 <img
                   src={guest.profileUrl}
                   alt={`${guest.name} Perfil`}
                   className="profile-image"
                 />
-              </td>
-              <td>{guest.name}</td>
-              <td>{guest.score}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                <span className="guest-name">{guest.name}</span>
+                <span className="guest-score">{guest.score} pts</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      {otherGuests.length > 0 && (
+        <div style={{ width: "100%", overflowX: "auto" }}>
+          <div style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "1rem",
+            marginBottom: "0.5rem",
+          }}>
+            <h2 style={{
+              color: "#fff",
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: 600,
+            }}>Outros Participantes</h2>
+          </div>
+          <table className="ranking-table">
+            <thead>
+              <tr>
+                <th>Posição</th>
+                <th>Perfil</th>
+                <th>Nome</th>
+                <th>Pontuação</th>
+              </tr>
+            </thead>
+            <tbody>
+              {otherGuests.map((guest, index) => (
+                <tr key={guest.id}>
+                  <td>{index + 6}</td>{" "}
+                  {/* Ajusta a posição considerando os top 5 */}
+                  <td>
+                    <img
+                      src={guest.profileUrl}
+                      alt={`${guest.name} Perfil`}
+                      className="profile-image"
+                    />
+                  </td>
+                  <td>{guest.name}</td>
+                  <td>{guest.score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       <button onClick={() => navigate("/")} className="back-button">
         Voltar para Home
       </button>

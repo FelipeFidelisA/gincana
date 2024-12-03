@@ -1,16 +1,26 @@
+/* Ranking.css */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
 .ranking-container {
   padding: 2rem;
   text-align: center;
-  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+  background: linear-gradient(135deg, #2575fc, #6a11cb);
   min-height: 100vh;
   box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  color: #fff; /* Texto branco */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .ranking-container h1 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
-  color: #333;
-   font-family: "Poppins", sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: 700;
 }
 
 .ranking-content {
@@ -18,29 +28,36 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 2rem;
+  width: 100%;
 }
 
 .chart-container {
-  flex: 1;
-  min-width: 300px;
+  flex: 1 1 300px;
   max-width: 700px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  /* Adicionando destaque */
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .others-container {
-  flex: 1;
-  min-width: 200px;
+  flex: 1 1 200px;
   max-width: 300px;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  /* Adicionando destaque */
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .others-container h2 {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-   font-family: "Poppins", sans-serif;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  font-weight: 600;
 }
 
 .others-list {
@@ -53,28 +70,73 @@
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
+  transition: transform 0.2s;
 }
 
-.profile-image-small {
+.others-list li:hover {
+  transform: scale(1.05);
+}
+
+.profile-image {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 0.5rem;
-  border: 2px solid #02a09d;
+  margin-right: 0.75rem;
+  border: 2px solid #fff;
 }
 
 .guest-name {
   flex: 1;
   font-size: 1rem;
-  color: #333;
-   font-family: "Poppins", sans-serif;
+  color: #fff;
+  font-weight: 600;
 }
 
 .guest-score {
   font-size: 1rem;
-  color: #555;
-   font-family: "Poppins", sans-serif;
+  color: #ffd700; /* Cor dourada para destacar a pontuação */
+  font-weight: 600;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  font-family: "Poppins", sans-serif;
+}
+
+.ranking-table th,
+.ranking-table td {
+  padding: 1rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.ranking-table th {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 600;
+  border-bottom: 2px solid #fff;
+}
+
+.ranking-table tbody tr {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background-color 0.3s;
+}
+
+.ranking-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.ranking-table tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.ranking-table img.profile-image {
+  border: 2px solid #fff;
 }
 
 .back-button {
@@ -88,9 +150,78 @@
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s;
   font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .back-button:hover {
   background: #028a7e;
   transform: translateY(-2px);
+}
+
+/* Responsividade */
+
+@media (max-width: 768px) {
+  .ranking-container {
+    padding: 1rem;
+  }
+
+  .ranking-container h1 {
+    font-size: 2rem;
+  }
+
+  .chart-container,
+  .others-container {
+    max-width: 100%;
+  }
+
+  .ranking-table th,
+  .ranking-table td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .back-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .guest-name,
+  .guest-score {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ranking-container h1 {
+    font-size: 1.8rem;
+  }
+
+  .others-container h2 {
+    font-size: 1.3rem;
+  }
+
+  .ranking-table th,
+  .ranking-table td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .guest-name,
+  .guest-score {
+    font-size: 0.9rem;
+  }
+
+  .back-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Barra de rolagem invisível */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
