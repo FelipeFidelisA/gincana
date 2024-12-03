@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuizApi } from "../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
-import "./addQuiz.css";
+import "../styles/addQuiz.css";
 
 interface Option {
   id: number;
@@ -212,7 +212,7 @@ const AddQuiz: React.FC = () => {
 
   return (
     <div className="container">
-      <h2>Criar Novo Quiz</h2>
+      <h1>Criar Novo Quiz</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="quizTitle">Título do Quiz:</label>
