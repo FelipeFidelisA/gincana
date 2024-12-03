@@ -335,7 +335,7 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
   ): Promise<any> => {
     try {
       const response = await api.put(
-        `/quiz/score/plus `,
+        `/quiz/score/plus`,
         {
           guestId,
           quizCode,
