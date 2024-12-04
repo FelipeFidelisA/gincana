@@ -8,11 +8,10 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-
- const [credentials, setCredentials] = useState({
+  const [credentials, setCredentials] = useState({
     username: "",
     password: "",
-  }); 
+  });
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = ({
@@ -69,15 +68,52 @@ const Login: React.FC = () => {
         </div>
         <div className="image-section"></div>
       </div>
-      <footer style={{
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
-        textAlign: "center",
-        padding: "1rem",
-        color: "#fff",
-      }} className="footer">
-        © 2024 Produzido por Alexandre Neves. Carlos Henrique, Felipe Fielis e Guilherme 
+      <footer
+        style={{
+          textAlign: "center",
+          backgroundColor: "transparent",
+          marginTop: "1rem !important",
+          color: "#fff",
+        }}
+      >
+        <p>
+          © 2024 Desenvolvido por{" "}
+          <span
+            style={{
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Alexandre Neves
+          </span>
+          ,{" "}
+          <span
+            style={{
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Carlos Henrique
+          </span>
+          ,{" "}
+          <span
+            style={{
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Felipe Fielis
+          </span>{" "}
+          e{" "}
+          <span
+            style={{
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Guilherme Monteiro
+          </span>
+        </p>
       </footer>
     </div>
   );
