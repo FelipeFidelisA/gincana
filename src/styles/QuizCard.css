@@ -203,3 +203,39 @@
     aspect-ratio: 1 / 1;
   }
 }
+
+/* Estilo base para o botão de compartilhamento */
+.share-button {
+  background-color: #02a09d;
+  color: #fff;
+  border: 2px solid #028c8a;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 1000;
+}
+
+/* Estilo quando o botão está no estado "copiado" */
+.share-button.copied {
+  background-color: #28a745 !important; /* Verde */
+  border-color: #1e7e34;
+  transform: scale(1.05); /* Leve aumento de tamanho */
+}
+
+/* Efeito de hover para o botão de compartilhamento */
+.share-button:hover {
+  background-color: #028c8a;
+}
+
+/* Adicionando animação suave para o botão */
+.share-button,
+.share-button.copied {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}

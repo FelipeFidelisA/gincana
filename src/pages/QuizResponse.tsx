@@ -123,12 +123,12 @@ const QuizResponse: React.FC = () => {
         setRemainingTime(300);
         await fetchQuestions(foundQuiz.id);
         /* Verifica se o usuário já respondeu o quiz */
-        if (
+        /* if (
           localStorage.getItem(`quiz_${foundQuiz.id}_respondido`) === "true"
         ) {
           alert("Você já respondeu a este quiz.");
           navigate(`/ranking?code=${quizCode}`);
-        }
+        } */
       } else {
         alert("Quiz não encontrado.");
         navigate("/");
@@ -334,19 +334,7 @@ const QuizResponse: React.FC = () => {
         {/* Tela do quiz */}
         {step === "quiz" && quizStatus === "IN_PROGRESS" && (
           <>
-            {quiz &&
-            localStorage.getItem(`quiz_${quiz.id}_respondido`) === "true" ? (
-              /* Se o usuário já respondeu o quiz */
-              <div className="already-answered">
-                <h2>Você já respondeu a este quiz.</h2>
-                <button
-                  className="ranking-button"
-                  onClick={() => navigate(`/ranking?code=${quizCode}`)}
-                >
-                  Ver Ranking
-                </button>
-              </div>
-            ) : (
+            {quiz && (
               /* Tela das perguntas */
               <>
                 <h2>Quiz: {quiz?.title}</h2>

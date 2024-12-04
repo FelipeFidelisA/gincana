@@ -8,6 +8,8 @@ import "../../styles/QuizCard.css";
 const QuizCard = ({ quiz, openModal }: any) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [shareButtonText, setShareButtonText] = useState("Compartilhar");
+  const [isCopied, setIsCopied] = useState(false); // Novo estado para controlar a cópia
   const { setQuizSelected } = useQuizApi();
   const menuRef: any = useRef(null);
   const buttonRef: any = useRef(null);
@@ -16,7 +18,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
     `${window.location.origin}/respond?code=${quiz.code}`;
 
   const toggleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation(); // Prevent the card's onClick from being triggered
+    event.stopPropagation(); // Prevenir que o onClick do card seja acionado
     setIsMenuOpen((prevState) => !prevState);
   };
 
@@ -26,7 +28,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
   };
 
   const handleOpenModal = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation(); // Prevent the card's onClick from being triggered
+    event.stopPropagation(); // Prevenir que o onClick do card seja acionado
     openModal(quiz);
   };
 
@@ -53,6 +55,16 @@ const QuizCard = ({ quiz, openModal }: any) => {
     };
   }, [isMenuOpen]);
 
+  const handleShareClick = () => {
+    navigator.clipboard.writeText(generateQuizURL(quiz));
+    setShareButtonText("Copiado!");
+    setIsCopied(true); // Ativa o estado de cópia
+    setTimeout(() => {
+      setShareButtonText("Compartilhar");
+      setIsCopied(false); // Reseta o estado após 2 segundos
+    }, 2000);
+  };
+
   return (
     <div onClick={handleNavigateToQuizAdmin} className="quiz-card">
       <div>
@@ -63,6 +75,24 @@ const QuizCard = ({ quiz, openModal }: any) => {
           className="quiz-card-qr-code"
         />
         <h3 className="quiz-card-title">{quiz.title}</h3>
+      </div>
+      {/* Botão para copiar o link e compartilhar */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <button
+          className={`share-button ${isCopied ? "copied" : ""}`} // Classe condicional
+          onClick={(e) => {
+            e.stopPropagation(); // Previne o click do card
+            handleShareClick();
+          }}
+        >
+          {shareButtonText}
+        </button>
       </div>
       <button
         className="menu-toggle-button"
