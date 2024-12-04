@@ -117,7 +117,9 @@ const QuizResponse: React.FC = () => {
     }
 
     try {
+      // Busca o quiz pelo código
       const response = await api.get<Quiz>(`/quiz/code/${quizCode}`);
+      // Verifica se o quiz foi encontrado
       const foundQuiz = response.data;
       if (foundQuiz) {
         setQuiz(foundQuiz);
@@ -125,7 +127,6 @@ const QuizResponse: React.FC = () => {
         setTotalTime(60);
         setRemainingTime(60);
         await fetchQuestions(foundQuiz.id);
-
         /* Verifica se o usuário já respondeu o quiz */
         if (
           localStorage.getItem(`quiz_${foundQuiz.id}_respondido`) === "true"

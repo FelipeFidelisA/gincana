@@ -17,8 +17,14 @@ interface Question {
 }
 
 const AddQuiz: React.FC = () => {
-  const { createQuiz, createQuestion, createOption } = useQuizApi();
   const navigate = useNavigate();
+  const token = localStorage.getItem("authToken");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
+  const { createQuiz, createQuestion, createOption } = useQuizApi();
   const [quizTitle, setQuizTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([
     {

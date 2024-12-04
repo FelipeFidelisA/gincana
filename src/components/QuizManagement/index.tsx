@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import { useQuizApi } from "../../context/QuizApiContext";
@@ -10,7 +10,29 @@ import QuestionList from "../QuestionList";
 Modal.setAppElement("#root");
 
 const QuizManagement: React.FC = () => {
-  const { quizzes } = useQuizApi();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("authToken");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+    // chama navigate sempre que token mudar ou estiver ausente
+  }, [token, navigate]);
+
+  const { quizzes, listQuizzes, listQuestions } = useQuizApi();
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      // Chama listQuizzes até que quizzes não seja mais um array vazio
+      while (quizzes.length === 0) {
+        await listQuizzes();
+        // Para cada quiz, chama listQuestions
+        for (const quiz of quizzes) {
+          await listQuestions(quiz.id);
+        }
+      }
+    };
+    fetchQuizzes();
+  }, [quizzes, listQuizzes]);
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
     quiz: any;
@@ -20,7 +42,6 @@ const QuizManagement: React.FC = () => {
     quiz: null,
     type: "",
   });
-  const navigate = useNavigate();
 
   const openModal = (quiz: any, type: string) => {
     setModalData({ isOpen: true, quiz, type });
@@ -35,7 +56,7 @@ const QuizManagement: React.FC = () => {
       style={{
         fontFamily: "Poppins, sans-serif",
         padding: "20px",
-        color: "#fff", 
+        color: "#fff",
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",

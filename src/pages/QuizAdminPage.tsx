@@ -48,6 +48,12 @@ interface Question {
 
 const QuizAdminPage: React.FC = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("authToken");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const quizCode: string | null = queryParams.get("code");
