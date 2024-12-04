@@ -20,25 +20,132 @@ body {
   flex-direction: column; /* Adicionado para melhor responsividade */
 }
 
-/* Container de espera */
 .waiting-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.85);
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 2rem auto;
+  animation: fadeIn 1s ease-out;
 }
 
-/* Imagem de espera com animação */
-.waiting-image {
-  width: 150px;
-  height: 150px;
-  margin-bottom: 1rem;
-  animation: float 6s ease-in-out infinite;
+/* Spinner animado */
+.spinner-container {
+  margin-bottom: 1.5rem;
+}
+
+.spinner {
+  font-size: 3rem;
+  color: #007bff;
+  animation: spin 2s linear infinite;
+}
+
+/* Título da tela de espera */
+.waiting-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  animation: fadeInUp 1s ease-out;
+}
+
+/* Mensagem de espera */
+.waiting-message {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1.2s ease-out;
+}
+
+/* Barra de progresso */
+/* Barra de progresso */
+.progress-bar {
+  width: 80%;
+  height: 10px;
+  background-color: #b1afaf;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 1rem;
+  position: relative;
+}
+
+/* Elemento da barra de progresso */
+.progress {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #00c6ff);
+  border-radius: 5px;
+  animation: loading 80s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+}
+
+/* Animação da barra de progresso */
+@keyframes loading {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* Animações */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
+
+@media (max-width: 600px) {
+  .waiting-container {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+
+  .spinner {
+    font-size: 2.5rem;
+  }
+
+  .waiting-title {
+    font-size: 1.5rem;
+  }
+
+  .waiting-message {
+    font-size: 0.9rem;
+  }
+
+  .progress-bar {
+    width: 90%;
+  }
 }
 
 /* Animação de flutuação */

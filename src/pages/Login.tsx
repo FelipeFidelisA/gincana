@@ -77,7 +77,7 @@ const Login: React.FC = () => {
         padding: "1rem",
         color: "#fff",
       }} className="footer">
-        © 2024 Produzido por Sistemas de Informação
+        © 2024 Produzido por Alexandre Neves. Carlos Henrique, Felipe Fielis e Guilherme 
       </footer>
     </div>
   );

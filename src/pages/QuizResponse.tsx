@@ -321,14 +321,16 @@ const QuizResponse: React.FC = () => {
         {/* Tela de espera */}
         {step === "quiz" && quizStatus !== "IN_PROGRESS" && (
           <div className="waiting-container">
-            <img
-              src="https://i.imgur.com/nhR1ye7.jpeg"
-              alt="Aguardando Início do Quiz"
-              className="waiting-image"
-            />
-            <h2>Aguardando início do Quiz...</h2>
-            <p>Por favor, aguarde até que o administrador inicie o quiz.</p>
-            <FaSpinner className="spinner" />
+            <div className="spinner-container">
+              <FaSpinner className="spinner" />
+            </div>
+            <h2 className="waiting-title">Aguardando Início do Quiz...</h2>
+            <p className="waiting-message">
+              Por favor, aguarde até que o administrador inicie o quiz.
+            </p>
+            <div className="progress-bar">
+              <div className="progress"></div>
+            </div>
           </div>
         )}
         {/* Tela do quiz */}
