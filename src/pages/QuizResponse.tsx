@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { FaDice, FaSpinner } from "react-icons/fa";
-import {
-  CircularProgressbar,
-  buildStyles,
-} from "react-circular-progressbar";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import Confetti from "react-confetti";
 import { useSpring, animated } from "react-spring";
 import { useQuizApi } from "../context/QuizApiContext";
@@ -75,8 +72,8 @@ const QuizResponse: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionWithOptions[]>([]);
   const [userResponses, setUserResponses] = useState<number[]>([]);
   const [name, setName] = useState<string>("");
-  const [remainingTime, setRemainingTime] = useState<number>(60);
-  const [totalTime, setTotalTime] = useState<number>(60);
+  const [remainingTime, setRemainingTime] = useState<number>(300);
+  const [totalTime, setTotalTime] = useState<number>(300);
   const [step, setStep] = useState<"character" | "quiz">("character");
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [selectedCharacter, setSelectedCharacter] = useState<string>("");
@@ -102,9 +99,7 @@ const QuizResponse: React.FC = () => {
 
   /* Função para randomizar o personagem */
   const randomizeCharacter = () => {
-    const randomIndex = Math.floor(
-      Math.random() * predefinedCharacters.length
-    );
+    const randomIndex = Math.floor(Math.random() * predefinedCharacters.length);
     setSelectedCharacter(predefinedCharacters[randomIndex]);
   };
 
@@ -124,8 +119,8 @@ const QuizResponse: React.FC = () => {
       if (foundQuiz) {
         setQuiz(foundQuiz);
         setQuizStatus(foundQuiz.status);
-        setTotalTime(60);
-        setRemainingTime(60);
+        setTotalTime(300);
+        setRemainingTime(300);
         await fetchQuestions(foundQuiz.id);
         /* Verifica se o usuário já respondeu o quiz */
         if (
@@ -165,9 +160,7 @@ const QuizResponse: React.FC = () => {
   /* Função para listar as opções de uma pergunta */
   const listOptions = async (questionId: number): Promise<Option[]> => {
     try {
-      const options = await api.get<Option[]>(
-        `/option/question/${questionId}`
-      );
+      const options = await api.get<Option[]>(`/option/question/${questionId}`);
       return options.data;
     } catch (error) {
       console.error("Erro ao listar opções:", error);
@@ -190,8 +183,8 @@ const QuizResponse: React.FC = () => {
         setQuizStatus(currentStatus);
         if (currentStatus === "IN_PROGRESS") {
           clearInterval(interval);
-          setTotalTime(60);
-          setRemainingTime(60);
+          setTotalTime(300);
+          setRemainingTime(300);
         }
       } catch (error) {
         console.error("Erro ao verificar status do quiz:", error);
@@ -314,7 +307,7 @@ const QuizResponse: React.FC = () => {
           width={windowDimensions.width}
           height={windowDimensions.height}
           recycle={false}
-          numberOfPieces={500}
+          numberOfPieces={60}
         />
       )}
       {/* Mensagem de sucesso */}
@@ -408,10 +401,7 @@ const QuizResponse: React.FC = () => {
                 </div>
                 <div className="navigation-buttons">
                   {currentQuestion > 0 && (
-                    <button
-                      onClick={handlePrevious}
-                      className="nav-button"
-                    >
+                    <button onClick={handlePrevious} className="nav-button">
                       Anterior
                     </button>
                   )}
@@ -448,9 +438,7 @@ const QuizResponse: React.FC = () => {
                   return;
                 }
                 if (selectedCharacter === "") {
-                  alert(
-                    "Por favor, selecione uma imagem para seu personagem."
-                  );
+                  alert("Por favor, selecione uma imagem para seu personagem.");
                   return;
                 }
                 try {
@@ -475,10 +463,7 @@ const QuizResponse: React.FC = () => {
             >
               <div className="character-display">
                 <img
-                  src={
-                    selectedCharacter ||
-                    "https://i.imgur.com/x1byl5O.jpeg"
-                  }
+                  src={selectedCharacter || "https://i.imgur.com/x1byl5O.jpeg"}
                   alt="Seu Personagem"
                   className="character-image"
                 />
