@@ -190,7 +190,12 @@
   .guest-name,
   .guest-score {
     font-size: 0.95rem;
+    color: #fff !important;
   }
+}
+
+span .guest-name {
+  color: #fff !important;
 }
 
 @media (max-width: 480px) {
@@ -211,6 +216,7 @@
   .guest-name,
   .guest-score {
     font-size: 0.9rem;
+    color: #fff !important;
   }
 
   .back-button {
@@ -218,7 +224,6 @@
     font-size: 0.9rem;
   }
 }
-
 
 /* Barra de rolagem invisível */
 ::-webkit-scrollbar {

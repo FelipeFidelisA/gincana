@@ -157,7 +157,7 @@ const Ranking: React.FC = () => {
           },
         },
         grid: {
-          color: "rgba(255, 255, 255, 0.2)",
+          color: "#fff",
         },
       },
       x: {
