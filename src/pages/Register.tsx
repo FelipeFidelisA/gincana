@@ -61,39 +61,75 @@ const Register: React.FC = () => {
   ];
 
   return (
-    <div className="container">
-      <div className="form-container">
-        <div style={{ flex: 1 }}>
-          <FormComponent
-            credentials={credentials}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            error={error}
-            fields={fields}
-            title="Registro"
-            submitButtonText="Registrar"
-            footerText="Já tem uma conta?"
-            footerLinkText="Faça login"
-            footerLinkPath="/login"
-            navigate={navigate}
-          />
+    <>
+      <div className="container">
+        <div className="form-container">
+          <div style={{ flex: 1 }}>
+            <FormComponent
+              credentials={credentials}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              error={error}
+              fields={fields}
+              title="Registro"
+              submitButtonText="Registrar"
+              footerText="Já tem uma conta?"
+              footerLinkText="Faça login"
+              footerLinkPath="/login"
+              navigate={navigate}
+            />
+          </div>
+          <div className="image-section"></div>
         </div>
-        <div className="image-section"></div>
       </div>
       <footer
         style={{
-          position: "absolute",
-          bottom: 0,
-          width: "100%",
           textAlign: "center",
-          padding: "1rem",
+          backgroundColor: "transparent",
+          marginTop: "1rem !important",
           color: "#fff",
         }}
-        className="footer"
       >
-        © 2024 Produzido por Sistemas de Informação
+        <p>
+          © 2024 Desenvolvido por{" "}
+          <span
+            style={{
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Alexandre Neves
+          </span>
+          ,{" "}
+          <span
+            style={{
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Carlos Henrique
+          </span>
+          ,{" "}
+          <span
+            style={{
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Felipe Fielis
+          </span>{" "}
+          e{" "}
+          <span
+            style={{
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Guilherme Monteiro
+          </span>
+        </p>
       </footer>
-    </div>
+    </>
   );
 };
 

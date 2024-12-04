@@ -28,6 +28,7 @@ body {
   overflow: hidden;
   margin: 2rem auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 100px !important;
 }
 
 .image-section {
@@ -50,11 +51,6 @@ body {
 
   .image-section {
     display: none;
-  }
-
-  .footer {
-    font-size: 0.7rem;
-    padding: 1rem 0;
   }
 
   input {
@@ -82,18 +78,4 @@ body {
     padding: 12px;
     font-size: 1rem;
   }
-
-  .footer {
-    font-size: 0.6rem;
-  }
-}
-
-.footer a {
-  color: white!important;
-  text-decoration: none;
-  font-family: "Poppins", sans-serif;
-}
-
-.footer a:hover {
-  text-decoration: underline;
 }
