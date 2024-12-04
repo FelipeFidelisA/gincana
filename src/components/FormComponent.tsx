@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import InputComponent from "./InputComponent";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import "./FormComponent.css";
 
 interface FormComponentProps {
-  credentials: any;
+  credentials: { [key: string]: string };
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (e: any) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   error: string | null;
-  navigate: any;
+  navigate: (path: string) => void;
   fields: Array<{
     label: string;
     type: string;
@@ -37,103 +39,52 @@ const FormComponent: React.FC<FormComponentProps> = ({
   const [isLinkTextHovered, setIsLinkTextHovered] = useState(false);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const styles = {
-    formContent: {
-      flex: 1,
-      padding: "2rem",
-      display: "flex",
-      flexDirection: "column" as const,
-      justifyContent: "center",
-      animation: "slideIn 1s ease-out",
-      fontFamily: "'Poppins', sans-serif",
-    },
-    h2: {
-      fontSize: "2rem",
-      fontWeight: "bold",
-      color: isH2Hovered ? "#007bff" : "#333",
-      textAlign: "center" as const,
-      marginBottom: "1.5rem",
-      transition: "color 0.3s ease",
-      cursor: "pointer",
-    },
-    errorMessage: {
-      color: "#d33",
-      backgroundColor: "rgba(211, 51, 51, 0.1)",
-      padding: "0.75rem",
-      border: "1px solid #d33",
-      borderRadius: "5px",
-      marginBottom: "1rem",
-      textAlign: "center" as const,
-      fontFamily: "'Poppins', sans-serif",
-    },
-    form: {
-      display: "flex",
-      flexDirection: "column" as const,
-      fontFamily: "'Poppins', sans-serif",
-    },
-    buttonContainer: {
-      display: "flex",
-      width: "100%",
-    },
-    button: {
-      width: "40%",
-      padding: "0.75rem",
-      margin: "1.5rem auto 0 auto",
-      backgroundColor: isButtonHovered ? "#0056b3" : "#007bff",
-      color: "#fff",
-      border: "none",
-      borderRadius: "5px",
-      fontSize: "1.1rem",
-      cursor: "pointer",
-      transition: "background-color 0.3s ease, transform 0.2s ease",
-      textAlign: "center" as const,
-      transform: isButtonActive ? "scale(0.95)" : "scale(1)",
-      fontFamily: "'Poppins', sans-serif",
-    },
-    registerLink: {
-      textAlign: "center" as const,
-      fontSize: "0.9rem",
-      color: "#555",
-      marginTop: "1.5rem",
-      fontFamily: "'Poppins', sans-serif",
-    },
-    linkText: {
-      color: isLinkTextHovered ? "#0056b3" : "#007bff",
-      marginLeft: "0.3rem",
-      cursor: "pointer",
-      textDecoration: "underline",
-      transition: "color 0.3s ease",
-      fontFamily: "'Poppins', sans-serif",
-    },
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
-    <div style={styles.formContent}>
+    <div className="form-content">
       <h2
-        style={styles.h2}
+        className={`form-title ${isH2Hovered ? "title-hovered" : ""}`}
         onMouseEnter={() => setIsH2Hovered(true)}
         onMouseLeave={() => setIsH2Hovered(false)}
       >
         {title}
       </h2>
-      {error && <div style={styles.errorMessage}>{error}</div>}
-      <form onSubmit={handleSubmit} noValidate style={styles.form}>
+      {error && <div className="error-message">{error}</div>}
+      <form onSubmit={handleSubmit} noValidate className="form">
         {fields.map((field) => (
-          <InputComponent
-            key={field.name}
-            label={field.label}
-            type={field.type}
-            name={field.name}
-            value={credentials[field.name]}
-            onChange={handleChange}
-            placeholder={field.placeholder}
-          />
+          <div key={field.name} className="input-container">
+            <InputComponent
+              label={field.label}
+              type={
+                field.name === "password" && showPassword ? "text" : field.type
+              }
+              name={field.name}
+              value={credentials[field.name]}
+              onChange={handleChange}
+              placeholder={field.placeholder}
+            />
+            {field.name === "password" && (
+              <span
+                onClick={toggleShowPassword}
+                className="password-toggle-icon"
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            )}
+          </div>
         ))}
-        <div style={styles.buttonContainer}>
+        <div className="button-container">
           <button
             type="submit"
-            style={styles.button}
+            className={`submit-button ${
+              isButtonHovered ? "button-hovered" : ""
+            } ${isButtonActive ? "button-active" : ""}`}
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
             onMouseDown={() => setIsButtonActive(true)}
@@ -143,11 +94,11 @@ const FormComponent: React.FC<FormComponentProps> = ({
           </button>
         </div>
       </form>
-      <p style={styles.registerLink}>
+      <p className="footer-text">
         {footerText}
         <span
           onClick={() => navigate(footerLinkPath)}
-          style={styles.linkText}
+          className={`footer-link ${isLinkTextHovered ? "link-hovered" : ""}`}
           onMouseEnter={() => setIsLinkTextHovered(true)}
           onMouseLeave={() => setIsLinkTextHovered(false)}
         >

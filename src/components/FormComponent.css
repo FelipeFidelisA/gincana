@@ -1,0 +1,137 @@
+.form-content {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: slideIn 1s ease-out;
+  font-family: "Poppins", sans-serif;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.form-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.form-title.title-hovered {
+  color: #007bff;
+}
+
+.error-message {
+  color: #d33;
+  background-color: rgba(211, 51, 51, 0.1);
+  padding: 0.75rem;
+  border: 1px solid #d33;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  font-family: "Poppins", sans-serif;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s ease;
+}
+
+.password-toggle-icon:hover {
+  color: #007bff;
+}
+
+.button-container {
+  display: flex;
+  width: 100%;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 1.5rem 0 0 0;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
+
+.submit-button.button-hovered {
+  background-color: #0056b3;
+}
+
+.submit-button.button-active {
+  transform: scale(0.95);
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 1.5rem;
+  font-family: "Poppins", sans-serif;
+}
+
+.footer-link {
+  color: #007bff;
+  margin-left: 0.3rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.footer-link.link-hovered {
+  color: #0056b3;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .form-content {
+    padding: 1rem;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .submit-button {
+    font-size: 1rem;
+    padding: 0.6rem;
+  }
+}
+
+/* Animação de entrada */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
