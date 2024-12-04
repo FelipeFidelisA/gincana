@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useQuizApi } from "../context/QuizApiContext";
+import { delay, useQuizApi } from "../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/addQuiz.css";
+import { FaSpinner } from "react-icons/fa"; // Importing the spinner icon
 
 interface Option {
   id: number;
@@ -19,12 +20,15 @@ interface Question {
 const AddQuiz: React.FC = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
+
   useEffect(() => {
     if (!token) {
       navigate("/login");
     }
   }, [token, navigate]);
+
   const { createQuiz, createQuestion, createOption } = useQuizApi();
+
   const [quizTitle, setQuizTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([
     {
@@ -40,6 +44,7 @@ const AddQuiz: React.FC = () => {
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(
     null
   );
+  const [submitting, setSubmitting] = useState(false); // State to manage submission
 
   useEffect(() => {
     if (questions.length > 0 && selectedQuestionId === null) {
@@ -125,8 +130,7 @@ const AddQuiz: React.FC = () => {
             return { ...o, [field]: value };
           }
 
-          // Se o campo sendo alterado for 'isRight' e o valor está sendo marcado como correto,
-          // desmarque as outras opções.
+          // If setting isRight to true, unset it for other options
           if (field === "isRight" && value === true) {
             return { ...o, isRight: false };
           }
@@ -177,23 +181,25 @@ const AddQuiz: React.FC = () => {
 
     if (!validateForm()) return;
 
+    setSubmitting(true); // Start submission
+
     try {
-      setTimeout(() => {}, 1000);
+      await delay(400);
       const newQuiz = await createQuiz(quizTitle);
-      setTimeout(() => {}, 1000);
+      await delay(400);
       const quizId: any = newQuiz;
       if (!quizId) {
         throw new Error("Falha ao obter o ID do Quiz criado.");
       }
 
       for (const [qIndex, question] of questions.entries()) {
-        setTimeout(() => {}, 1000);
+        await delay(400);
         const newQuestion: any = await createQuestion(
           question.title,
           question.description,
           quizId + 1
         );
-        setTimeout(() => {}, 1000);
+        await delay(400);
         const questionId = newQuestion.id;
         if (!questionId) {
           throw new Error(
@@ -204,9 +210,9 @@ const AddQuiz: React.FC = () => {
         }
         for (const [oIndex, option] of question.options.entries()) {
           console.log(oIndex);
-          setTimeout(() => {}, 1000);
+          await delay(400);
           await createOption(option.description, option.isRight, questionId);
-          setTimeout(() => {}, 1000);
+          await delay(400);
         }
       }
       setQuizTitle("");
@@ -222,13 +228,15 @@ const AddQuiz: React.FC = () => {
         },
       ]);
       setSelectedQuestionId(null);
-      navigate("/manage");
+      navigate("/manage"); // Redirect after successful submission
     } catch (error: any) {
       console.error("Erro ao criar o quiz:", error);
       alert(
         error.message ||
           "Ocorreu um erro ao criar o quiz. Por favor, tente novamente."
       );
+    } finally {
+      setSubmitting(false); // End submission
     }
   };
 
@@ -277,7 +285,10 @@ const AddQuiz: React.FC = () => {
                   {questions.length > 1 && (
                     <button
                       type="button"
-                      onClick={() => handleRemoveQuestion(question.id)}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the li onClick
+                        handleRemoveQuestion(question.id);
+                      }}
                       className="remove-question-button"
                       aria-label={`Remover Pergunta ${qIndex + 1}`}
                     >
@@ -376,8 +387,19 @@ const AddQuiz: React.FC = () => {
             )}
           </div>
         </div>
-        <button type="submit" className="submit-button">
-          Criar Quiz
+        <button
+          type="submit"
+          className="submit-button"
+          disabled={submitting} // Disable the button when submitting
+        >
+          {submitting ? (
+            <>
+              <FaSpinner className="spinner" /> {/* Spinner icon */}
+              Criando...
+            </>
+          ) : (
+            "Criar Quiz"
+          )}
         </button>
       </form>
     </div>

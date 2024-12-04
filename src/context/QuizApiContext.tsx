@@ -7,6 +7,8 @@ import React, {
 } from "react";
 import { api } from "../api";
 
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export interface Quiz {
   id: number;
   title: string;
@@ -92,7 +94,7 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
     if (localStorage.getItem("authToken")) {
       setTimeout(() => {
         listQuizzes();
-      }, 500);
+      }, 1500);
     }
   }, []);
 
@@ -122,7 +124,9 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
       console.log("Quiz criado com sucesso:", response.data);
+      await delay(400);
       await listQuizzes();
+      await delay(400);
       const lastIndex = quizzes.length - 1;
       const lastQuiz = quizzes[lastIndex];
       console.log("Último quiz na lista após criação:", lastQuiz);
