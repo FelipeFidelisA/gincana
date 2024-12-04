@@ -22,13 +22,18 @@ const QuizManagement: React.FC = () => {
   const { quizzes, listQuizzes, listQuestions } = useQuizApi();
   useEffect(() => {
     const fetchQuizzes = async () => {
+      if (quizzes.length > 0) {
+        return;
+      }
       // Chama listQuizzes até que quizzes não seja mais um array vazio
-      while (quizzes.length === 0) {
+      while (quizzes.length > 0) {
         await listQuizzes();
         // Para cada quiz, chama listQuestions
         for (const quiz of quizzes) {
           await listQuestions(quiz.id);
+          await new Promise((resolve) => setTimeout(resolve, 1500));
         }
+        await new Promise((resolve) => setTimeout(resolve, 1500)); // Espera 1.5s antes de chamar novamente
       }
     };
     fetchQuizzes();

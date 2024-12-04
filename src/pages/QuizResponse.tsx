@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { FaDice, FaSpinner } from "react-icons/fa";
+import { FaDice, FaSpinner, FaStar, FaCircle, FaSquare } from "react-icons/fa";
+import { MdChangeHistory } from "react-icons/md";
 import {
   CircularProgressbar,
   buildStyles,
@@ -306,6 +307,38 @@ const QuizResponse: React.FC = () => {
     config: { tension: 200, friction: 20 },
   });
 
+  /* Função para obter o ícone da opção */
+  const getOptionIcon = (index: number) => {
+    switch (index) {
+      case 0:
+        return <FaStar />;
+      case 1:
+        return <FaCircle />;
+      case 2:
+        return <MdChangeHistory />;
+      case 3:
+        return <FaSquare />;
+      default:
+        return null;
+    }
+  };
+
+  /* Função para obter a cor da opção */
+  const getOptionColor = (index: number) => {
+    switch (index) {
+      case 0:
+        return "#FFC0CB"; // Rosa
+      case 1:
+        return "#90EE90"; // Verde claro
+      case 2:
+        return "#FFA500"; // Laranja
+      case 3:
+        return "#ADD8E6"; // Azul claro
+      default:
+        return "#FFFFFF";
+    }
+  };
+
   return (
     <>
       {/* Confete ao enviar o quiz */}
@@ -356,8 +389,10 @@ const QuizResponse: React.FC = () => {
             ) : (
               /* Tela das perguntas */
               <>
-                <h2>Quiz: {quiz?.title}</h2>
-                <div className="timer-container">
+                <div className="question-title">
+                  <h2>Pergunta</h2>
+                </div>
+                <div className="timer-circle">
                   <CircularProgressbar
                     value={remainingTime}
                     maxValue={totalTime}
@@ -372,7 +407,7 @@ const QuizResponse: React.FC = () => {
                     })}
                   />
                 </div>
-                <div className="question-container">
+                <div className="question-content">
                   {questions.length > 0 ? (
                     <>
                       <p>
@@ -384,34 +419,40 @@ const QuizResponse: React.FC = () => {
                       {questions[currentQuestion].description && (
                         <p>{questions[currentQuestion].description}</p>
                       )}
-                      <div className="options-list">
-                        {questions[currentQuestion].options.map(
-                          (option, optionIndex) => (
-                            <div
-                              key={option.id}
-                              className={`option-container ${
-                                userResponses[currentQuestion] === optionIndex
-                                  ? "selected"
-                                  : ""
-                              }`}
-                              onClick={() => handleOptionChange(optionIndex)}
-                            >
-                              <span>{option.description}</span>
-                            </div>
-                          )
-                        )}
-                      </div>
                     </>
                   ) : (
                     <p>Carregando perguntas...</p>
                   )}
                 </div>
+                <div className="options-grid">
+                  {questions.length > 0 &&
+                    questions[currentQuestion].options.map(
+                      (option, optionIndex) => (
+                        <div
+                          key={option.id}
+                          className={`option-box ${
+                            userResponses[currentQuestion] === optionIndex
+                              ? "selected"
+                              : ""
+                          }`}
+                          onClick={() => handleOptionChange(optionIndex)}
+                          style={{
+                            backgroundColor: getOptionColor(optionIndex),
+                          }}
+                        >
+                          <div className="option-icon">
+                            {getOptionIcon(optionIndex)}
+                          </div>
+                          <div className="option-text">
+                            {option.description}
+                          </div>
+                        </div>
+                      )
+                    )}
+                </div>
                 <div className="navigation-buttons">
                   {currentQuestion > 0 && (
-                    <button
-                      onClick={handlePrevious}
-                      className="nav-button"
-                    >
+                    <button onClick={handlePrevious} className="nav-button">
                       Anterior
                     </button>
                   )}
@@ -476,8 +517,7 @@ const QuizResponse: React.FC = () => {
               <div className="character-display">
                 <img
                   src={
-                    selectedCharacter ||
-                    "https://i.imgur.com/x1byl5O.jpeg"
+                    selectedCharacter || "https://i.imgur.com/x1byl5O.jpeg"
                   }
                   alt="Seu Personagem"
                   className="character-image"
