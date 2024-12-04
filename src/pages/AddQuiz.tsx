@@ -178,20 +178,22 @@ const AddQuiz: React.FC = () => {
     if (!validateForm()) return;
 
     try {
+      setTimeout(() => {}, 1000);
       const newQuiz = await createQuiz(quizTitle);
+      setTimeout(() => {}, 1000);
       const quizId: any = newQuiz;
       if (!quizId) {
         throw new Error("Falha ao obter o ID do Quiz criado.");
       }
 
       for (const [qIndex, question] of questions.entries()) {
-        setTimeout(() => {}, 500);
+        setTimeout(() => {}, 1000);
         const newQuestion: any = await createQuestion(
           question.title,
           question.description,
           quizId + 1
         );
-        setTimeout(() => {}, 500);
+        setTimeout(() => {}, 1000);
         const questionId = newQuestion.id;
         if (!questionId) {
           throw new Error(
@@ -202,9 +204,9 @@ const AddQuiz: React.FC = () => {
         }
         for (const [oIndex, option] of question.options.entries()) {
           console.log(oIndex);
-          setTimeout(() => {}, 500);
+          setTimeout(() => {}, 1000);
           await createOption(option.description, option.isRight, questionId);
-          setTimeout(() => {}, 500);
+          setTimeout(() => {}, 1000);
         }
       }
       setQuizTitle("");
