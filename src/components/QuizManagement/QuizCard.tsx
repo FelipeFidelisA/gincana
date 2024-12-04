@@ -76,24 +76,6 @@ const QuizCard = ({ quiz, openModal }: any) => {
         />
         <h3 className="quiz-card-title">{quiz.title}</h3>
       </div>
-      {/* Botão para copiar o link e compartilhar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <button
-          className={`share-button ${isCopied ? "copied" : ""}`} // Classe condicional
-          onClick={(e) => {
-            e.stopPropagation(); // Previne o click do card
-            handleShareClick();
-          }}
-        >
-          {shareButtonText}
-        </button>
-      </div>
       <button
         className="menu-toggle-button"
         onClick={toggleMenu}
@@ -103,17 +85,39 @@ const QuizCard = ({ quiz, openModal }: any) => {
         <FaEllipsisV />
       </button>
       {isMenuOpen && (
-        <div
-          style={{
-            zIndex: 1000,
-          }}
-          className="menu"
-          ref={menuRef}
-        >
-          <button onClick={handleOpenModal} className="menu-item">
-            Ver Detalhes
-          </button>
-        </div>
+        <>
+          <div
+            style={{
+              zIndex: 1000,
+            }}
+            className="menu"
+            ref={menuRef}
+          >
+            <button onClick={handleOpenModal} className="menu-item">
+              Ver Detalhes
+            </button>
+            {/* Botão para copiar o link e compartilhar */}
+
+            <button
+              className={`menu-item ${isCopied ? "copied" : ""}`} // Classe condicional
+              onClick={(e) => {
+                e.stopPropagation(); // Previne o click do card
+                handleShareClick();
+              }}
+            >
+              {shareButtonText}
+            </button>
+            <button
+              className="menu-item"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/respond?code=${quiz.code}`);
+              }}
+            >
+              responder
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

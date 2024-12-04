@@ -223,19 +223,17 @@
 }
 
 /* Estilo quando o botão está no estado "copiado" */
-.share-button.copied {
+.copied {
   background-color: #28a745 !important; /* Verde */
   border-color: #1e7e34;
   transform: scale(1.05); /* Leve aumento de tamanho */
 }
 
 /* Efeito de hover para o botão de compartilhamento */
-.share-button:hover {
-  background-color: #028c8a;
-}
+
 
 /* Adicionando animação suave para o botão */
-.share-button,
-.share-button.copied {
+,
+.copied {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
