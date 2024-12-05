@@ -90,11 +90,22 @@ const QuizResponse: React.FC = () => {
 
   /* Personagens pré-definidos */
   const predefinedCharacters: string[] = [
-    "https://i.imgur.com/x1byl5O.jpeg",
-    "https://i.imgur.com/eGGKCQk.jpeg",
-    "https://i.imgur.com/mhf5qhD.jpeg",
     "https://i.imgur.com/UpkmJj7.jpeg",
+    "https://i.imgur.com/eGGKCQk.jpeg",
+    "https://i.imgur.com/y8rOK45.jpeg",
+    "https://i.imgur.com/uciF6PR.jpeg",
     "https://i.imgur.com/7Nv2wN9.jpeg",
+    "https://i.imgur.com/0M60djy.jpeg",
+    "https://i.imgur.com/HXcYUbQ.jpeg",
+    "https://i.imgur.com/djrtigi.jpeg",
+    "https://i.imgur.com/x1byl5O.jpeg",
+    "https://i.imgur.com/xKj6bS7.jpeg",
+    "https://i.imgur.com/mhf5qhD.jpeg",
+    "https://i.imgur.com/8amCndS.jpeg",
+    "https://i.imgur.com/0MtDXFD.jpeg",
+    "https://i.imgur.com/DWDr1ZX.jpeg",
+    "https://i.imgur.com/dY4uXD4.jpeg",
+    "https://i.imgur.com/TrAsdHx.jpeg",
   ];
 
   /* Função para randomizar o personagem */

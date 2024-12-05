@@ -1,5 +1,4 @@
 // Ranking.tsx
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../api";
@@ -14,7 +13,6 @@ import {
   Legend,
 } from "chart.js";
 
-// Registro dos componentes do ChartJS
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 interface Quiz {
@@ -79,7 +77,7 @@ const Ranking: React.FC = () => {
 
     const intervalId = setInterval(() => {
       fetchRanking();
-    }, 30000); // Atualiza a cada 30 segundos para evitar excesso de requisições
+    }, 1000); // Atualiza a cada 3 segundos
 
     fetchRanking();
 
