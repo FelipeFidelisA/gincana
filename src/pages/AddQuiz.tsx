@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useQuizApi } from "../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/addQuiz.css";
-import { FaSpinner } from "react-icons/fa"; // Importing the spinner icon
+import { FaSpinner } from "react-icons/fa";
 
 interface Option {
   id: number;
@@ -44,7 +44,7 @@ const AddQuiz: React.FC = () => {
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(
     null
   );
-  const [submitting, setSubmitting] = useState(false); // State to manage submission
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (questions.length > 0 && selectedQuestionId === null) {
@@ -130,7 +130,6 @@ const AddQuiz: React.FC = () => {
             return { ...o, [field]: value };
           }
 
-          // If setting isRight to true, unset it for other options
           if (field === "isRight" && value === true) {
             return { ...o, isRight: false };
           }
@@ -181,7 +180,7 @@ const AddQuiz: React.FC = () => {
 
     if (!validateForm()) return;
 
-    setSubmitting(true); // Start submission
+    setSubmitting(true);
 
     try {
       const newQuiz = await createQuiz(quizTitle);
@@ -197,7 +196,6 @@ const AddQuiz: React.FC = () => {
           quizCorrectId = 1;
         } else {
           quizCorrectId = quizzes[quizzes.length - 1].id + 1;
-          alert(quizCorrectId);
         }
         const newQuestion: any = await createQuestion(
           question.title,
@@ -231,7 +229,7 @@ const AddQuiz: React.FC = () => {
         },
       ]);
       setSelectedQuestionId(null);
-      navigate("/manage"); // Redirect after successful submission
+      navigate("/manage");
     } catch (error: any) {
       console.error("Erro ao criar o quiz:", error);
       alert(
@@ -239,7 +237,7 @@ const AddQuiz: React.FC = () => {
           "Ocorreu um erro ao criar o quiz. Por favor, tente novamente."
       );
     } finally {
-      setSubmitting(false); // End submission
+      setSubmitting(false);
     }
   };
 
@@ -289,7 +287,7 @@ const AddQuiz: React.FC = () => {
                     <button
                       type="button"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering the li onClick
+                        e.stopPropagation();
                         handleRemoveQuestion(question.id);
                       }}
                       className="remove-question-button"
@@ -390,14 +388,10 @@ const AddQuiz: React.FC = () => {
             )}
           </div>
         </div>
-        <button
-          type="submit"
-          className="submit-button"
-          disabled={submitting} // Disable the button when submitting
-        >
+        <button type="submit" className="submit-button" disabled={submitting}>
           {submitting ? (
             <>
-              <FaSpinner className="spinner" /> {/* Spinner icon */}
+              <FaSpinner className="spinner" />
               Criando...
             </>
           ) : (

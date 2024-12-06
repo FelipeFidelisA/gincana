@@ -9,7 +9,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [shareButtonText, setShareButtonText] = useState("Compartilhar");
-  const [isCopied, setIsCopied] = useState(false); // Novo estado para controlar a cópia
+  const [isCopied, setIsCopied] = useState(false);
   const { setQuizSelected } = useQuizApi();
   const menuRef: any = useRef(null);
   const buttonRef: any = useRef(null);
@@ -18,7 +18,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
     `${window.location.origin}/respond?code=${quiz.code}`;
 
   const toggleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation(); // Prevenir que o onClick do card seja acionado
+    event.stopPropagation();
     setIsMenuOpen((prevState) => !prevState);
   };
 
@@ -28,7 +28,7 @@ const QuizCard = ({ quiz, openModal }: any) => {
   };
 
   const handleOpenModal = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation(); // Prevenir que o onClick do card seja acionado
+    event.stopPropagation();
     openModal(quiz);
   };
 
@@ -58,10 +58,10 @@ const QuizCard = ({ quiz, openModal }: any) => {
   const handleShareClick = () => {
     navigator.clipboard.writeText(generateQuizURL(quiz));
     setShareButtonText("Copiado!");
-    setIsCopied(true); // Ativa o estado de cópia
+    setIsCopied(true);
     setTimeout(() => {
       setShareButtonText("Compartilhar");
-      setIsCopied(false); // Reseta o estado após 2 segundos
+      setIsCopied(false);
     }, 2000);
   };
 
@@ -96,12 +96,11 @@ const QuizCard = ({ quiz, openModal }: any) => {
             <button onClick={handleOpenModal} className="menu-item">
               Ver Detalhes
             </button>
-            {/* Botão para copiar o link e compartilhar */}
 
             <button
-              className={`menu-item ${isCopied ? "copied" : ""}`} // Classe condicional
+              className={`menu-item ${isCopied ? "copied" : ""}`}
               onClick={(e) => {
-                e.stopPropagation(); // Previne o click do card
+                e.stopPropagation();
                 handleShareClick();
               }}
             >

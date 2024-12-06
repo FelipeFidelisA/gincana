@@ -1,7 +1,5 @@
-// React e Bibliotecas Externas
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-// Páginas
 import AddQuiz from "./pages/AddQuiz";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -9,12 +7,11 @@ import QrView from "./pages/QrView";
 import QuizAdminPage from "./pages/QuizAdminPage";
 import QuizResponse from "./pages/QuizResponse";
 import Ranking from "./pages/Ranking";
-import Register from "./pages/Register";
+// import Register from "./pages/Register";
 
-// Componentes
+
 import QuizManagement from "./components/QuizManagement";
 
-// Contextos
 import { AuthProvider } from "./context/AuthContext";
 import { QuizApiProvider } from "./context/QuizApiContext";
 

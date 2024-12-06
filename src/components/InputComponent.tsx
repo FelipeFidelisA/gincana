@@ -8,7 +8,7 @@ interface InputComponentProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
-  children?: React.ReactNode; // Para permitir a inserção de ícones ou outros elementos
+  children?: React.ReactNode;
 }
 
 const InputComponent: React.FC<InputComponentProps> = ({

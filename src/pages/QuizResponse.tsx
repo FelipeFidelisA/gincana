@@ -10,7 +10,6 @@ import { api } from "../api";
 import "../styles/QuizResponse.css";
 import "react-circular-progressbar/dist/styles.css";
 
-/* Interfaces para tipagem */
 interface QuestionWithOptions extends Question {
   options: Option[];
 }
@@ -52,12 +51,10 @@ interface Guest {
 }
 
 const QuizResponse: React.FC = () => {
-  /* Hooks do React Router */
   const navigate = useNavigate();
   const location = useLocation();
   const quizCode = new URLSearchParams(location.search).get("code");
 
-  /* Contexto da API */
   const {
     submitResponses,
     createGuest,
@@ -66,7 +63,6 @@ const QuizResponse: React.FC = () => {
     increaseScore,
   } = useQuizApi();
 
-  /* Estados */
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [quizStatus, setQuizStatus] = useState<string>("WAITING_GUESTS");
   const [questions, setQuestions] = useState<QuestionWithOptions[]>([]);
@@ -88,7 +84,6 @@ const QuizResponse: React.FC = () => {
     height: window.innerHeight,
   });
 
-  /* Personagens pré-definidos */
   const predefinedCharacters: string[] = [
     "https://i.imgur.com/UpkmJj7.jpeg",
     "https://i.imgur.com/eGGKCQk.jpeg",
@@ -108,13 +103,11 @@ const QuizResponse: React.FC = () => {
     "https://i.imgur.com/TrAsdHx.jpeg",
   ];
 
-  /* Função para randomizar o personagem */
   const randomizeCharacter = () => {
     const randomIndex = Math.floor(Math.random() * predefinedCharacters.length);
     setSelectedCharacter(predefinedCharacters[randomIndex]);
   };
 
-  /* Função para buscar o quiz */
   const fetchQuiz = async () => {
     if (!quizCode) {
       alert("Código do quiz não fornecido.");
@@ -123,9 +116,8 @@ const QuizResponse: React.FC = () => {
     }
 
     try {
-      // Busca o quiz pelo código
       const response = await api.get<Quiz>(`/quiz/code/${quizCode}`);
-      // Verifica se o quiz foi encontrado
+
       const foundQuiz = response.data;
       if (foundQuiz) {
         setQuiz(foundQuiz);
@@ -134,7 +126,6 @@ const QuizResponse: React.FC = () => {
         setRemainingTime(300);
         await fetchQuestions(foundQuiz.id);
 
-        // Verifica se o usuário já respondeu o quiz
         const quizjarespondido = localStorage.getItem(
           `quiz_${quizCode}_respondido`
         );
@@ -152,7 +143,6 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  /* Função para buscar as perguntas e opções */
   const fetchQuestions = async (quizId: number) => {
     try {
       const fetchedQuestions = await listQuestions(quizId);
@@ -169,7 +159,6 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  /* Função para listar as opções de uma pergunta */
   const listOptions = async (questionId: number): Promise<Option[]> => {
     try {
       const options = await api.get<Option[]>(`/option/question/${questionId}`);
@@ -180,13 +169,10 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  /* Efeito para buscar o quiz ao carregar o componente */
   useEffect(() => {
     fetchQuiz();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizCode]);
 
-  /* Efeito para verificar o status do quiz periodicamente */
   useEffect(() => {
     if (!quizCode) return;
     const interval = setInterval(async () => {
@@ -206,7 +192,6 @@ const QuizResponse: React.FC = () => {
     return () => clearInterval(interval);
   }, [quizCode]);
 
-  /* Efeito para controlar o temporizador */
   useEffect(() => {
     if (step !== "quiz" || !quiz) return;
     if (remainingTime > 0) {
@@ -217,31 +202,26 @@ const QuizResponse: React.FC = () => {
     } else {
       handleSubmit();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remainingTime, step, quiz]);
 
-  /* Função para manipular a seleção de opção */
   const handleOptionChange = (optionIndex: number) => {
     const newResponses = [...userResponses];
     newResponses[currentQuestion] = optionIndex;
     setUserResponses(newResponses);
   };
 
-  /* Função para ir para a próxima pergunta */
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
 
-  /* Função para voltar para a pergunta anterior */
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
     }
   };
 
-  /* Função para enviar as respostas */
   const handleSubmit = async () => {
     if (quizSubmitted) return;
     if (userResponses.length !== questions.length) {
@@ -255,13 +235,13 @@ const QuizResponse: React.FC = () => {
 
     try {
       let correctAnswers = 0;
-      const selectedOptionIds: any = []; // Armazena os IDs das opções selecionadas
+      const selectedOptionIds: any = [];
 
       questions.forEach((question, index) => {
         const selectedOptionIndex = userResponses[index];
         const selectedOption = question.options[selectedOptionIndex];
         if (selectedOption) {
-          selectedOptionIds.push(selectedOption.id); // Adiciona o ID da opção selecionada
+          selectedOptionIds.push(selectedOption.id);
           if (selectedOption.isRight) {
             correctAnswers += 1;
           }
@@ -273,13 +253,12 @@ const QuizResponse: React.FC = () => {
         remainingTime: number,
         guestId: number
       ) => {
-        const timeWeight = Math.pow(remainingTime, 1.5) * 50; // Eleva ao 1.5 para dar mais peso ao tempo
-        const answerWeight = Math.pow(correctAnswers, 2) * 1000; // Quadrado dos acertos com peso maior
-        const uniqueFactor = (guestId % 100) * 0.1; // Fator único com impacto menor
-        return Math.floor(answerWeight + timeWeight + uniqueFactor); // Retorna um número inteiro
+        const timeWeight = Math.pow(remainingTime, 1.5) * 50;
+        const answerWeight = Math.pow(correctAnswers, 2) * 1000;
+        const uniqueFactor = (guestId % 100) * 0.1;
+        return Math.floor(answerWeight + timeWeight + uniqueFactor);
       };
 
-      // Exemplo de uso:
       const score = calculateScore(correctAnswers, remainingTime, guestId);
 
       await submitResponses(guestId, quizCode!, score);
@@ -287,7 +266,6 @@ const QuizResponse: React.FC = () => {
       setQuizSubmitted(true);
       localStorage.setItem(`quiz_${quizCode}_respondido`, "true");
 
-      /* Inicia o redirecionamento com contagem regressiva */
       const countdownInterval = setInterval(() => {
         setCountdown((prev) => prev - 1);
       }, 1000);
@@ -308,13 +286,10 @@ const QuizResponse: React.FC = () => {
     }
   };
 
-  /* Efeito para randomizar o personagem ao carregar o componente */
   useEffect(() => {
     randomizeCharacter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* Efeito para atualizar as dimensões da janela */
   useEffect(() => {
     const handleResize = () => {
       setWindowDimensions({
@@ -326,7 +301,6 @@ const QuizResponse: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  /* Animação para a mensagem de sucesso */
   const animationProps = useSpring({
     opacity: quizSubmitted ? 1 : 0,
     transform: quizSubmitted
@@ -337,7 +311,6 @@ const QuizResponse: React.FC = () => {
 
   return (
     <>
-      {/* Confete ao enviar o quiz */}
       {quizSubmitted && (
         <Confetti
           width={windowDimensions.width}
@@ -346,7 +319,6 @@ const QuizResponse: React.FC = () => {
           numberOfPieces={60}
         />
       )}
-      {/* Mensagem de sucesso */}
       {quizSubmitted && (
         <animated.div style={animationProps} className="success-message">
           <h2>Quiz respondido com sucesso!</h2>
@@ -354,7 +326,6 @@ const QuizResponse: React.FC = () => {
         </animated.div>
       )}
       <div className="quiz-container">
-        {/* Tela de espera */}
         {step === "quiz" && quizStatus !== "IN_PROGRESS" && (
           <div className="waiting-container">
             <div className="spinner-container">
@@ -369,11 +340,9 @@ const QuizResponse: React.FC = () => {
             </div>
           </div>
         )}
-        {/* Tela do quiz */}
         {step === "quiz" && quizStatus === "IN_PROGRESS" && (
           <>
             {quiz && (
-              /* Tela das perguntas */
               <>
                 <h2>Quiz: {quiz?.title}</h2>
                 <div className="timer-container">
@@ -460,7 +429,6 @@ const QuizResponse: React.FC = () => {
             )}
           </>
         )}
-        {/* Tela de criação de personagem */}
         {step === "character" && (
           <div className="character-creation">
             <h2>Bem-vindo ao Quiz: {quiz?.title}</h2>

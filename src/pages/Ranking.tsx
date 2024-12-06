@@ -1,4 +1,3 @@
-// Ranking.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../api";
@@ -142,7 +141,6 @@ const Ranking: React.FC = () => {
     ],
   };
 
-  // Opções do gráfico
   const chartOptions = {
     responsive: true,
     plugins: {

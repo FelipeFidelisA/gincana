@@ -7,7 +7,6 @@ import QuizCard from "./QuizCard";
 import QuizModal from "./QuizModal";
 import QuestionList from "../QuestionList";
 
-// Importação de CSS para as transições e o loader
 import "./QuizManagement.css";
 
 Modal.setAppElement("#root");
@@ -16,7 +15,6 @@ const QuizManagement: React.FC = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
 
-  // Estado para controlar o carregamento
   const [loading, setLoading] = useState<boolean>(true);
   const [questionsFetched, setQuestionsFetched] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("Carregando quizzes...");
@@ -32,12 +30,10 @@ const QuizManagement: React.FC = () => {
     if (!token) {
       navigate("/login");
     }
-    // Chama navigate sempre que token mudar ou estiver ausente
   }, [token, navigate]);
 
   const { quizzes, listQuizzes, listQuestions } = useQuizApi();
 
-  // Primeiro useEffect: Carrega os quizzes quando o componente é montado
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
@@ -50,17 +46,16 @@ const QuizManagement: React.FC = () => {
     fetchQuizzes();
   }, [listQuizzes]);
 
-  // Segundo useEffect: Carrega as perguntas quando os quizzes são atualizados
   useEffect(() => {
     const fetchQuestions = async () => {
       if (quizzes.length > 0 && !questionsFetched) {
         try {
           for (const quiz of quizzes) {
             await listQuestions(quiz.id);
-            // Adiciona um atraso para evitar sobrecarregar a API
+
             await new Promise((resolve) => setTimeout(resolve, 500));
           }
-          // Adiciona um atraso mínimo para a barra de carregamento
+
           await new Promise((resolve) => setTimeout(resolve, 500));
           setQuestionsFetched(true);
         } catch (error) {
@@ -69,7 +64,6 @@ const QuizManagement: React.FC = () => {
           setLoading(false);
         }
       } else if (quizzes.length === 0 && questionsFetched) {
-        // Caso não haja quizzes, desativa o carregamento
         setLoading(false);
       }
     };

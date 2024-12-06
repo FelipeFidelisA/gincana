@@ -1,4 +1,3 @@
-// QuizAdminPage.tsx
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
@@ -156,11 +155,10 @@ const QuizAdminPage: React.FC = () => {
   const sortedGuests = React.useMemo(() => {
     if (!quiz) return [];
     return quiz.guests.slice().sort((a, b) => {
-      // Primeiro, compara pelo score em ordem decrescente
       if (b.score !== a.score) {
         return b.score - a.score;
       }
-      // Se os scores forem iguais, compara pelo IP em ordem ascendente
+
       if (a.ip < b.ip) return -1;
       if (a.ip > b.ip) return 1;
       return 0;
@@ -177,7 +175,6 @@ const QuizAdminPage: React.FC = () => {
     marginBottom: "1.5rem",
   };
 
-  // Dados para o gráfico
   const chartData = {
     labels: topGuests.map((guest) => guest.name + "#" + guest.ip.slice(-4)),
     datasets: [
@@ -207,7 +204,7 @@ const QuizAdminPage: React.FC = () => {
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "flex-start", // Alinha o conteúdo à direita
+                      justifyContent: "flex-start",
                       marginBottom: "1rem",
                       width: "100%",
                       backgroundColor: "transparent",
@@ -226,21 +223,19 @@ const QuizAdminPage: React.FC = () => {
                         backdropFilter: "blur(10px)",
                         backgroundColor: "rgba(0, 0, 0, 0.2)",
                         transition:
-                          "background-color 0.3s ease, transform 0.3s ease", // Transição suave
+                          "background-color 0.3s ease, transform 0.3s ease",
                       }}
                       onMouseEnter={(e) => {
-                        // Altera a cor e aplica o translate (movimento)
                         (e.target as HTMLElement).style.backgroundColor =
                           "rgba(0, 0, 0, 0.4)";
                         (e.target as HTMLElement).style.transform =
-                          "translateY(-5px)"; // Desloca para cima
+                          "translateY(-5px)";
                       }}
                       onMouseLeave={(e) => {
-                        // Reverte a cor e o movimento
                         (e.target as HTMLElement).style.backgroundColor =
                           "rgba(0, 0, 0, 0.2)";
                         (e.target as HTMLElement).style.transform =
-                          "translateY(0)"; // Retorna ao normal
+                          "translateY(0)";
                       }}
                       onClick={() => navigate("/manage")}
                     >
