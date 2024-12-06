@@ -24,7 +24,7 @@ const App = () => {
       <QuizApiProvider>
         <Router>
           <Routes>
-            <Route path="/register" element={<Register />} />
+            {/* <Route path="/register" element={<Register />} /> */}
             <Route path="/login" element={<Login />} />
             <Route path="/manage" element={<QuizManagement />} />
             <Route path="/add-quiz" element={<AddQuiz />} />

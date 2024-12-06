@@ -13,7 +13,6 @@ body {
   align-items: center;
   padding: 2rem;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
@@ -62,7 +61,6 @@ body {
   animation: fadeInUp 1.2s ease-out;
 }
 
-/* Barra de progresso */
 /* Barra de progresso */
 .progress-bar {
   width: 80%;
@@ -386,15 +384,16 @@ body {
 /* Botões de navegação */
 .navigation-buttons {
   display: flex;
+  flex-direction: row; /* Garante direção horizontal */
   justify-content: space-between;
   gap: 1rem;
-  flex-wrap: wrap; /* Adicionado para melhor responsividade */
+  /* flex-wrap: wrap; Removido para evitar quebra de linha */
 }
 
 /* Botões de navegação e envio */
 .nav-button,
 .submit-button {
-  flex: 1;
+  flex: 1; /* Faz com que os botões ocupem espaço igual */
   padding: 0.8rem;
   background: #02a09d;
   color: #fff;
@@ -404,7 +403,7 @@ body {
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s;
   font-family: "Poppins", sans-serif;
-  min-width: 120px; /* Adicionado para consistência */
+  /* min-width: 120px; Removido para evitar restrição em telas menores */
 }
 
 /* Efeito hover nos botões */
@@ -471,14 +470,15 @@ body {
     height: 60px;
   }
 
-  .navigation-buttons {
-    flex-direction: column; /* Botões empilhados em telas menores */
+  /* Removido para manter os botões lado a lado */
+  /* .navigation-buttons {
+    flex-direction: column; Botões empilhados em telas menores
   }
 
   .nav-button,
   .submit-button {
     margin-bottom: 0.5rem;
-  }
+  } */
 }
 
 .character-display{

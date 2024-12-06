@@ -519,7 +519,7 @@ const QuizResponse: React.FC = () => {
                   id="name"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value.slice(0, 10))}
+                  onChange={(e) => setName(e.target.value.slice(0, 15))}
                   required
                   placeholder="Digite seu nome"
                 />
