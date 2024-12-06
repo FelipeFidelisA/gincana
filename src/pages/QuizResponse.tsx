@@ -133,13 +133,14 @@ const QuizResponse: React.FC = () => {
         setTotalTime(300);
         setRemainingTime(300);
         await fetchQuestions(foundQuiz.id);
-        /* Verifica se o usuário já respondeu o quiz */
-        /* if (
-          localStorage.getItem(`quiz_${foundQuiz.id}_respondido`) === "true"
-        ) {
-          alert("Você já respondeu a este quiz.");
+
+        // Verifica se o usuário já respondeu o quiz
+        const quizjarespondido = localStorage.getItem(
+          `quiz_${quizCode}_respondido`
+        );
+        if (quizjarespondido === "true") {
           navigate(`/ranking?code=${quizCode}`);
-        } */
+        }
       } else {
         alert("Quiz não encontrado.");
         navigate("/");
@@ -182,6 +183,7 @@ const QuizResponse: React.FC = () => {
   /* Efeito para buscar o quiz ao carregar o componente */
   useEffect(() => {
     fetchQuiz();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizCode]);
 
   /* Efeito para verificar o status do quiz periodicamente */
@@ -215,6 +217,7 @@ const QuizResponse: React.FC = () => {
     } else {
       handleSubmit();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remainingTime, step, quiz]);
 
   /* Função para manipular a seleção de opção */
@@ -249,20 +252,40 @@ const QuizResponse: React.FC = () => {
       alert("Erro interno: guestId não definido.");
       return;
     }
+
     try {
       let correctAnswers = 0;
+      const selectedOptionIds: any = []; // Armazena os IDs das opções selecionadas
+
       questions.forEach((question, index) => {
         const selectedOptionIndex = userResponses[index];
         const selectedOption = question.options[selectedOptionIndex];
-        if (selectedOption && selectedOption.isRight) {
-          correctAnswers += 1;
+        if (selectedOption) {
+          selectedOptionIds.push(selectedOption.id); // Adiciona o ID da opção selecionada
+          if (selectedOption.isRight) {
+            correctAnswers += 1;
+          }
         }
       });
-      const score = correctAnswers * 10 + remainingTime * 0.5;
+
+      const calculateScore = (
+        correctAnswers: number,
+        remainingTime: number,
+        guestId: number
+      ) => {
+        const timeWeight = Math.pow(remainingTime, 1.5) * 50; // Eleva ao 1.5 para dar mais peso ao tempo
+        const answerWeight = Math.pow(correctAnswers, 2) * 1000; // Quadrado dos acertos com peso maior
+        const uniqueFactor = (guestId % 100) * 0.1; // Fator único com impacto menor
+        return Math.floor(answerWeight + timeWeight + uniqueFactor); // Retorna um número inteiro
+      };
+
+      // Exemplo de uso:
+      const score = calculateScore(correctAnswers, remainingTime, guestId);
+
       await submitResponses(guestId, quizCode!, score);
       await increaseScore(guestId, quiz!.code, score);
       setQuizSubmitted(true);
-      localStorage.setItem(`quiz_${quiz!.id}_respondido`, "true");
+      localStorage.setItem(`quiz_${quizCode}_respondido`, "true");
 
       /* Inicia o redirecionamento com contagem regressiva */
       const countdownInterval = setInterval(() => {
@@ -272,6 +295,7 @@ const QuizResponse: React.FC = () => {
         clearInterval(countdownInterval);
         navigate(`/ranking?code=${quizCode}`);
       }, 3000);
+
       return () => {
         clearInterval(countdownInterval);
         clearTimeout(redirectTimeout);
@@ -287,6 +311,7 @@ const QuizResponse: React.FC = () => {
   /* Efeito para randomizar o personagem ao carregar o componente */
   useEffect(() => {
     randomizeCharacter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* Efeito para atualizar as dimensões da janela */
@@ -355,17 +380,25 @@ const QuizResponse: React.FC = () => {
                   <CircularProgressbar
                     value={remainingTime}
                     maxValue={totalTime}
-                    text={`${remainingTime}s`}
+                    text={
+                      remainingTime > 60
+                        ? `${Math.floor(remainingTime / 60)}m ${
+                            remainingTime % 60
+                          }s`
+                        : `${remainingTime}s`
+                    }
                     styles={buildStyles({
                       pathColor: `rgba(62, 152, 199, ${
                         remainingTime / totalTime
                       })`,
-                      textColor: "#000",
+                      textColor: "#fff",
+                      textSize: "20px",
                       trailColor: "#d6d6d6",
-                      backgroundColor: "#f88",
+                      backgroundColor: "#3e98c7",
                     })}
                   />
                 </div>
+
                 <div className="question-container">
                   {questions.length > 0 ? (
                     <>
@@ -442,6 +475,7 @@ const QuizResponse: React.FC = () => {
                   alert("Por favor, selecione uma imagem para seu personagem.");
                   return;
                 }
+                localStorage.setItem("myName", name);
                 try {
                   const newGuest = await createGuest(
                     name,
@@ -485,7 +519,7 @@ const QuizResponse: React.FC = () => {
                   id="name"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setName(e.target.value.slice(0, 10))}
                   required
                   placeholder="Digite seu nome"
                 />

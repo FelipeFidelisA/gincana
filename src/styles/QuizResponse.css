@@ -480,3 +480,11 @@ body {
     margin-bottom: 0.5rem;
   }
 }
+
+.character-display{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;  
+}

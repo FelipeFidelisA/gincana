@@ -7,37 +7,76 @@ import QuizCard from "./QuizCard";
 import QuizModal from "./QuizModal";
 import QuestionList from "../QuestionList";
 
+// Importação de CSS para as transições e o loader
+import "./QuizManagement.css";
+
 Modal.setAppElement("#root");
 
 const QuizManagement: React.FC = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
+
+  // Estado para controlar o carregamento
+  const [loading, setLoading] = useState<boolean>(true);
+  const [questionsFetched, setQuestionsFetched] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("Carregando quizzes...");
+  useEffect(() => {
+    setTimeout(() => {
+      setMessage(
+        "nenhum quiz criado ainda, clique em adicionar quiz para criar um novo quiz"
+      );
+    }, 3000);
+  }, [questionsFetched]);
+
   useEffect(() => {
     if (!token) {
       navigate("/login");
     }
-    // chama navigate sempre que token mudar ou estiver ausente
+    // Chama navigate sempre que token mudar ou estiver ausente
   }, [token, navigate]);
 
   const { quizzes, listQuizzes, listQuestions } = useQuizApi();
+
+  // Primeiro useEffect: Carrega os quizzes quando o componente é montado
   useEffect(() => {
     const fetchQuizzes = async () => {
-      if (quizzes.length > 0) {
-        return;
-      }
-      // Chama listQuizzes até que quizzes não seja mais um array vazio
-      while (quizzes.length > 0) {
+      try {
         await listQuizzes();
-        // Para cada quiz, chama listQuestions
-        for (const quiz of quizzes) {
-          await listQuestions(quiz.id);
-          await new Promise((resolve) => setTimeout(resolve, 1500));
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // Espera 1.5s antes de chamar novamente
+      } catch (error) {
+        console.error("Erro ao buscar quizzes:", error);
       }
     };
+
     fetchQuizzes();
-  }, [quizzes, listQuizzes]);
+  }, [listQuizzes]);
+
+  // Segundo useEffect: Carrega as perguntas quando os quizzes são atualizados
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      if (quizzes.length > 0 && !questionsFetched) {
+        try {
+          for (const quiz of quizzes) {
+            await listQuestions(quiz.id);
+            // Adiciona um atraso para evitar sobrecarregar a API
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
+          // Adiciona um atraso mínimo para a barra de carregamento
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          setQuestionsFetched(true);
+        } catch (error) {
+          console.error("Erro ao buscar perguntas:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else if (quizzes.length === 0 && questionsFetched) {
+        // Caso não haja quizzes, desativa o carregamento
+        setLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  }, [quizzes, listQuestions, questionsFetched]);
+
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
     quiz: any;
@@ -58,6 +97,7 @@ const QuizManagement: React.FC = () => {
 
   return (
     <div
+      className={`quiz-management-container ${loading ? "loading" : "loaded"}`}
       style={{
         fontFamily: "Poppins, sans-serif",
         padding: "20px",
@@ -65,6 +105,8 @@ const QuizManagement: React.FC = () => {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
+        transition: "opacity 0.5s ease-in-out",
+        opacity: loading ? 0.5 : 1,
       }}
     >
       <div
@@ -92,16 +134,20 @@ const QuizManagement: React.FC = () => {
             gap: "8px",
             fontSize: "1rem",
             fontWeight: "bold",
+            zIndex: 999,
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             transition: "background-color 0.3s, transform 0.3s",
           }}
           onMouseEnter={(e) => {
-            (e.target as HTMLButtonElement).style.backgroundColor = "#028C8A";
-            (e.target as HTMLButtonElement).style.transform = "scale(1.05)";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+              "#028C8A";
+            (e.currentTarget as HTMLButtonElement).style.transform =
+              "scale(1.05)";
           }}
           onMouseLeave={(e) => {
-            (e.target as HTMLButtonElement).style.backgroundColor = "#02A09D";
-            (e.target as HTMLButtonElement).style.transform = "scale(1)";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+              "#02A09D";
+            (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
           }}
         >
           <FaPlus />
@@ -109,17 +155,34 @@ const QuizManagement: React.FC = () => {
         </button>
       </div>
 
-      {quizzes.length === 0 ? (
+      {loading ? (
+        <div className="loader-container">
+          {message != "Carregando quizzes..." ? (
+            <div
+              className="loader"
+              style={{
+                display: "none",
+              }}
+            ></div>
+          ) : (
+            <div className="loader"></div>
+          )}
+          <p style={{ fontSize: "1.2rem", textAlign: "center" }}>{message}</p>
+        </div>
+      ) : quizzes.length === 0 ? (
         <p style={{ fontSize: "1.2rem", textAlign: "center" }}>
           Nenhum quiz adicionado ainda.
         </p>
       ) : (
         <div
+          className="quizzes-container"
           style={{
             display: "flex",
             flexWrap: "wrap",
             gap: "20px",
             justifyContent: "center",
+            opacity: loading ? 0 : 1,
+            transition: "opacity 0.5s ease-in-out",
           }}
         >
           {quizzes.map((quiz: any) => (

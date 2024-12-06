@@ -131,12 +131,6 @@ const tableCellStyle: React.CSSProperties = {
   padding: "12px",
   color: COLORS.darkGray,
 };
-
-const loadingStyle: React.CSSProperties = {
-  color: COLORS.warning,
-  fontWeight: 600,
-};
-
 const errorStyle: React.CSSProperties = {
   color: COLORS.danger,
   fontWeight: 600,
@@ -238,7 +232,6 @@ const QuestionsSection: React.FC<{
 }> = ({ questionsWithOptions, loading, error }) => (
   <section style={sectionStyle}>
     <h3 style={sectionHeaderStyle}>Perguntas</h3>
-    {loading && <p style={loadingStyle}>Carregando opções das perguntas...</p>}
     {error && <p style={errorStyle}>{error}</p>}
     {!loading && !error && (
       <>
@@ -309,7 +302,10 @@ const QuizModal: React.FC<QuizModalProps> = ({ modalData, closeModal }) => {
     };
 
     if (isOpen && quiz) {
-      loadOptions();
+      (async () => {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        loadOptions();
+      })();
     }
   }, [isOpen, quiz, fetchOptionsForQuestion]);
 

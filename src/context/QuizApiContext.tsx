@@ -7,7 +7,8 @@ import React, {
 } from "react";
 import { api } from "../api";
 
-export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 export interface Quiz {
   id: number;
@@ -124,9 +125,12 @@ export const QuizApiProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
       console.log("Quiz criado com sucesso:", response.data);
-      await delay(400);
+
       await listQuizzes();
-      await delay(400);
+
+      if (quizzes.length === 0) {
+        return 1;
+      }
       const lastIndex = quizzes.length - 1;
       const lastQuiz = quizzes[lastIndex];
       console.log("Último quiz na lista após criação:", lastQuiz);

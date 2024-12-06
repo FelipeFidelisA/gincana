@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { delay, useQuizApi } from "../context/QuizApiContext";
+import { useQuizApi } from "../context/QuizApiContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/addQuiz.css";
 import { FaSpinner } from "react-icons/fa"; // Importing the spinner icon
@@ -27,7 +27,7 @@ const AddQuiz: React.FC = () => {
     }
   }, [token, navigate]);
 
-  const { createQuiz, createQuestion, createOption } = useQuizApi();
+  const { createQuiz, createQuestion, createOption, quizzes } = useQuizApi();
 
   const [quizTitle, setQuizTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([
@@ -184,22 +184,26 @@ const AddQuiz: React.FC = () => {
     setSubmitting(true); // Start submission
 
     try {
-      await delay(400);
       const newQuiz = await createQuiz(quizTitle);
-      await delay(400);
+
       const quizId: any = newQuiz;
       if (!quizId) {
         throw new Error("Falha ao obter o ID do Quiz criado.");
       }
 
       for (const [qIndex, question] of questions.entries()) {
-        await delay(400);
+        let quizCorrectId;
+        if (quizzes.length === 0) {
+          quizCorrectId = 1;
+        } else {
+          quizCorrectId = quizzes[quizzes.length - 1].id + 1;
+          alert(quizCorrectId);
+        }
         const newQuestion: any = await createQuestion(
           question.title,
           question.description,
-          quizId + 1
+          quizCorrectId
         );
-        await delay(400);
         const questionId = newQuestion.id;
         if (!questionId) {
           throw new Error(
@@ -210,9 +214,8 @@ const AddQuiz: React.FC = () => {
         }
         for (const [oIndex, option] of question.options.entries()) {
           console.log(oIndex);
-          await delay(400);
+
           await createOption(option.description, option.isRight, questionId);
-          await delay(400);
         }
       }
       setQuizTitle("");

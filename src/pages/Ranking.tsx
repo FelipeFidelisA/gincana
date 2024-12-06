@@ -55,6 +55,8 @@ const Ranking: React.FC = () => {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [myName, setMyName] = useState<string | null>(null);
+  const name = localStorage.getItem("myName");
 
   useEffect(() => {
     if (!quizCode) {
@@ -68,6 +70,9 @@ const Ranking: React.FC = () => {
         const response = await api.get<Quiz>(`/quiz/code/${quizCode}`);
         setQuiz(response.data);
         setLoading(false);
+        if (name) {
+          setMyName(name);
+        }
       } catch (err: any) {
         console.error("Erro ao buscar ranking:", err);
         setError("Ocorreu um erro ao buscar o ranking.");
@@ -77,7 +82,7 @@ const Ranking: React.FC = () => {
 
     const intervalId = setInterval(() => {
       fetchRanking();
-    }, 1000); // Atualiza a cada 3 segundos
+    }, 1000);
 
     fetchRanking();
 
@@ -118,9 +123,13 @@ const Ranking: React.FC = () => {
   const topGuests = sortedGuests.slice(0, 5);
   const otherGuests = sortedGuests.slice(5);
 
-  // Preparação dos dados para o gráfico (apenas Top 5)
   const chartData = {
-    labels: topGuests.map((guest) => guest.name),
+    labels: topGuests.map(
+      (guest) =>
+        `${
+          guest.name === myName ? `${guest.name}(Vc)` : guest.name
+        } #${guest.ip.slice(-4)}`
+    ),
     datasets: [
       {
         label: "Pontuação",
@@ -128,6 +137,7 @@ const Ranking: React.FC = () => {
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
+        color: "red",
       },
     ],
   };
@@ -191,7 +201,32 @@ const Ranking: React.FC = () => {
                   alt={`${guest.name} Perfil`}
                   className="profile-image"
                 />
-                <span className="guest-name">{guest.name}</span>
+                <span className="guest-name">
+                  {guest.name === myName ? (
+                    <span
+                      style={{
+                        color: "yellow",
+                        textShadow: "0 0 5px #000",
+                      }}
+                    >
+                      {guest.name}
+                      {"(Você)"}
+                    </span>
+                  ) : (
+                    guest.name
+                  )}
+                  <span
+                    style={{
+                      color: guest.name === myName ? "yellow" : "#02A09D",
+                      fontWeight: 600,
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: "0.6rem",
+                    }}
+                  >
+                    {" "}
+                    #{guest.ip.slice(-4)}
+                  </span>
+                </span>
                 <span className="guest-score">{guest.score} pts</span>
               </li>
             ))}
@@ -231,7 +266,6 @@ const Ranking: React.FC = () => {
               {otherGuests.map((guest, index) => (
                 <tr key={guest.id}>
                   <td>{index + 6}</td>{" "}
-                  {/* Ajusta a posição considerando os top 5 */}
                   <td>
                     <img
                       src={guest.profileUrl}
@@ -239,7 +273,21 @@ const Ranking: React.FC = () => {
                       className="profile-image"
                     />
                   </td>
-                  <td>{guest.name}</td>
+                  <td>
+                    {guest.name === myName ? (
+                      <span
+                        style={{
+                          color: "yellow",
+                          textShadow: "0 0 5px #000",
+                        }}
+                      >
+                        Você
+                      </span>
+                    ) : (
+                      guest.name
+                    )}
+                    # {guest.ip.slice(-4)}
+                  </td>
                   <td>{guest.score}</td>
                 </tr>
               ))}

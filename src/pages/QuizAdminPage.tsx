@@ -179,12 +179,11 @@ const QuizAdminPage: React.FC = () => {
 
   // Dados para o gráfico
   const chartData = {
-    labels: topGuests.map((guest) => guest.name + " #" + guest.ip.slice(-4)),
+    labels: topGuests.map((guest) => guest.name + "#" + guest.ip.slice(-4)),
     datasets: [
       {
         label: "Pontuação",
         data: topGuests.map((guest) => guest.score),
-        backgroundColor: "rgba(2, 160, 157, 0.6)",
       },
     ],
   };
@@ -333,7 +332,14 @@ const QuizAdminPage: React.FC = () => {
                           alt={guest.name + "#" + guest.ip.slice(-4)}
                           className="guest-image"
                         />
-                        <p className="guest-name">
+                        <p
+                          style={{
+                            color: "black",
+                            fontSize: "1.2rem",
+                            fontWeight: 600,
+                            textShadow: "0 0 5px rgba(0, 0, 0, 0.2)",
+                          }}
+                        >
                           {guest.name} #{guest.ip.slice(-4)}
                         </p>
                         <button
